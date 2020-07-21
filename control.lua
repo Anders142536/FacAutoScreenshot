@@ -15,23 +15,6 @@ function initialize()
 	evaluateZoomFromWholeBase();
 end
 
--- 3600
-script.on_nth_tick(60, function(event)
-	for _, player in pairs(game.connected_players) do
-		game.print("player!")
-		local index = player.index
-		local doScreenshot = settings.get_player_settings(game.get_player(index))["FAS-do-screenshot"].value
-		if doScreenshot then
-			local interval = settings.get_player_settings(game.get_player(index))["FAS-Screenshot-interval"].value * 60
-			
-			if event.tick % interval == 0 then
-				game.print("ding")
-				renderScreenshot(index)
-			end
-		end
-	end
-end)
-
 script.on_load(function()
 	script.on_event(defines.events.on_built_entity, on_built_entity)
 end)
@@ -51,6 +34,35 @@ function on_built_entity(event)
 	end
 end
 
+function breaksCurrentZoom(zoomX, zoomY)
+	return (zoomX < global.zoom or zoomY < global.zoom);
+end
+
+function evaluateZoomFromWholeBase()
+	game.print("ev whole base");
+end
+
+function evaluateZoomFromPosition(zoomX, zoomY)
+	while breaksCurrentZoom(zoomX, zoomY) do
+		global.zoom = global.zoom / 2;
+	end
+end
+
+-- 3600
+script.on_nth_tick(60, function(event)
+	for _, player in pairs(game.connected_players) do
+		local index = player.index
+		local doScreenshot = settings.get_player_settings(game.get_player(index))["FAS-do-screenshot"].value
+		if doScreenshot then
+			local interval = settings.get_player_settings(game.get_player(index))["FAS-Screenshot-interval"].value * 60
+			
+			if event.tick % interval == 0 then
+				renderScreenshot(index)
+			end
+		end
+	end
+end)
+
 function renderScreenshot(index)
 	local resolution = settings.get_player_settings(game.get_player(index))["FAS-Resolution"].value
 
@@ -67,7 +79,6 @@ function renderScreenshot(index)
 		resY = 720;
 	end
 
-	game.print("doing screenshot with res " .. resX .. " and player " .. index)
 	game.take_screenshot{
 		resolution={resX, resY},
 		position={0, 0},
@@ -77,18 +88,4 @@ function renderScreenshot(index)
 		by_player=index,
 		path="./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
 	}
-end
-
-function breaksCurrentZoom(zoomX, zoomY)
-	return (zoomX < global.zoom or zoomY < global.zoom);
-end
-
-function evaluateZoomFromWholeBase()
-	game.print("ev whole base");
-end
-
-function evaluateZoomFromPosition(zoomX, zoomY)
-	while breaksCurrentZoom(zoomX, zoomY) do
-		global.zoom = global.zoom / 2;
-	end
 end
