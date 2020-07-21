@@ -40,6 +40,19 @@ end
 
 function evaluateZoomFromWholeBase()
 	game.print("ev whole base");
+	for _, surface in pairs(game.surfaces) do
+		game.print("surface " .. surface.index .. ": " .. surface.name);
+	end
+
+	local surface = game.surfaces[1];
+	-- do this smarter
+	local tchunk = nil;
+	local rchunk = nil;
+	local bchunk = nil;
+	local lchunk = nil;
+	for chunk in surface.get_chunks() do
+		
+	end
 end
 
 function evaluateZoomFromPosition(zoomX, zoomY)
