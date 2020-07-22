@@ -34,7 +34,6 @@ script.on_nth_tick(3600, function(event)
 			local interval = settings.get_player_settings(game.get_player(index))["FAS-Screenshot-interval"].value * 3600
 			if event.tick % interval == 0 then
 				renderScreenshot(index)
-
 function loadSettings(player_index)
 	game.print("loading settings for player " .. player_index)
 	global.doScreenshot[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-do-screenshot"].value
@@ -61,11 +60,6 @@ end
 
 function evaluateLimitsFromWholeBase()
 	game.print("ev whole base")
-	for _, surface in pairs(game.surfaces) do
-		game.print("surface " .. surface.index .. ": " .. surface.name);
-
-
-	game.print("force 1 is : " .. game.forces[1].name)
 
 	local surface = game.surfaces[1];
 	-- do this smarter
