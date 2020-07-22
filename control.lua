@@ -16,16 +16,13 @@ function initialize()
 end
 
 -- 3600
-script.on_nth_tick(60, function(event)
+script.on_nth_tick(3600, function(event)
 	for _, player in pairs(game.connected_players) do
-		game.print("player!")
 		local index = player.index
 		local doScreenshot = settings.get_player_settings(game.get_player(index))["FAS-do-screenshot"].value
 		if doScreenshot then
-			local interval = settings.get_player_settings(game.get_player(index))["FAS-Screenshot-interval"].value * 60
-			
+			local interval = settings.get_player_settings(game.get_player(index))["FAS-Screenshot-interval"].value * 3600
 			if event.tick % interval == 0 then
-				game.print("ding")
 				renderScreenshot(index)
 			end
 		end
@@ -67,7 +64,6 @@ function renderScreenshot(index)
 		resY = 720;
 	end
 
-	game.print("doing screenshot with res " .. resX .. " and player " .. index)
 	game.take_screenshot{
 		resolution={resX, resY},
 		position={0, 0},
