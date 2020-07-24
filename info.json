@@ -1,8 +1,8 @@
 {
   "name": "FacAutoScreenshot",
-  "version": "0.1.1",
+  "version": "1.0.0",
   "title": "FacAutoScreenshot",
-  "author": "Anders",
-  "description": "Personal mod that is mainly for experimental purposes",
+  "author": "Anders142536",
+  "description": "Small Screenshot script that automatically does screenshots in set minute intervals.\n\nResolution, minute interval and what players want to do screenshots can be set in the mod settings.",
   "factorio_version": "0.18"
 }

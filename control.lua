@@ -9,7 +9,7 @@ script.on_configuration_changed(function()
 end)
 
 function initialize()
-	game.print("initializing")
+	-- game.print("initializing")
 	if global.zoom == nil then
 		global.zoom = {}
 		global.doScreenshot = {}
@@ -24,6 +24,8 @@ function initialize()
 		global.maxX = 0
 		global.minY = 0
 		global.maxY = 0
+		global.limitX = 0
+		global.limitY = 0
 	end
 
 	loadSettings(1)
@@ -31,9 +33,9 @@ function initialize()
 end
 
 function loadSettings(player_index)
-	game.print("loading settings for player " .. player_index)
+	-- game.print("loading settings for player " .. player_index)
 	global.doScreenshot[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-do-screenshot"].value
-	global.interval[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-Screenshot-interval"].value * 60 -- 3600
+	global.interval[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-Screenshot-interval"].value * 3600 -- 3600
 
 	local resolution = settings.get_player_settings(game.get_player(player_index))["FAS-Resolution"].value
 
@@ -52,10 +54,21 @@ function loadSettings(player_index)
 
 	global.resX[player_index] = resX
 	global.resY[player_index] = resY
+	global.zoom[player_index] = 1
+	
+	-- confirmation prints reading back the set settings in chat
+	if (global.doScreenshot[player_index]) then
+		game.print("Player " .. player_index .. " does screenshots with resolution " .. 
+		global.resX[player_index] .. "x" .. global.resY[player_index] .. 
+		" every " .. (global.interval[player_index] / 3600) .. " minutes")
+		evaluateZoomForPlayer(player_index)
+	else
+		game.print("Player " .. player_index .. " does no screenshots")
+	end
 end
 
 function evaluateLimitsFromWholeBase()
-	game.print("ev whole base")
+	game.print("evaluating whole base")
 
 	local surface = game.surfaces[1];
 	-- do this smarter
@@ -87,8 +100,30 @@ function evaluateLimitsFromWholeBase()
 		end
 	end
 
-	global.limitX = tchunk.area.left_top.x 
-	global.limitY
+	local top = math.abs(tchunk.area.left_top.y)
+	local right = math.abs(rchunk.area.right_bottom.x)
+	local bottom = math.abs(bchunk.area.right_bottom.y)
+	local left =  math.abs(lchunk.area.left_top.x)
+	
+	-- game.print("top: " .. top)
+	-- game.print("right: " .. right)
+	-- game.print("bottom: " .. bottom)
+	-- game.print("left: " .. left)
+
+	if (top > bottom) then
+		global.limitY = top
+	else
+		global.limitY = bottom
+	end
+
+	if (left > right) then
+		global.limitX = left
+	else
+		global.limitX = right
+	end
+
+	-- game.print("limitX: " .. global.limitX)
+	-- game.print("limitY: " .. global.limitY)
 
 	evaluateZoomForAllPlayers()
 end
@@ -109,19 +144,19 @@ script.on_load(function()
 end)
 
 function on_player_joined_game(event)
-	game.print("player " .. event.player_index .. " joined")
+	-- game.print("player " .. event.player_index .. " joined")
 	loadSettings(event.player_index)
 	evaluateZoomForPlayer(event.player_index)
 end
 
 function on_runtime_mod_setting_changed(event)
-	game.print("runtimesettings for player " .. event.player_index .. " changed")
+	-- game.print("runtimesettings for player " .. event.player_index .. " changed")
 	loadSettings(event.player_index)
 	evaluateZoomForPlayer(event.player_index)
 end
 
 function on_built_entity(event)
-	game.print("on built entity")
+	-- game.print("on built entity")
 	pos = event.created_entity.position
 	if breaksCurrentLimits(pos) then
 		evaluateLimitsFromPosition(pos)
@@ -136,7 +171,7 @@ function breaksCurrentLimits(pos)
 end
 
 function evaluateLimitsFromPosition(pos)
-	game.print("ev limit from position")
+	-- game.print("ev limit from position")
 	if pos.x < global.minX then
 		global.minX = pos.x
 	elseif pos.x > global.maxX then
@@ -165,18 +200,18 @@ function evaluateLimitsFromPosition(pos)
 end
 
 function evaluateZoomForAllPlayers()
-	game.print("ev zoom for all players")
+	-- game.print("ev zoom for all players")
 	for _, player in pairs(game.connected_players) do
-		game.print("ding")
+		-- game.print("ding")
 		if global.doScreenshot[player.index] then
-			game.print("dong")
+			-- game.print("dong")
 			evaluateZoomForPlayer(player.index)
 		end
 	end
 end
 
 function evaluateZoomForPlayer(player)
-	game.print("ev zoom for player")
+	-- game.print("ev zoom for player")
 	-- 7680					resx
 	-- -------- = 0,3		------------------ = zoom
 	-- 800  32				leftRight resTiles
@@ -189,7 +224,7 @@ function evaluateZoomForPlayer(player)
 	if zoomX > zoomY then
 		newZoom = zoomY
 	end
-	game.print("new zoom: " .. newZoom)
+	-- game.print("new zoom: " .. newZoom)
 	
 	if (global.zoom[player] == nil) then
 		global.zoom[player] = 1
@@ -202,8 +237,7 @@ function evaluateZoomForPlayer(player)
 end
 
 -- 3600
-script.on_nth_tick(60, function(event)
-	game.print("dang")
+script.on_nth_tick(3600, function(event)
 	for _, player in pairs(game.connected_players) do
 		if global.doScreenshot[player.index] then
 			if event.tick % global.interval[player.index] == 0 then
@@ -214,10 +248,10 @@ script.on_nth_tick(60, function(event)
 end)
 
 function renderScreenshot(index)
-	game.print("index: " .. index)
-	game.print("resX: " .. global.resX[index])
-	game.print("resY: " .. global.resY[index])
-	game.print("zoom: " .. global.zoom[index])
+	-- game.print("index: " .. index)
+	-- game.print("resX: " .. global.resX[index])
+	-- game.print("resY: " .. global.resY[index])
+	-- game.print("zoom: " .. global.zoom[index])
 	game.take_screenshot{
 		resolution={global.resX[index], global.resY[index]},
 		position={0, 0},
@@ -225,6 +259,6 @@ function renderScreenshot(index)
 		daytime=0,		-- bright daylight
 		water_tick=0,
 		by_player=index,
-		path="./testscreenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
+		path="./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
 	}
 end
