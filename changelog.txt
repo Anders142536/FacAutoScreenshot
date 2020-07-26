@@ -1,0 +1,15 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+  Features:
+    - First release of the script. Now automatically does the screenshots
+    - Settings are now properly read
+    - Adjust zoom level based on base size and new buildings being placed
+  Fixes:
+    - General Bugfixes
+---------------------------------------------------------------------------------------------------
+Version: 1.0.1
+  Features:
+    - Zoom is now adjusted softer. Instead of doing 1/(2^n) it is now 1/n. Before the image size was quadrupled every adjustment.
+  Fixes:
+    - Fixed crashes occuring on loading the script on a fresh map.
+    - Fixed crashes on "sandbox" gametype being caused by player character missing.
