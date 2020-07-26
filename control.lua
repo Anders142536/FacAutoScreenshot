@@ -221,7 +221,7 @@ function evaluateZoomForPlayer(player)
 end
 
 -- 3600
-script.on_nth_tick(60, function(event)
+script.on_nth_tick(3600, function(event)
 	-- game.print("on nth tick")
 	if firstRun then
 		evaluateLimitsFromWholeBase()
