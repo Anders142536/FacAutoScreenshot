@@ -13,3 +13,7 @@ Version: 1.0.1
   Fixes:
     - Fixed crashes occuring on loading the script on a fresh map.
     - Fixed crashes on "sandbox" gametype being caused by player character missing.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.2
+  Fixes:
+    - Fixed issue with loading properly on mod or base game version change.

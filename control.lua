@@ -6,6 +6,10 @@ script.on_init(function()
 	initialize()
 end)
 
+script.on_configuration_changed(function()
+	initialize()
+end)
+
 function initialize()
 	zoom = {}
 	zoomLevel = {}
