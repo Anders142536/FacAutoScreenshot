@@ -17,3 +17,9 @@ Version: 1.0.1
 Version: 1.0.2
   Fixes:
     - Fixed issue with loading properly on mod or base game version change.
+---------------------------------------------------------------------------------------------------
+Version: 1.0.3
+  Optimizations:
+    - On building large blueprints there should be no more freeze for a few frames, as the limits for new screenshots are now only calculated once there was something built that leaves the boundaries of the current limits.
+  Fixes:
+    - Fixed issue with last fix causing desyncs in multiplayer. Sry, but factorio is really unfriendly in that regard :/
