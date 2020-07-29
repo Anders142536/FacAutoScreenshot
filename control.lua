@@ -130,7 +130,7 @@ function loadSettings(player_index)
 	global.zoom[player_index] = 1
 	global.zoomLevel[player_index] = 1
 	
-	-- confirmation prints reading back the set settings in chat
+	-- confirmation prints reading back the set settings in chat.
 	if (global.doScreenshot[player_index]) then
 		game.print("FAS: Player " .. player_index .. " does screenshots with resolution " .. 
 		global.resX[player_index] .. "x" .. global.resY[player_index] .. 
