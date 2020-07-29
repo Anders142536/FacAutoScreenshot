@@ -23,3 +23,7 @@ Version: 1.0.3
     - On building large blueprints there should be no more freeze for a few frames, as the limits for new screenshots are now only calculated once there was something built that leaves the boundaries of the current limits.
   Fixes:
     - Fixed issue with last fix causing desyncs in multiplayer. Sry, but factorio is really unfriendly in that regard :/
+---------------------------------------------------------------------------------------------------
+Version: 1.0.4
+  Fixes:
+    - Fixed issue with screenshots being saved in the wrong folder
