@@ -27,3 +27,9 @@ Version: 1.0.3
 Version: 1.0.4
   Fixes:
     - Fixed issue with screenshots being saved in the wrong folder
+---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+  Features:
+    - Added "" setting. This makes the script make the whole screenshot in one go instead of splitting the work over several ticks. This will cause freeze frames, but you wont need to stitch together the screenshots anymore.
+  Fixes:
+    - 

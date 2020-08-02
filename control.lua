@@ -257,6 +257,19 @@ function renderScreenshot(index)
 	}
 end
 
+function on_tick()
+	log("FAS: doing screenshot benchmarks weeeee")
+	game.take_screenshot{
+		resolution={1920, 1080},
+		position={0, 0},
+		zoom=1,		-- lower means further zoomed out
+		daytime=0,		-- bright daylight
+		water_tick=0,
+		path="./testscreenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
+	}
+end
+
+script.on_event(defines.events.on_tick, on_tick)
 script.on_event(defines.events.on_player_joined_game, on_player_joined_game)
 script.on_event(defines.events.on_runtime_mod_setting_changed, on_runtime_mod_setting_changed)
 script.on_event(defines.events.on_built_entity, on_built_entity)
