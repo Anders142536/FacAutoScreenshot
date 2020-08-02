@@ -1,6 +1,6 @@
 {
   "name": "FacAutoScreenshot",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "title": "FacAutoScreenshot",
   "author": "Anders142536",
   "description": "Small Screenshot script that automatically does screenshots in set minute intervals.\n\nResolution, minute interval and which players want to do screenshots can be set in the mod settings.",

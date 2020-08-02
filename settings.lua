@@ -19,5 +19,11 @@ data:extend(
         setting_type = "runtime-per-user",
         allowed_values = {"7680x4320 (8K)", "3840x2160 (4K)", "1920x1080 (FullHD)", "1280x720  (HD)"},
         default_value = "7680x4320 (8K)"
+    },
+    {
+        type = "bool-setting",
+        name = "FAS-enable-debug",
+        setting_type = "runtime-global",
+        default_value = false
     }
 })
