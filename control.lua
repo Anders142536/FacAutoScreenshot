@@ -253,7 +253,7 @@ function renderScreenshot(index)
 		daytime=0,		-- bright daylight
 		water_tick=0,
 		by_player=index,
-		path="./testscreenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
+		path="./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
 	}
 end
 
