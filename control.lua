@@ -141,7 +141,6 @@ end
 
 function loadSettings(player_index)
 	log("loading settings for player " .. player_index)
-	game.print("loading settings for player " .. player_index)
 	global.doScreenshot[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-do-screenshot"].value
 	global.interval[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-Screenshot-interval"].value * 3600 -- 3600
 	
@@ -201,7 +200,7 @@ end
 
 function evaluateMinMaxFromPosition(pos)
 	if (global.verbose) then
-		log("Evaluate limit from position: pos: " .. pos.x .. "x" .. pos.y)
+		log("Evaluate min max from position: " .. pos.x .. "x" .. pos.y)
 	end
 	if pos.x < global.minX then
 		global.minX = pos.x
@@ -213,6 +212,13 @@ function evaluateMinMaxFromPosition(pos)
 		global.minY = pos.y
 	elseif pos.y > global.maxY then
 		global.maxY = pos.y
+	end
+
+	if (global.verbose) then
+		log("global.minX = " .. global.minX)
+		log("global.maxX = " .. global.maxX)
+		log("global.minY = " .. global.minY)
+		log("global.maxY = " .. global.maxY)
 	end
 	
 	global.minMaxChanged = true
@@ -254,17 +260,23 @@ script.on_nth_tick(3600, function(event)
 end)
 
 function evaluateZoomForAllPlayers()
-log("ev zoom for all players")
-for _, player in pairs(game.connected_players) do
-	if global.doScreenshot[player.index] then
-		evaluateZoomForPlayer(player.index)
+	log("ev zoom for all players")
+	for _, player in pairs(game.connected_players) do
+		if global.doScreenshot[player.index] then
+			evaluateZoomForPlayer(player.index)
+		end
 	end
-end
 end
 
 function evaluateZoomForPlayer(player)
 	if(global.verbose) then
 		log("ev zoom for player " .. player)
+		log("resX: " .. global.resX[player])
+		log("resY: " .. global.resY[player])
+		log("global.limitX: " .. global.limitX)
+		log("global.limitY: " .. global.limitY)
+		log("old zoom: " .. global.zoom[player])
+		log("zoomLevel: " .. global.zoomLevel[player])
 	end
 	-- 7680					global.resX
 	-- -------- = 0,3		------------------ = zoom
@@ -281,6 +293,7 @@ function evaluateZoomForPlayer(player)
 	while newZoom < global.zoom[player] do
 		global.zoomLevel[player] = global.zoomLevel[player] + 1
 		global.zoom[player] = 1 / global.zoomLevel[player]
+		log("Adjusting zoom for player " .. player .. " to " .. global.zoom[player] .. " and zoomlevel to " .. global.zoomLevel[player])
 	end
 	if oldZoom > global.zoom[player] then
 		log("Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.zoom[player])
@@ -290,6 +303,7 @@ end
 
 function renderScreenshot(index)
 	if (global.verbose) then
+		log("rendering screenshot")
 		log("index: " .. index)
 		log("global.resX: " .. global.resX[index])
 		log("global.resY: " .. global.resY[index])
