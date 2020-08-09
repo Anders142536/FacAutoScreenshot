@@ -1,33 +1,31 @@
--- script.on_load(function()
--- 	log("on load")
--- 	isFirst = true;
--- end)
-
 script.on_init(function()
 	log("on init")
-	-- isFirst = true;
 	initialize()
 end)
 
 script.on_configuration_changed(function()
 	log("on configuraiton changed")
-	-- isFirst = true;
 	initialize()
 end)
 
--- basically resets the state of the script
 function initialize()
 	log("initialize")
 
+	-- runtime global settings
 	global.verbose = settings.global["FAS-enable-debug"].value
+	global.increasedSplitting = settings.global["FAS-increased-splitting"].value
 	
-	global.zoom = {}
-	global.zoomLevel = {}
+	-- runtime user settings
 	global.doScreenshot = {}
 	global.interval = {}
+	global.singleScreenshot = {}
 	global.resX = {}
 	global.resY = {}
-	
+
+	-- calculated values
+	global.zoom = {}
+	global.zoomLevel = {}
+	global.nextScreenshot = {}
 	global.minX = 1
 	global.maxX = 1
 	global.minY = 1
@@ -36,6 +34,8 @@ function initialize()
 	global.limitY = 1
 
 	evaluateLimitsFromWholeBase()
+
+	-- this should be unnecessary, but i feel there are some things missing if not present
 	for _, player in pairs(game.connected_players) do
 		log("found player already connected: " .. player.name)
 		loadSettings(player.index)
@@ -83,10 +83,10 @@ function evaluateLimitsFromWholeBase()
 		global.limitY = 1
 	else
 		-- add 20 to have empty margin
-		local top = math.abs(tchunk.area.left_top.y) + 20
-		local right = math.abs(rchunk.area.right_bottom.x) + 20
-		local bottom = math.abs(bchunk.area.right_bottom.y) + 20
-		local left =  math.abs(lchunk.area.left_top.x) + 20
+		local top = math.abs(tchunk.area.left_top.y)
+		local right = math.abs(rchunk.area.right_bottom.x)
+		local bottom = math.abs(bchunk.area.right_bottom.y)
+		local left =  math.abs(lchunk.area.left_top.x)
 		
 		if (global.verbose) then
 			log("top: " .. top)
@@ -114,6 +114,24 @@ function evaluateLimitsFromWholeBase()
 	end
 end
 
+function evaluateLimitsFromMinMax()
+	if (global.verbose) then
+		log("evaluate limits from min max")
+	end
+
+	if math.abs(global.minX) > global.maxX then
+		global.limitX =  math.abs(global.minX)
+	else
+		global.limitX = global.maxX
+	end
+	
+	if math.abs(global.minY) > global.maxY then
+		global.limitY = math.abs(global.minY)
+	else
+		global.limitY = global.maxY
+	end
+end
+
 function hasEntities(chunk)
 	local count = game.surfaces[1].count_entities_filtered{
 		area=chunk.area,
@@ -133,6 +151,7 @@ function on_runtime_mod_setting_changed(event)
 		log("global settings changed")
 		game.print("FAS: Global settings changed")
 		global.verbose = settings.global["FAS-enable-debug"].value
+		global.increasedSplitting = settings.global["FAS-increased-splitting"].value
 	else
 		log("runtimesettings for player " .. event.player_index .. " changed")
 		loadSettings(event.player_index)
@@ -141,11 +160,13 @@ end
 
 function loadSettings(player_index)
 	log("loading settings for player " .. player_index)
-	global.doScreenshot[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-do-screenshot"].value
-	global.interval[player_index] = settings.get_player_settings(game.get_player(player_index))["FAS-Screenshot-interval"].value * 3600 -- 3600
-	
-	local resolution = settings.get_player_settings(game.get_player(player_index))["FAS-Resolution"].value
-	
+
+	local player = game.get_player(player_index)
+	global.doScreenshot[player_index] = settings.get_player_settings(player)["FAS-do-screenshot"].value
+	global.interval[player_index] = settings.get_player_settings(player)["FAS-Screenshot-interval"].value * 3600 -- 3600
+	global.singleScreenshot[player_index] = settings.get_player_settings(player)["FAS-single-screenshot"].value
+
+	local resolution = settings.get_player_settings(player)["FAS-Resolution"].value
 	global.resX[player_index] = 7680;
 	global.resY[player_index] = 4320;
 	if (resolution == "3840x2160 (4K)") then
@@ -229,32 +250,32 @@ script.on_nth_tick(3600, function(event)
 	log("on nth tick")
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
 	if (global.minMaxChanged) then
-		if (global.verbose) then
-			log("min max changed")
-		end
-		if math.abs(global.minX) > global.maxX then
-			global.limitX =  math.abs(global.minX)
-		else
-			global.limitX = global.maxX
-		end
-		
-		if math.abs(global.minY) > global.maxY then
-			global.limitY = math.abs(global.minY)
-		else
-			global.limitY = global.maxY
-		end
-		
+		evaluateLimitsFromMinMax()
 		evaluateZoomForAllPlayers()
 		global.minMaxChanged = false
 	end
+
+	local n = global.nextScreenshot[1]
+	if (n ~= nil) then
+		log("there was still a screenshot queued on nth tick event trigger")
+		game.print("FAS: The script is not yet done with the screenshots of the last minute interval. This screenshot interval will be skipped. Please disable the \"increased splitting\" setting if it is set or make less players do screenshots. Changing the resolution will not prevent this from happening.")
+		return
+	end
 	
 	for _, player in pairs(game.connected_players) do
-		log("player " .. player.name .. " with index " .. player.index .. " found")
-		log(global.doScreenshot[player.index])
-		log(global.interval[player.index])
-		log(game.tick)
+		if (global.verbose) then
+			log("player " .. player.name .. " with index " .. player.index .. " found")
+			log(global.doScreenshot[player.index])
+			log(global.interval[player.index])
+			log(global.singleScreenshot[player.index])
+			log(game.tick)
+		end
 		if global.doScreenshot[player.index] and (event.tick % global.interval[player.index] == 0) then
-			renderScreenshot(player.index)
+			if (global.singleScreenshot[player.index]) then
+				renderScreenshot(player.index, {global.resX[player.index], global.resY[player.index]}, {0, 0}, global.zoom[player.index], "", "screenshot" .. game.tick) -- set params
+			else
+				registerPlayerToScreenshotlist(player.index)
+			end
 		end
 	end
 end)
@@ -301,59 +322,125 @@ function evaluateZoomForPlayer(player)
 	end
 end
 
-function renderScreenshot(index)
+function registerPlayerToScreenshotlist(index)
+	log("registering player to screenshot list")
+
+	local numberOfTiles = getDivisor(global.zoomLevel[index])
+	local resX = global.resX[index]
+	local resY = global.resY[index]
+	local zoom = global.zoom[index]
+
+	-- like calculating zoom, but reverse
+	-- cannot take limits from global, as we want the border of the screenshot, not the base
+	local rightborder = resX / (zoom * 2 * 32)
+	local bottomborder = resY / (zoom * 2 * 32)
+
+	local posXStepsize = rightborder * 2 / numberOfTiles
+	local posYStepsize = bottomborder * 2 / numberOfTiles
+	
+	local temp = {}
+	temp["index"] = index
+	temp["res"] = {x = resX / numberOfTiles, y = resY / numberOfTiles}
+	temp["numberOfTiles"] = numberOfTiles
+	temp["offset"] = {x=0, y=0}
+	temp["startpos"] = {x = -rightborder + posXStepsize / 2, y = -bottomborder + posYStepsize}
+	temp["stepsize"] = {x = posXStepsize, y = posYStepsize}
+	temp["zoom"] = zoom
+	temp["title"] = "screenshot" .. game.tick
+
+	if (global.verbose) then
+		log("index:      " .. temp["index"])
+		log("res:        " .. temp["res"].x .. "x" .. temp["res"].y)
+		log("numOfTiles: " .. temp["numberOfTiles"])
+		log("offset:     " .. temp["offset"].x .. " " .. temp["offset"].y)
+		log("startpos:   " .. temp["startpos"].x .. " " .. temp["startpos"].y)
+		log("stepsize:   " .. temp["stepsize"].x .. " " .. temp["stepsize"].y)
+		log("zoom:       " .. temp["zoom"])
+		log("title:      " .. temp["title"])
+	end
+
+	table.insert(global.nextScreenshot, temp)
+end
+
+function getDivisor(zoomLevel)
+	-- rough expected result:
+	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+	--  1,  2,  2,  2,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
+
+	local divisor
+	if zoomLevel == 1 then
+		divisor = 1
+	elseif zoomLevel < 5 then
+		divisor = 2
+	elseif zoomLevel < 17 then
+		divisor = 4
+	elseif zoomLevel < 33 then
+		divisor = 8
+	else
+		divisor = 16
+	end
+
+	if global.increasedSplitting then
+		divisor = divisor * 2	-- 4 times the screenshots, just a quarter of the lag!
+	end
+
+	if (global.verbose) then
+		log("returned divisor " .. divisor .. " from input " .. zoomLevel)
+	end
+
+	return divisor
+end
+
+function on_tick()
+	-- global.test = {}
+	-- for i = 1,64 do
+	-- 	table.insert(global.test, {i, getDivisor(i)})
+	-- end
+
+	-- log("testing done")
+
+	local n = global.nextScreenshot[1]
+	if (n ~= nil) then
+		local posX = n.startpos.x + n.stepsize.x * n.offset.x
+		local posY = n.startpos.y + n.stepsize.y * n.offset.y
+
+		renderScreenshot(n.index, {n.res.x, n.res.y}, {posX, posY}, n.zoom, "split/", n.title .. "_x" .. n.offset.x .. "_y" .. n.offset.y)
+
+		n.offset.x = n.offset.x + 1
+		if (n.offset.x >= n.numberOfTiles) then
+			n.offset.x = 0
+			n.offset.y = n.offset.y + 1
+			if (n.offset.y >= n.numberOfTiles) then
+				table.remove(global.nextScreenshot, 1)
+			end
+		end
+	-- else		-- for testing
+	-- 	game.print("registering screenshot")
+	-- 	log("registering screenshot at tick " .. game.tick)
+	-- 	registerPlayerToScreenshotlist(1)
+	end
+end
+
+function renderScreenshot(index, resolution, position, zoom, folder, title)
 	if (global.verbose) then
 		log("rendering screenshot")
-		log("index: " .. index)
-		log("global.resX: " .. global.resX[index])
-		log("global.resY: " .. global.resY[index])
-		log("zoom: " .. global.zoom[index])
+		log("resolution: " .. resolution[1] .. " " .. resolution[2])
+		log("position:   " .. position[1] .. " " .. position[2])
+		log("zoom:       " .. zoom)
+		log("title:      " .. title)
 	end
 	game.take_screenshot{
-		resolution={global.resX[index], global.resY[index]},
-		position={0, 0},
-		zoom=global.zoom[index],		-- lower means further zoomed out
+		resolution=resolution,
+		position=position,
+		zoom=zoom,		-- lower means further zoomed out
 		daytime=0,		-- bright daylight
 		water_tick=0,
 		by_player=index,
-		path="./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
+		path="./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. folder .. title .. ".png"
 	}
 end
 
--- function on_tick()
--- 	-- log("FAS: doing screenshot benchmarks weeeee")
-
--- 	if (isFirst) then
--- 		log("is first")
--- 		log(global.verbose)
-	
--- 		log(global.zoom[1])
--- 		log(global.zoomLevel[1])
--- 		log(global.doScreenshot[1])
--- 		log(global.interval [1])
--- 		log(global.resX[1])
--- 		log(global.resY[1])
-		
--- 		log(global.minX)
--- 		log(global.maxX)
--- 		log(global.minY)
--- 		log(global.maxY)
--- 		log(global.limitX)
--- 		log(global.limitY)
-
--- 		isFirst = false
--- 	end
--- 	-- game.take_screenshot{
--- 	-- 	resolution={1920, 1080},
--- 	-- 	position={0, 0},
--- 	-- 	zoom=1,		-- lower means further zoomed out
--- 	-- 	daytime=0,		-- bright daylight
--- 	-- 	water_tick=0,
--- 	-- 	path="./testscreenshots/" .. game.default_map_gen_settings.seed .. "/" .. "screenshot" .. game.tick .. ".png"
--- 	-- }
--- end
-
--- script.on_event(defines.events.on_tick, on_tick)
+script.on_event(defines.events.on_tick, on_tick)
 script.on_event(defines.events.on_player_joined_game, on_player_joined_game)
 script.on_event(defines.events.on_runtime_mod_setting_changed, on_runtime_mod_setting_changed)
 script.on_event(defines.events.on_built_entity, on_built_entity)

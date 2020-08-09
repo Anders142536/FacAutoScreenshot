@@ -25,5 +25,17 @@ data:extend(
         name = "FAS-enable-debug",
         setting_type = "runtime-global",
         default_value = false
+    },
+    {
+        type = "bool-setting",
+        name = "FAS-increased-splitting",
+        setting_type = "runtime-global",
+        default_value = false
+    },
+	{
+		type = "bool-setting",
+		name = "FAS-single-screenshot",
+		setting_type = "runtime-per-user",
+        default_value = false
     }
 })

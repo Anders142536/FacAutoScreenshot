@@ -33,3 +33,15 @@ Version: 1.0.5
     - Added "enable debug" setting. This enables verbose logging, which can slow the game down significantly. Use this if, and only if, you want to create a log for a bugreport.
   Fixes:
     - Fixed issue with settings sometimes not being loaded (I hope at least, Im going crazy here, not gonna lie (╯°□°）╯︵ ┻━┻ )
+---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+  Features:
+    - Added possibility to do the screenshot over several ticks, with subscreenshots being taken based on the base size. This prevents freezeframes on medium or bigger bases.
+    - Split screenshots are saved in a separate folder called "split"
+    - Added "enable single tick screenshot" setting. This is false by default.
+    - Added "increased splitting" setting. This is false by default.
+    - If the script is not done with all screenshots after one minute there will be a warning and the screenshot is skipped. For more information have a look at the "increased splitting" setting tooltip.
+  Fixes:
+    - Fixed typo in "Enable debug?" setting tooltip
+  Other:
+    - Currently there is no way to stitch the multiscreenshots together. This will be the next step.
