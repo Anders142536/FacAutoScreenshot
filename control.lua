@@ -364,17 +364,17 @@ end
 
 function getDivisor(zoomLevel)
 	-- rough expected result:
-	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
-	--  1,  2,  2,  2,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
+	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16
+	--  1,  2,  2,  2,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
 
 	local divisor
 	if zoomLevel == 1 then
 		divisor = 1
 	elseif zoomLevel < 5 then
 		divisor = 2
-	elseif zoomLevel < 17 then
+	elseif zoomLevel < 9 then
 		divisor = 4
-	elseif zoomLevel < 33 then
+	elseif zoomLevel < 17 then
 		divisor = 8
 	else
 		divisor = 16

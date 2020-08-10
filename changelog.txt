@@ -45,3 +45,7 @@ Version: 1.1.0
     - Fixed typo in "Enable debug?" setting tooltip
   Other:
     - Currently there is no way to stitch the multiscreenshots together. This will be the next step.
+---------------------------------------------------------------------------------------------------
+Version: 1.1.1
+  Optimizations:
+    - Improved splitting ratios after looking at the math of it and seeing some potential for it
