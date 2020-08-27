@@ -49,3 +49,9 @@ Version: 1.1.0
 Version: 1.1.1
   Optimizations:
     - Improved splitting ratios after looking at the math of it and seeing some potential for it
+---------------------------------------------------------------------------------------------------
+Version: 1.1.2
+  Fixes:
+    - Zoom level is now capped at 32. Any zoom level over 32 would crash the game due to the engine limiting it. And tbh, any higher zoom level would zoom everything out so far one couldn't identify anything anyways. The player will be warned when this limit is hit.
+  Other:
+    - Increased factorio version from 0.18 to 1.0

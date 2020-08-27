@@ -311,14 +311,18 @@ function evaluateZoomForPlayer(player)
 	end
 
 	local oldZoom = global.zoom[player]
-	while newZoom < global.zoom[player] do
+	while newZoom < global.zoom[player] and global.zoomLevel[player] < 32 do
 		global.zoomLevel[player] = global.zoomLevel[player] + 1
 		global.zoom[player] = 1 / global.zoomLevel[player]
 		log("Adjusting zoom for player " .. player .. " to " .. global.zoom[player] .. " and zoomlevel to " .. global.zoomLevel[player])
 	end
 	if oldZoom > global.zoom[player] then
 		log("Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.zoom[player])
-		game.print("FAS: Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.zoom[player])
+		game.print("FAS: Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.zoom[player] .. " (zoomlevel: " .. global.zoomLevel[player] .. ")")
+		if (global.zoom[player] == 32) then
+			log("Player " .. player .. " reached maximum zoomlevel")
+			game.print("FAS: Player " .. player .. " reached maximum zoom level of 32. No further zooming out possible. Entities exceeding the screenshot limits will not be shown on the screenshots!")
+		end
 	end
 end
 
