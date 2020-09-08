@@ -258,7 +258,7 @@ script.on_nth_tick(3600, function(event)
 	local n = global.nextScreenshot[1]
 	if (n ~= nil) then
 		log("there was still a screenshot queued on nth tick event trigger")
-		game.print("FAS: The script is not yet done with the screenshots of the last minute interval. This screenshot interval will be skipped. Please disable the \"increased splitting\" setting if it is set or make less players do screenshots. Changing the resolution will not prevent this from happening.")
+		game.print("FAS: The script is not yet done with the screenshots of the last minute interval. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make less players do screenshots. Changing the resolution will not prevent this from happening.")
 		return
 	end
 	

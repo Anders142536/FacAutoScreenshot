@@ -27,10 +27,11 @@ data:extend(
         default_value = false
     },
     {
-        type = "bool-setting",
+        type = "int-setting",
         name = "FAS-increased-splitting",
         setting_type = "runtime-global",
-        default_value = false
+        default_value = 1,
+        allowed_values = {1, 4, 16, 64}
     },
 	{
 		type = "bool-setting",
