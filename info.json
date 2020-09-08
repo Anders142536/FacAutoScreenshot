@@ -1,8 +1,8 @@
 {
   "name": "FacAutoScreenshot",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "title": "FacAutoScreenshot",
   "author": "Anders142536",
-  "description": "Small Screenshot script that automatically does screenshots in set minute intervals.\n\nResolution, minute interval and which players want to do screenshots can be set in the mod settings.",
+  "description": "Automatically does screenshots of the whole base in set minute intervals.\n\nWritten to be performance friendly with various settings giving you control over how the screenshots are done and how much the performance is impacted. For more information check the FAQ on the mod portal.",
   "factorio_version": "1.0"
 }

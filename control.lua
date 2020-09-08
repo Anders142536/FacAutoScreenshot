@@ -383,10 +383,8 @@ function getDivisor(zoomLevel)
 	else
 		divisor = 16
 	end
-
-	if global.increasedSplitting then
-		divisor = divisor * 2	-- 4 times the screenshots, just a quarter of the lag!
-	end
+	
+	divisor = divisor * (math.sqrt(global.increasedSplitting))
 
 	if (global.verbose) then
 		log("returned divisor " .. divisor .. " from input " .. zoomLevel)

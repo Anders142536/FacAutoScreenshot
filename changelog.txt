@@ -55,3 +55,9 @@ Version: 1.1.2
     - Zoom level is now capped at 32. Any zoom level over 32 would crash the game due to the engine limiting it. And tbh, any higher zoom level would zoom everything out so far one couldn't identify anything anyways. The player will be warned when this limit is hit.
   Other:
     - Increased factorio version from 0.18 to 1.0
+---------------------------------------------------------------------------------------------------
+Version: 1.1.3
+  Features:
+    - Changed the "Increased Splitting" from being a tickbox to being a dropdown of different increase factors. Changed Tooltip accordingly.
+  Other:
+    - Changed Mod description to better represent what it is doing.
