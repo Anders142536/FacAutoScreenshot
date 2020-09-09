@@ -255,12 +255,6 @@ script.on_nth_tick(3600, function(event)
 		global.minMaxChanged = false
 	end
 
-	local n = global.nextScreenshot[1]
-	if (n ~= nil) then
-		log("there was still a screenshot queued on nth tick event trigger")
-		game.print("FAS: The script is not yet done with the screenshots of the last minute interval. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make less players do screenshots. Changing the resolution will not prevent this from happening.")
-		return
-	end
 	
 	for _, player in pairs(game.connected_players) do
 		if (global.verbose) then
@@ -271,6 +265,12 @@ script.on_nth_tick(3600, function(event)
 			log(game.tick)
 		end
 		if global.doScreenshot[player.index] and (event.tick % global.interval[player.index] == 0) then
+			local n = global.nextScreenshot[1]
+			if (n ~= nil) then
+				log("there was still a screenshot queued on nth tick event trigger")
+				game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set, make less players do screenshots or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
+				return
+			end
 			if (global.singleScreenshot[player.index]) then
 				renderScreenshot(player.index, {global.resX[player.index], global.resY[player.index]}, {0, 0}, global.zoom[player.index], "", "screenshot" .. game.tick) -- set params
 			else
