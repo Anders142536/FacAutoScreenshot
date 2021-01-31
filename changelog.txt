@@ -67,3 +67,7 @@ Version: 1.1.4
     - Fixed issue of "there are still screenshots to be done" warning being thrown when no new screenshot is registered and skipped. Also, adjusted text slightly
   Other:
     - Changed mod thumbnail to this masterpiece. I made a lot of people look at it. I love it.
+---------------------------------------------------------------------------------------------------
+Version: 1.1.5
+  Other:
+    - 1.1 didn't break anything, adjusted the compatible game version.
