@@ -1,3 +1,5 @@
+FASgui = require("FASgui")
+
 script.on_init(function()
 	log("on init")
 	initialize()
@@ -38,6 +40,7 @@ function initialize()
 	-- this should be unnecessary, but i feel there are some things missing if not present
 	for _, player in pairs(game.connected_players) do
 		log("found player already connected: " .. player.name)
+		FASgui.initialize(player)
 		loadSettings(player.index)
 	end
 
@@ -143,6 +146,7 @@ end
 
 function on_player_joined_game(event)
 	log("player " .. event.player_index .. " joined")
+	FASgui.initialize(game.get_player(event.player_index))
 	loadSettings(event.player_index)
 end
 
@@ -255,7 +259,6 @@ script.on_nth_tick(3600, function(event)
 		global.minMaxChanged = false
 	end
 
-	
 	for _, player in pairs(game.connected_players) do
 		if (global.verbose) then
 			log("player " .. player.name .. " with index " .. player.index .. " found")
@@ -408,6 +411,10 @@ function on_tick()
 
 		renderScreenshot(n.index, {n.res.x, n.res.y}, {posX, posY}, n.zoom, "split/", n.title .. "_x" .. n.offset.x .. "_y" .. n.offset.y)
 
+		local amount = n.offset.y * n.numberOfTiles + n.offset.x
+		local total = n.numberOfTiles * n.numberOfTiles
+		FASgui.setStatusValue(amount, total)
+
 		n.offset.x = n.offset.x + 1
 		if (n.offset.x >= n.numberOfTiles) then
 			n.offset.x = 0
@@ -416,10 +423,11 @@ function on_tick()
 				table.remove(global.nextScreenshot, 1)
 			end
 		end
-	-- else		-- for testing
-	-- 	game.print("registering screenshot")
-	-- 	log("registering screenshot at tick " .. game.tick)
-	-- 	registerPlayerToScreenshotlist(1)
+	else
+		if game.tick % 60  == 0 then
+			-- refresh countdown in FASgui
+			FASgui.setStatusCountdown(game.tick / 60)
+		end
 	end
 end
 
@@ -446,3 +454,8 @@ script.on_event(defines.events.on_tick, on_tick)
 script.on_event(defines.events.on_player_joined_game, on_player_joined_game)
 script.on_event(defines.events.on_runtime_mod_setting_changed, on_runtime_mod_setting_changed)
 script.on_event(defines.events.on_built_entity, on_built_entity)
+
+-- GUI
+script.on_event(defines.events.on_gui_click, FASgui.on_gui_event)
+script.on_event(defines.events.on_gui_value_changed, FASgui.on_gui_event)
+-- script.on_event(defines.events.on_gui_text_changed, FASgui.on_gui_event)
