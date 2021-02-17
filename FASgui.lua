@@ -105,6 +105,13 @@ function createGuiFrame(player)
         direction = "vertical"
     }
 
+    vertical_flow.add{
+        type = "label",
+        name = "auto_screenshots_label",
+        caption = "Auto Screenshots",
+        style = "caption_label"
+    }
+
     -- status flow
     local status_flow = vertical_flow.add{
         type = "flow",
@@ -122,16 +129,44 @@ function createGuiFrame(player)
         name = "status_value",
         caption = getStatusValue(player)
     }
+
     local progressbar = vertical_flow.add{
         type = "progressbar",
-        name = "progress"
+        name = "progress",
+        visible = "false"
     }
     progressbar.style.width = 350
     FASgui.players[player.index].progress_bar = progressbar
 
+    -- surface flow
+    local surface_flow = vertical_flow.add{
+        type = "flow",
+        name = "surface_flow",
+        direction = "horizontal"
+    }
+    local surface_label = surface_flow.add{
+        type = "label",
+        name = "surface_label",
+        caption = "Surface"
+    }
+    surface_label.style.width = label_width
+    surface_flow.add{
+        type = "label",
+        name = "surface_value",
+        caption = "nauvis (default)",
+        tooltip = "This is currently unsettable."
+    }
+
     -- separator line
     local line = vertical_flow.add{ type = "line" }
     line.style.height = 10
+
+    vertical_flow.add{
+        type = "label",
+        name = "high_res_screenshots_label",
+        caption = "High Resolution Screenshots",
+        style = "caption_label"
+    }
 
     -- zoom flow
     local zoom_flow = vertical_flow.add{
@@ -237,6 +272,9 @@ function FASgui.setStatusValue(amount, total)
         if player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. player.index .. " with amount " .. amount .. " / " .. total) end
             player.status_value.caption = amount .. " / " .. total
+            if player.progress_bar.visible == false then
+                player.progress_bar.visible = true
+            end
             player.progress_bar.value = FASgui.progressValue
         end
         -- set flowbutton pie progress value

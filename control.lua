@@ -411,7 +411,8 @@ function on_tick()
 
 		renderScreenshot(n.index, {n.res.x, n.res.y}, {posX, posY}, n.zoom, "split/", n.title .. "_x" .. n.offset.x .. "_y" .. n.offset.y)
 
-		local amount = n.offset.y * n.numberOfTiles + n.offset.x
+		-- the first screenshot is the screenshot 0 0, therefore +1
+		local amount = n.offset.y * n.numberOfTiles + n.offset.x + 1
 		local total = n.numberOfTiles * n.numberOfTiles
 		FASgui.setStatusValue(amount, total)
 
