@@ -1,15 +1,15 @@
 local modGui = require("mod-gui")
-local FASgui = {}
+local gui = {}
 
-FASgui.zoomLevels = {}
-FASgui.doesUnderstand = {}
-FASgui.players = {}
+gui.zoomLevels = {}
+gui.doesUnderstand = {}
+gui.players = {}
 
 -- handler methods have to be called the same as the element that shall trigger them
-local flowButtonName = "toggleFASgui"
-local mainFrameName = "FASguiFrame"
+local flowButtonName = "togglegui"
+local mainFrameName = "guiFrame"
 
-function FASgui.initialize(player)
+function gui.initialize(player)
     log("initializing gui for player " .. player.index)
     local buttonFlow = modGui.get_button_flow(player)
     
@@ -34,11 +34,11 @@ function FASgui.initialize(player)
 end
 
 -- event catchers
-function FASgui.on_gui_event(event)
+function gui.on_gui_event(event)
     log("on gui event triggered with element name " .. event.element.name)
 
     -- handler methods have to be called the same as the element that shall trigger them
-    local handlerMethod = FASgui[event.element.name]
+    local handlerMethod = gui[event.element.name]
 
     -- if a handler method exists the gui press was for an element of this mod
     if handlerMethod then
@@ -47,33 +47,33 @@ function FASgui.on_gui_event(event)
 end
 
 -- handler methods
-function FASgui.toggleFASgui(event)
-    log("toggling FASgui")
+function gui.togglegui(event)
+    log("toggling gui")
     local player = game.get_player(event.player_index)
     local guiFrame = player.gui.screen[mainFrameName]
     if not guiFrame then
         createGuiFrame(player)
     else
         -- if we hide the gui, the tick on the "I understand" checkbox is removed, so that the user has to click it again the next time
-        if FASgui.doesUnderstand[event.player_index] then
-            FASgui.doesUnderstand[event.player_index] = false
-            FASgui.players[event.player_index].agree_checkbox.state = false
-            FASgui.players[event.player_index].start_high_res_screenshot_button.enabled = false
+        if gui.doesUnderstand[event.player_index] then
+            gui.doesUnderstand[event.player_index] = false
+            gui.players[event.player_index].agree_checkbox.state = false
+            gui.players[event.player_index].start_high_res_screenshot_button.enabled = false
         end
         guiFrame.visible = not guiFrame.visible
     end
 end
 
-function FASgui.agree_checkbox(event)
+function gui.agree_checkbox(event)
     log("i understand was clicked, toggling button and value")
     local state = event.element.state
-    FASgui.players[event.player_index].start_high_res_screenshot_button.enabled = state
-    FASgui.doesUnderstand[event.player_index] = state
+    gui.players[event.player_index].start_high_res_screenshot_button.enabled = state
+    gui.doesUnderstand[event.player_index] = state
 end
 
-function FASgui.zoom_slider(event)
+function gui.zoom_slider(event)
     if (global.verbose) then log("zoom slider was moved") end
-    FASgui.players[event.player_index].zoom_value.text = tostring(event.element.slider_value)
+    gui.players[event.player_index].zoom_value.text = tostring(event.element.slider_value)
 end
 
 -- end handler methods
@@ -82,15 +82,15 @@ function createGuiFrame(player)
     log("creating gui for player " .. player.index)
     local label_width = 150
     
-    FASgui.players[player.index] = {}
-    FASgui.players[player.index].index = player.index
+    gui.players[player.index] = {}
+    gui.players[player.index].index = player.index
     local guiFrame = player.gui.screen.add{
         type = "frame",
         name = mainFrameName,
         caption = "FAS Panel"
     }
     guiFrame.auto_center = true
-    FASgui.players[player.index].mainFrame = guiFrame
+    gui.players[player.index].mainFrame = guiFrame
 
     local content_frame = guiFrame.add{
         type = "frame",
@@ -124,7 +124,7 @@ function createGuiFrame(player)
         caption = "Status"
     }
     status_label.style.width = label_width
-    FASgui.players[player.index].status_value = status_flow.add{
+    gui.players[player.index].status_value = status_flow.add{
         type = "label",
         name = "status_value",
         caption = getStatusValue(player)
@@ -136,7 +136,7 @@ function createGuiFrame(player)
         visible = "false"
     }
     progressbar.style.width = 350
-    FASgui.players[player.index].progress_bar = progressbar
+    gui.players[player.index].progress_bar = progressbar
 
     -- surface flow
     local surface_flow = vertical_flow.add{
@@ -192,7 +192,7 @@ function createGuiFrame(player)
     }
     zoom_slider.style.right_margin = 8
     zoom_slider.style.width = 144
-    FASgui.players[player.index].zoom_slider = zoom_slider
+    gui.players[player.index].zoom_slider = zoom_slider
     local zoom_value = zoom_flow.add{
         type = "textfield",
         name = "zoom_value",
@@ -203,7 +203,7 @@ function createGuiFrame(player)
     }
     zoom_value.style.width = 40
     -- zoom_value.style.disabled_font_color = {1, 1, 1}
-    FASgui.players[player.index].zoom_value = zoom_value
+    gui.players[player.index].zoom_value = zoom_value
 
     -- resolution flow
     local estimated_resolution_flow = vertical_flow.add{
@@ -217,7 +217,7 @@ function createGuiFrame(player)
         caption = "Estimated Resolution"
     }
     estimated_resolution_label.style.width = label_width
-    FASgui.players[player.index].estimated_resolution_value = estimated_resolution_flow.add{
+    gui.players[player.index].estimated_resolution_value = estimated_resolution_flow.add{
         type = "label",
         name = "estimated_resolution_value",
         caption = "aLot x evenMore"
@@ -237,7 +237,7 @@ function createGuiFrame(player)
         direction = "horizontal"
     }
     agree_flow.style.vertical_align = "center"
-    FASgui.players[player.index].agree_checkbox = agree_flow.add{
+    gui.players[player.index].agree_checkbox = agree_flow.add{
         type = "checkbox",
         name = "agree_checkbox",
         caption = "I understand",
@@ -248,7 +248,7 @@ function createGuiFrame(player)
         name = "spreader"
     }
     spreader.style.horizontally_stretchable = true
-    FASgui.players[player.index].start_high_res_screenshot_button = agree_flow.add{
+    gui.players[player.index].start_high_res_screenshot_button = agree_flow.add{
         type = "button",
         name = "start_high_res_screenshot_button",
         caption = "Start High Res Screenshots",
@@ -258,44 +258,59 @@ function createGuiFrame(player)
 end
 
 function getStatusValue(player)
-    if FASgui.amount then
-        return FASgui.amount .. " / " .. FASgui.total
+    if gui.amount then
+        return gui.amount .. " / " .. gui.total
     end
 
 end
 
-function FASgui.setStatusValue(amount, total)
-    FASgui.amount = amount
-    FASgui.total = total
-    FASgui.progressValue = amount / total
-    for _, player in pairs(FASgui.players) do
+function gui.setStatusValue(amount, total)
+    gui.amount = amount
+    gui.total = total
+    gui.progressValue = amount / total
+    for _, player in pairs(gui.players) do
         if player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. player.index .. " with amount " .. amount .. " / " .. total) end
             player.status_value.caption = amount .. " / " .. total
             if player.progress_bar.visible == false then
                 player.progress_bar.visible = true
             end
-            player.progress_bar.value = FASgui.progressValue
+            player.progress_bar.value = gui.progressValue
         end
         -- set flowbutton pie progress value
     end
 end
 
-function FASgui.setStatusCountdown(countdown)
-    FASgui.countdown = countdown
+local function calculateCountdown()
+    if (shooter.nextScreenshotTimestamp ~= nil) then
+        local timediff = (shooter.nextScreenshotTimestamp - game.tick) / 60
 
+        local diffSec = timediff % 60
+        if timediff > 59 then
+            local diffMin = math.floor(timediff / 60) % 60
+            return diffMin .. "min " .. diffSec .. "s"
+        else
+            return diffSec .. "s"
+        end
+    else
+        return "-"
+    end
+end
+
+function gui.refreshStatusCountdown()
     --reset status values if still present, necessary on the first time the cooldown is set
-    if FASgui.amount then
-        FASgui.amount = nil
-        FASgui.total = nil
-        FASgui.progressValue = nil
-        for _, player in pairs(FASgui.players) do
+    if gui.amount then
+        gui.amount = nil
+        gui.total = nil
+        gui.progressValue = nil
+        for _, player in pairs(gui.players) do
             player.progress_bar.visible = false
             -- reset flowbutton pie progress value
         end
     end
-
-    for _, player in pairs(FASgui.players) do
+    
+    local countdown = calculateCountdown()
+    for _, player in pairs(gui.players) do
         if player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. player.index .. " with countdown " .. countdown) end
             player.status_value.caption = countdown
@@ -303,4 +318,4 @@ function FASgui.setStatusCountdown(countdown)
     end
 end
 
-return FASgui
+return gui

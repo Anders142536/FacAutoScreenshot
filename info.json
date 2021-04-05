@@ -1,6 +1,6 @@
 {
   "name": "FacAutoScreenshot",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "title": "FacAutoScreenshot",
   "author": "Anders142536",
   "description": "Automatically does screenshots of the whole base in set minute intervals.\n\nWritten to be performance friendly with various settings giving you control over how the screenshots are done and how much the performance is impacted. For more information check the FAQ on the mod portal.",
