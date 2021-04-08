@@ -54,13 +54,22 @@ function gui.togglegui(event)
     if not guiFrame then
         createGuiFrame(player)
     else
-        -- if we hide the gui, the tick on the "I understand" checkbox is removed, so that the user has to click it again the next time
-        if gui.doesUnderstand[event.player_index] then
-            gui.doesUnderstand[event.player_index] = false
-            gui.players[event.player_index].agree_checkbox.state = false
-            gui.players[event.player_index].start_high_res_screenshot_button.enabled = false
+        if guiFrame.visible then
+            log("guiframe was visible")
+            -- if we hide the gui, the tick on the "I understand" checkbox is removed, so that the user has to click it again the next time
+            if gui.doesUnderstand[event.player_index] then
+                gui.doesUnderstand[event.player_index] = false
+                gui.players[event.player_index].agree_checkbox.state = false
+                gui.players[event.player_index].start_high_res_screenshot_button.enabled = false
+            end
+            guiFrame.visible = false
+        else
+            log("guiframe was not visible")
+            guiFrame.visible = true
+            if not gui.amount then
+                gui.refreshStatusCountdown()
+            end
         end
-        guiFrame.visible = not guiFrame.visible
     end
 end
 
@@ -285,7 +294,7 @@ local function calculateCountdown()
     if (shooter.nextScreenshotTimestamp ~= nil) then
         local timediff = (shooter.nextScreenshotTimestamp - game.tick) / 60
 
-        local diffSec = timediff % 60
+        local diffSec = math.floor(timediff % 60)
         if timediff > 59 then
             local diffMin = math.floor(timediff / 60) % 60
             return diffMin .. "min " .. diffSec .. "s"
