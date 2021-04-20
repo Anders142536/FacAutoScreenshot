@@ -180,4 +180,6 @@ script.on_event(defines.events.on_built_entity, on_built_entity)
 -- GUI
 script.on_event(defines.events.on_gui_click, gui.on_gui_event)
 script.on_event(defines.events.on_gui_value_changed, gui.on_gui_event)
+script.on_event("FAS-left-click", gui.on_left_click)
+script.on_event("FAS-right-click", gui.on_right_click)
 -- script.on_event(defines.events.on_gui_text_changed, gui.on_gui_event)
