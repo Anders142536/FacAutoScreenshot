@@ -3,3 +3,5 @@
 Styles:
   * graphical sets and style swapping:
         graphSets.notes
+  * changing the cursor:
+        changingCursor.notes

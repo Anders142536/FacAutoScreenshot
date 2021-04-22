@@ -93,9 +93,11 @@ function gui.select_area_button(event)
     if gui.doesSelection[event.player_index] then
         log("turned on")
         --swap styles of button
+        gui.components[event.player_index].select_area_button.style = "fas_clicked_tool_button"
     else
         log("turned off")
         --swap styles of button
+        gui.components[event.player_index].select_area_button.style = "tool_button"
     end
 end
 
@@ -377,7 +379,7 @@ function gui.createGuiFrame(player)
         caption = "Area"
     }
 
-    area_select_flow.add{
+    gui.components[player.index].select_area_button = area_select_flow.add{
         type = "sprite-button",
         name = "select_area_button",
         sprite = "FAS-area-select-icon",
@@ -388,9 +390,9 @@ function gui.createGuiFrame(player)
     area_select_flow.add{
         type = "sprite-button",
         name = "delete_area_button",
-        sprite = "FAS-area-select-icon",
+        sprite = "FAS-delete-selection-icon",
         mouse_button_filter = {"left"},
-        style = "tool_button"
+        style = "tool_button_red"
     }
 
     local area_spreader = area_select_flow.add{
