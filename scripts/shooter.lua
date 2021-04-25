@@ -185,4 +185,21 @@ function shooter.renderNextScreenshot()
 	end
 end
 
+function shooter.renderAreaScreenshot(index, area, zoomLevel)
+	log("shooter.renderAreaScreenshot was triggered")
+	if global.verbose then log("index: " .. index .. " area.top: " .. area.top .. " area.bottom: " .. area.bottom .. " area.left: " .. area.left .. " area.right: " .. area.right .. " zoomlevel: " .. zoomLevel) end
+
+	local width = area.right - area.left
+	local heigth = area.bottom - area.top
+
+	local zoom = 1 / zoomLevel
+	local resX = math.floor(width * 32 * zoom)
+	local resY = math.floor(heigth * 32 * zoom)
+	local posX = area.left + width / 2
+	local posY = area.top + heigth / 2
+
+	renderScreenshot(index, {resX, resY}, {posX, posY}, zoom, "high_res_screenshots/", "screenshot" .. game.tick .. "_" .. resX .. "x" .. resY)
+end
+
 return shooter
+
