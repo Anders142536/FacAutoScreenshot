@@ -31,7 +31,7 @@ function gui.initialize(player)
     buttonFlow.add{
         type = "sprite-button",
         name = flowButtonName,
-        sprite = "item/rocket-silo",
+        sprite = "FAS-icon",
         visibility = true;
     }
     
@@ -94,10 +94,30 @@ function gui.select_area_button(event)
         log("turned on")
         --swap styles of button
         gui.components[event.player_index].select_area_button.style = "fas_clicked_tool_button"
+        --change this as the player is not correctly fetched
+        game.get_player(event.player_index).cursor_stack.set_stack{
+            name = "FAS-selection-tool"
+          }
     else
         log("turned off")
         --swap styles of button
         gui.components[event.player_index].select_area_button.style = "tool_button"
+        game.get_player(event.player_index).cursor_stack.clear()
+    end
+end
+
+local function refreshStartHighResScreenshotButton(index)
+    -- {1, 16384}
+    local zoom = 1 / gui.zoomLevels[index]
+    if not gui.areas[index] then
+        gui.components[index].start_high_res_screenshot_button.enabled = false
+    else
+        local resX = math.floor((gui.areas[index].right - gui.areas[index].left) * 32 * zoom)
+        local resY = math.floor((gui.areas[index].bottom - gui.areas[index].top) * 32 * zoom)
+        
+        gui.components[index].start_high_res_screenshot_button.enabled = gui.doesUnderstand[index]
+            and resX < 16385
+            and resY < 16385
     end
 end
 
@@ -152,6 +172,7 @@ function gui.delete_area_button(event)
     gui.components[i].height_value.text = ""
 
     refreshEstimates(i)
+    refreshStartHighResScreenshotButton(event.player_index)
 end
 
 local function calculateArea(index)
@@ -232,10 +253,13 @@ end
 
 function gui.on_left_click(event)
     log("left click!")
+    --remove this
+    local player = game.connected_players[1]
     if gui.doesSelection[event.player_index] then
         gui.areaLeftClick[event.player_index] = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
+        refreshStartHighResScreenshotButton(event.player_index)
     end
 end
 
@@ -245,14 +269,22 @@ function gui.on_right_click(event)
         gui.areaRightClick[event.player_index] = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
+        refreshStartHighResScreenshotButton(event.player_index)
     end
 end
 
 function gui.agree_checkbox(event)
     log("i understand was clicked, toggling button and value")
     local state = event.element.state
-    gui.components[event.player_index].start_high_res_screenshot_button.enabled = state
     gui.doesUnderstand[event.player_index] = state
+    refreshStartHighResScreenshotButton(event.player_index)
+end
+
+function gui.start_high_res_screenshot_button(event)
+    log("start high res screenshot button was pressed")
+    local i = event.player_index
+
+    shooter.renderAreaScreenshot(i, gui.areas[i], gui.zoomLevels[i])
 end
 
 function gui.zoom_slider(event)
@@ -261,6 +293,7 @@ function gui.zoom_slider(event)
     gui.components[event.player_index].zoom_value.text = tostring(level)
     gui.zoomLevels[event.player_index] = level
     refreshEstimates(event.player_index)
+    refreshStartHighResScreenshotButton(event.player_index)
 end
 --[[ END HANDLER METHODS ]]--
 
@@ -272,7 +305,6 @@ function gui.createGuiFrame(player)
     --TODO change these into proper styles
     local label_width = 150
     local max_width = 350
-    local numeric_input_width = 40
     
     -- [[ GENERAL ]] --
     gui.components[player.index] = {}
@@ -410,58 +442,62 @@ function gui.createGuiFrame(player)
     area_input_table.add{
         type = "label",
         name = "width-label",
-        caption = "Width"
+        caption = "Width:"
     }
 
     local width_value = area_input_table.add{
         type = "textfield",
         name = "width_value",
-        numeric = "true"
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
     }
-    width_value.style.width = numeric_input_width
     gui.components[player.index].width_value = width_value
 
     area_input_table.add{
         type = "label",
         name = "height-label",
-        caption = "Height"
+        caption = "Height:"
     }
 
     local height_value = area_input_table.add{
         type = "textfield",
         name = "height_value",
-        numeric = "true"
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
     }
-    height_value.style.width = numeric_input_width
     gui.components[player.index].height_value = height_value
 
     area_input_table.add{
         type = "label",
         name = "x-label",
-        caption = "X"
+        caption = "X:"
     }
 
     local x_value = area_input_table.add{
         type = "textfield",
         name = "x_value",
-        numeric = "true"
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
     }
-    x_value.style.width = numeric_input_width
     gui.components[player.index].x_value = x_value
 
 
     area_input_table.add{
         type = "label",
         name = "y-label",
-        caption = "Y",
+        caption = "Y:",
     }
 
     local y_value = area_input_table.add{
         type = "textfield",
         name = "y_value",
-        numeric = "true"
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
     }
-    y_value.style.width = numeric_input_width
     gui.components[player.index].y_value = y_value
 
     -- zoom flow
@@ -487,7 +523,7 @@ function gui.createGuiFrame(player)
         style = "notched_slider"
     }
     zoom_slider.style.right_margin = 8
-    zoom_slider.style.width = 144
+    zoom_slider.style.width = 124
     gui.components[player.index].zoom_slider = zoom_slider
     local zoom_value = zoom_flow.add{
         type = "textfield",
@@ -495,9 +531,9 @@ function gui.createGuiFrame(player)
         text = "1",
         numeric = "true",
         allow_decimal = "true",
-        enabled = "false"
+        enabled = "false",
+        style = "fas_numeric_input"
     }
-    zoom_value.style.width = numeric_input_width
     -- zoom_value.style.disabled_font_color = {1, 1, 1}
     gui.components[player.index].zoom_value = zoom_value
     gui.zoomLevels[player.index] = 1
@@ -542,7 +578,7 @@ function gui.createGuiFrame(player)
     local warning = vertical_flow.add{
         type = "label",
         name = "warning_label",
-        caption = "This will probably break multiplayer games and might cause a lot of data on your hard drive. Use at own risk."
+        caption = "Large screenshots will probably break multiplayer games and might cause a lot of data on your hard drive. I highly recommend you to only use this feature in singleplayer saves or talk with the people you play with before using it in their saves."
     }
     warning.style.width = max_width
     warning.style.single_line = false
