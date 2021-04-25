@@ -12,5 +12,12 @@ data:extend{
         filename = "__FacAutoScreenshot__/graphics/delete-selection.png",
         size = 24,
         flags = {"gui-icon"}
+    },
+    {
+        type = "sprite",
+        name = "FAS-icon",
+        filename = "__FacAutoScreenshot__/graphics/FAS-32px.png",
+        size = 32,
+        flags = {"gui-icon"}
     }
 }
