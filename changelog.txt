@@ -71,3 +71,12 @@ Version: 1.1.4
 Version: 1.1.5
   Other:
     - 1.1 didn't break anything, adjusted the compatible game version.
+---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+  Features:
+    - There is a gui now! Weeeee!
+    - Screenshots of selected areas are now possible using the new gui, as requested by Ida-Marie. For limitations please have a look at the FAQ and mod description on the mod portal.
+  Optimizations:
+    - The code of the mod was completely restructured and blew up completely. Now it is roughly 5x its former size. If this now causes new instabilities please notify me so on the mod portal. I will watch it thoroughly for the following days.
+  Other:
+    - Changed the mod icon. Yes, I really like skulls.
