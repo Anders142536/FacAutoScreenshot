@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.1
   Optimizations:
+    - Added instructions how to select an area in a tooltip
+    - Added info-icons to important tooltips
+    - Prepared localization
     - Reverted order of changelogs so that the newest are on top
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.0
