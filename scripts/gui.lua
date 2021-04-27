@@ -73,7 +73,7 @@ function gui.togglegui(event)
             if gui.doesUnderstand[event.player_index] then
                 gui.doesUnderstand[event.player_index] = false
                 gui.components[event.player_index].agree_checkbox.state = false
-                gui.components[event.player_index].start_high_res_screenshot_button.enabled = false
+                gui.components[event.player_index].start_area_screenshot_button.enabled = false
             end
             guiFrame.visible = false
         else
@@ -110,12 +110,12 @@ local function refreshStartHighResScreenshotButton(index)
     -- {1, 16384}
     local zoom = 1 / gui.zoomLevels[index]
     if not gui.areas[index] then
-        gui.components[index].start_high_res_screenshot_button.enabled = false
+        gui.components[index].start_area_screenshot_button.enabled = false
     else
         local resX = math.floor((gui.areas[index].right - gui.areas[index].left) * 32 * zoom)
         local resY = math.floor((gui.areas[index].bottom - gui.areas[index].top) * 32 * zoom)
         
-        gui.components[index].start_high_res_screenshot_button.enabled = gui.doesUnderstand[index]
+        gui.components[index].start_area_screenshot_button.enabled = gui.doesUnderstand[index]
             and resX < 16385
             and resY < 16385
     end
@@ -124,7 +124,7 @@ end
 local function refreshEstimates(index)
     if not gui.areas[index] then
         -- happens if the zoom slider is moved before an area was selected so far
-        gui.components[index].estimated_resolution_value.caption = "no area selected"
+        gui.components[index].resolution_value.caption = {"FAS-no-area-selected"}
         gui.components[index].estimated_filesize_value.caption = "-"
         return
     end
@@ -146,7 +146,7 @@ local function refreshEstimates(index)
         size = size .. " B"
     end
     
-    gui.components[index].estimated_resolution_value.caption = width .. "x" .. height
+    gui.components[index].resolution_value.caption = width .. "x" .. height
     gui.components[index].estimated_filesize_value.caption = size
 end
 
@@ -280,7 +280,7 @@ function gui.agree_checkbox(event)
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
-function gui.start_high_res_screenshot_button(event)
+function gui.start_area_screenshot_button(event)
     log("start high res screenshot button was pressed")
     local i = event.player_index
 
@@ -348,7 +348,7 @@ function gui.createGuiFrame(player)
     local status_label = status_flow.add{
         type = "label",
         name = "status_label",
-        caption = "Status"
+        caption = {"FAS-status-caption"}
     }
     status_label.style.width = label_width
     gui.components[player.index].status_value = status_flow.add{
@@ -374,14 +374,14 @@ function gui.createGuiFrame(player)
     local surface_label = surface_flow.add{
         type = "label",
         name = "surface_label",
-        caption = "Surface"
+        caption = {"FAS-surface-label-caption"}
     }
     surface_label.style.width = label_width
     surface_flow.add{
         type = "label",
         name = "surface_value",
-        caption = "nauvis (default)",
-        tooltip = "This is currently unsettable."
+        caption = {"FAS-surface-value-caption"},
+        tooltip = {"FAS-surface-value-tooltip"}
     }
 
     -- separator line
@@ -390,11 +390,11 @@ function gui.createGuiFrame(player)
 
 
 
-    -- [[ HIGH RES SCREENSHOTS AREA ]] --
+    -- [[ AREA SCREENSHOTS AREA ]] --
     vertical_flow.add{
         type = "label",
-        name = "high_res_screenshots_label",
-        caption = "High Resolution Screenshots",
+        name = "area_screenshots_label",
+        caption = {"FAS-area-screenshots-label"},
         style = "caption_label"
     }
 
@@ -408,7 +408,8 @@ function gui.createGuiFrame(player)
     area_select_flow.add{
         type = "label",
         name = "area-label",
-        caption = "Area"
+        caption = {"FAS-area-caption"},
+        tooltip = {"FAS-area-tooltip"}
     }
 
     gui.components[player.index].select_area_button = area_select_flow.add{
@@ -416,6 +417,7 @@ function gui.createGuiFrame(player)
         name = "select_area_button",
         sprite = "FAS-area-select-icon",
         mouse_button_filter = {"left"},
+        tooltip = {"FAS-area-select-button-tooltip"},
         style = "tool_button"
     }
 
@@ -424,6 +426,7 @@ function gui.createGuiFrame(player)
         name = "delete_area_button",
         sprite = "FAS-delete-selection-icon",
         mouse_button_filter = {"left"},
+        tooltip = {"FAS-delete-area-button-tooltip"},
         style = "tool_button_red"
     }
 
@@ -442,7 +445,7 @@ function gui.createGuiFrame(player)
     area_input_table.add{
         type = "label",
         name = "width-label",
-        caption = "Width:"
+        caption = {"FAS-width-label-caption", ":"}
     }
 
     local width_value = area_input_table.add{
@@ -457,7 +460,7 @@ function gui.createGuiFrame(player)
     area_input_table.add{
         type = "label",
         name = "height-label",
-        caption = "Height:"
+        caption = {"FAS-height-label-caption", ":"}
     }
 
     local height_value = area_input_table.add{
@@ -510,7 +513,7 @@ function gui.createGuiFrame(player)
     local zoom_label = zoom_flow.add{
         type = "label",
         name = "zoom_label",
-        caption = "Zoom level"
+        caption = {"FAS-zoom-label-caption"}
     }
     zoom_label.style.width = label_width
     local zoom_slider = zoom_flow.add{
@@ -539,21 +542,21 @@ function gui.createGuiFrame(player)
     gui.zoomLevels[player.index] = 1
 
     -- estimated resolution flow
-    local estimated_resolution_flow = vertical_flow.add{
+    local resolution_flow = vertical_flow.add{
         type = "flow",
-        name = "estimated_resolution_flow",
+        name = "resolution_flow",
         direction = "horizontal"
     }
-    local estimated_resolution_label = estimated_resolution_flow.add{
+    local resolution_label = resolution_flow.add{
         type = "label",
-        name = "estimated_resolution_label",
-        caption = "Estimated Resolution"
+        name = "resolution_label",
+        caption = {"FAS-resolution-caption"}
     }
-    estimated_resolution_label.style.width = label_width
-    gui.components[player.index].estimated_resolution_value = estimated_resolution_flow.add{
+    resolution_label.style.width = label_width
+    gui.components[player.index].resolution_value = resolution_flow.add{
         type = "label",
-        name = "estimated_resolution_value",
-        caption = "no area selected"
+        name = "resolution_value",
+        caption = {"FAS-no-area-selected"}
     }
 
     -- estimated filesize flow
@@ -565,7 +568,7 @@ function gui.createGuiFrame(player)
     local estimated_filesize_label = estimated_filesize_flow.add{
         type = "label",
         name = "estimated_filesize_label",
-        caption = "Estimated Filesize"
+        caption = {"FAS-estimated-filesize"}
     }
     estimated_filesize_label.style.width = label_width
     gui.components[player.index].estimated_filesize_value = estimated_filesize_flow.add{
@@ -578,7 +581,7 @@ function gui.createGuiFrame(player)
     local warning = vertical_flow.add{
         type = "label",
         name = "warning_label",
-        caption = "Large screenshots will probably break multiplayer games and might cause a lot of data on your hard drive. I highly recommend you to only use this feature in singleplayer saves or talk with the people you play with before using it in their saves."
+        caption = {"FAS-warning"}
     }
     warning.style.width = max_width
     warning.style.single_line = false
@@ -594,7 +597,7 @@ function gui.createGuiFrame(player)
     gui.components[player.index].agree_checkbox = agree_flow.add{
         type = "checkbox",
         name = "agree_checkbox",
-        caption = "I understand",
+        caption = {"FAS-i-understand-caption"},
         state = "false"
     }
     local spreader = agree_flow.add{
@@ -602,10 +605,10 @@ function gui.createGuiFrame(player)
         name = "spreader"
     }
     spreader.style.horizontally_stretchable = true
-    gui.components[player.index].start_high_res_screenshot_button = agree_flow.add{
+    gui.components[player.index].start_area_screenshot_button = agree_flow.add{
         type = "button",
-        name = "start_high_res_screenshot_button",
-        caption = "Start High Res Screenshots",
+        name = "start_area_screenshot_button",
+        caption = {"FAS-start-area-screenshot-button-caption"},
         mouse_button_filter = {"left"},
         enabled = "false"
     }
