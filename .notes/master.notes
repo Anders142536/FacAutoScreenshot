@@ -1,7 +1,14 @@
 # FacAutoScreenshot Notes weeeeee
 
 Styles:
-  * graphical sets and style swapping:
+* graphical sets and style swapping:
         graphSets.notes
-  * changing the cursor:
-        changingCursor.notes
+* changing the cursor:
+      	changingCursor.notes
+
+TODO:
+[√] add instructions to gui
+[ ] move settings to gui
+[ ] make icon in flow button animated when doing auto screenshots
+[ ] test multiplayer stability
+[ ] only show warning when in multiplayer
