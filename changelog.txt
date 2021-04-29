@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+  Features:
+    - Added small "x" button to top right of frame
+  Fixes:
+    - Fixed broken name and missing tooltip of controls entry in controls settings.
+    - Changed name of panel to "Screenshot Toolkit Panel"
+---------------------------------------------------------------------------------------------------
 Version: 2.0.1
   Optimizations:
     - Added instructions how to select an area in a tooltip
