@@ -86,6 +86,10 @@ function gui.togglegui(event)
     end
 end
 
+function gui.gui_close(event)
+    gui.togglegui(event)
+end
+
 function gui.select_area_button(event)
     log("select area button was clicked")
     gui.doesSelection[event.player_index] = not gui.doesSelection[event.player_index]
@@ -311,10 +315,35 @@ function gui.createGuiFrame(player)
     local guiFrame = player.gui.screen.add{
         type = "frame",
         name = mainFrameName,
-        caption = "FAS Panel"
+        direction = "vertical"
     }
     guiFrame.auto_center = true
     gui.components[player.index].mainFrame = guiFrame
+    local header = guiFrame.add{ type = "flow" }
+    header.style.horizontal_spacing = 8
+    header.drag_target = guiFrame
+
+    local title = header.add{
+        type = "label",
+        style = "frame_title",
+        caption = "Screenshot Toolkit Panel"
+    }
+    title.drag_target = guiFrame
+    local dragHandle = header.add{
+        type = "empty-widget",
+        style = "fas_draghandle"
+    }
+    dragHandle.drag_target = guiFrame
+    header.add{
+        type = "sprite-button",
+        name = "gui_close",
+        style = "frame_action_button",
+        sprite = "utility/close_white",
+        hovered_sprite = "utility/close_black",
+        clicked_sprite = "utility/close_black",
+        mouse_button_filter = {"left"},
+    }
+
 
     local content_frame = guiFrame.add{
         type = "frame",

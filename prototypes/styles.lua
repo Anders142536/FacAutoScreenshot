@@ -13,3 +13,11 @@ styles.fas_numeric_input = {
     disabled_font_color = {0.5, 0.5, 0.5},
     width = 60
 }
+styles.fas_draghandle = {
+    type = "empty_widget_style",
+    parent = "draggable_space_header",
+    left_margin = 4,
+    right_margin = 4,
+    height = 24,
+    horizontally_stretchable = "on"
+}
