@@ -8,7 +8,7 @@ Styles:
 
 TODO:
 [√] add instructions to gui
-[!] resolve conflicts with existing area selection hotkeys (CTRL-C, CTRL-X, etc) and Q presses
+[√] resolve conflicts with existing area selection hotkeys (CTRL-C, CTRL-X, etc) and Q presses
 [√] add "x" button to top right
 [ ] make icon in flow button animated when doing auto screenshots
 [ ] only show warning when in multiplayer if doable
@@ -19,3 +19,4 @@ TODO:
 Maybes:
 [ ] draw rectangle between last set position and current mouse cursor position, see drag.notes
 [ ] make area selection react to drag.notes
+[ ] draw half transparent image over mod gui to make it fancy
