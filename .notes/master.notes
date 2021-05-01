@@ -2,9 +2,11 @@
 
 Styles:
 * graphical sets and style swapping:
-        graphSets.notes
+	graphSets.notes
 * changing the cursor:
-      	changingCursor.notes
+	changingCursor.notes
+* sprite being in background:
+	backgroundimage.notes
 
 TODO:
 [√] add instructions to gui
