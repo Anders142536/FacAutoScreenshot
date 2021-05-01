@@ -17,7 +17,7 @@ data:extend{
         name = "FAS-selection-tool",
         icon = "__FacAutoScreenshot__/graphics/FAS-24px.png",
         icon_size = 24,
-        flags = {"hidden", "not-stackable", "spawnable"},
+        flags = {"hidden", "not-stackable", "spawnable", "only-in-cursor"},
         stack_size = 1,
         selection_color = {0, 0, 0, 0},
         alt_selection_color = {0, 0, 0, 0},
