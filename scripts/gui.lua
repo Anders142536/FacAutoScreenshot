@@ -277,6 +277,19 @@ function gui.on_right_click(event)
     end
 end
 
+function gui.on_player_cursor_stack_changed(event)
+    log("player " .. event.player_index .. " cursor stack changed")
+    local i = event.player_index
+    if gui.doesSelection[i] then
+        local stack = game.get_player(i).cursor_stack
+        if stack and (not stack.valid_for_read or stack.name ~= "FAS-selection-tool") then
+            log("reverting to not selecting area")
+            gui.doesSelection[i] = false
+            gui.components[i].select_area_button.style = "tool_button"
+        end
+    end
+end
+
 function gui.agree_checkbox(event)
     log("i understand was clicked, toggling button and value")
     local state = event.element.state

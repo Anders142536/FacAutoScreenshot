@@ -1,16 +1,3 @@
---[[ TODO
-# 2.0
-
-* refactor control.lua
-* think about peeling the settings stuff into seperate file, as that would be nicer to do
-	and the require-loading would avoid some sync issues
-* build gui as shown in mocks
-* add necessary functions to Shooter
-
-* make button do mega screenshot
-	> test if the resolution in the screenshotting is limited
-
---]]
 gui = require("scripts.gui")
 basetracker = require("scripts.basetracker")
 shooter = require("scripts.shooter")
@@ -182,4 +169,5 @@ script.on_event(defines.events.on_gui_click, gui.on_gui_event)
 script.on_event(defines.events.on_gui_value_changed, gui.on_gui_event)
 script.on_event("FAS-left-click", gui.on_left_click)
 script.on_event("FAS-right-click", gui.on_right_click)
+script.on_event(defines.events.on_player_cursor_stack_changed, gui.on_player_cursor_stack_changed)
 -- script.on_event(defines.events.on_gui_text_changed, gui.on_gui_event)
