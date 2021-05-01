@@ -143,10 +143,10 @@ function tracker.breaksCurrentLimits(pos)
 	if (global.verbose) then
 		log("breakscurrentLimits: pos: " .. pos.x .. "x" .. pos.y)
 	end
-	return (pos.x < global.minX or
-	pos.x > global.maxX or
-	pos.y < global.minY or
-	pos.y > global.maxY)
+	return (pos.x < tracker.minX or
+	pos.x > tracker.maxX or
+	pos.y < tracker.minY or
+	pos.y > tracker.maxY)
 end
 
 return tracker
