@@ -1,13 +1,9 @@
 local shooter = {}
 
-shooter.zoom = {}
-shooter.zoomLevel = {}
-shooter.nextScreenshot = {}
-
 function shooter.evaluateZoomForAllPlayers()
     log("ev zoom for all players")
 	for _, player in pairs(game.connected_players) do
-		if global.doScreenshot[player.index] then
+		if global.auto.doScreenshot[player.index] then
 			shooter.evaluateZoomForPlayer(player.index)
 		end
 	end
@@ -16,38 +12,38 @@ end
 function shooter.evaluateZoomForPlayer(player)
 	if(global.verbose) then
 		log("ev zoom for player " .. player)
-		log("resX: " .. global.resX[player])
-		log("resY: " .. global.resY[player])
-		log("tracker.limitX: " .. basetracker.limitX)
-		log("tracker.limitY: " .. basetracker.limitY)
-		log("old zoom: " .. (shooter.zoom[player] or "nil"))
-		log("zoomLevel: " .. (shooter.zoomLevel[player] or "nil"))
+		log("resX: " .. global.auto.resX[player])
+		log("resY: " .. global.auto.resY[player])
+		log("global.tracker.limitX: " .. global.tracker.limitX)
+		log("global.tracker.limitY: " .. global.tracker.limitY)
+		log("old zoom: " .. (global.auto.zoom[player] or "nil"))
+		log("zoomLevel: " .. (global.auto.zoomLevel[player] or "nil"))
 	end
 
-	if not shooter.zoom[player] then shooter.zoom[player] = 1 end
-	if not shooter.zoomLevel[player] then shooter.zoomLevel[player] = 1 end
+	if not global.auto.zoom[player] then global.auto.zoom[player] = 1 end
+	if not global.auto.zoomLevel[player] then global.auto.zoomLevel[player] = 1 end
 
-	-- 7680					global.resX
+	-- 7680					global.auto.resX
 	-- -------- = 0,3		------------------ = zoom
 	-- 800  32				leftRight resTiles
-	local zoomX = global.resX[player] / (basetracker.limitX * 2 * 32)
-	local zoomY = global.resY[player] / (basetracker.limitY * 2 * 32)
+	local zoomX = global.auto.resX[player] / (global.tracker.limitX * 2 * 32)
+	local zoomY = global.auto.resY[player] / (global.tracker.limitY * 2 * 32)
 
 	local newZoom = zoomX
 	if zoomX > zoomY then
 		newZoom = zoomY
 	end
 
-	local oldZoom = shooter.zoom[player]
-	while newZoom < shooter.zoom[player] and shooter.zoomLevel[player] < 32 do
-		shooter.zoomLevel[player] = shooter.zoomLevel[player] + 1
-		shooter.zoom[player] = 1 / shooter.zoomLevel[player]
-		log("Adjusting zoom for player " .. player .. " to " .. shooter.zoom[player] .. " and zoomlevel to " .. shooter.zoomLevel[player])
+	local oldZoom = global.auto.zoom[player]
+	while newZoom < global.auto.zoom[player] and global.auto.zoomLevel[player] < 32 do
+		global.auto.zoomLevel[player] = global.auto.zoomLevel[player] + 1
+		global.auto.zoom[player] = 1 / global.auto.zoomLevel[player]
+		log("Adjusting zoom for player " .. player .. " to " .. global.auto.zoom[player] .. " and zoomlevel to " .. global.auto.zoomLevel[player])
 	end
-	if oldZoom > shooter.zoom[player] then
-		log("Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. shooter.zoom[player])
-		game.print("FAS: Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. shooter.zoom[player] .. " (zoomlevel: " .. shooter.zoomLevel[player] .. ")")
-		if (shooter.zoom[player] == 32) then
+	if oldZoom > global.auto.zoom[player] then
+		log("Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.auto.zoom[player])
+		game.print("FAS: Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.auto.zoom[player] .. " (zoomlevel: " .. global.auto.zoomLevel[player] .. ")")
+		if (global.auto.zoom[player] == 32) then
 			log("Player " .. player .. " reached maximum zoomlevel")
 			game.print("FAS: Player " .. player .. " reached maximum zoom level of 32. No further zooming out possible. Entities exceeding the screenshot limits will not be shown on the screenshots!")
 		end
@@ -84,10 +80,10 @@ end
 function shooter.registerPlayerToScreenshotlist(index)
 	log("registering player to screenshot list")
 
-	local numberOfTiles = getDivisor(shooter.zoomLevel[index])
-	local resX = global.resX[index]
-	local resY = global.resY[index]
-	local zoom = shooter.zoom[index]
+	local numberOfTiles = getDivisor(global.auto.zoomLevel[index])
+	local resX = global.auto.resX[index]
+	local resY = global.auto.resY[index]
+	local zoom = global.auto.zoom[index]
 
 	-- like calculating zoom, but reverse
 	-- cannot take limits from global, as we want the border of the screenshot, not the base
@@ -118,15 +114,15 @@ function shooter.registerPlayerToScreenshotlist(index)
 		log("title:      " .. temp["title"])
 	end
 
-	table.insert(shooter.nextScreenshot, temp)
+	table.insert(global.auto.nextScreenshot, temp)
 end
 
 function shooter.refreshNextScreenshotTimestamp()
 	local closest
 	for _, player in pairs(game.connected_players) do
-		if global.doScreenshot[player.index] then
-			local times = math.floor(game.tick / global.interval[player.index])
-			local next = global.interval[player.index] * (times + 1)
+		if global.auto.doScreenshot[player.index] then
+			local times = math.floor(game.tick / global.auto.interval[player.index])
+			local next = global.auto.interval[player.index] * (times + 1)
 			if closest == nil or next < closest then
 				closest = next
 			end
@@ -134,9 +130,9 @@ function shooter.refreshNextScreenshotTimestamp()
 	end
 
 	if closest then
-		shooter.nextScreenshotTimestamp = closest
+		global.nextScreenshotTimestamp = closest
 	else
-		shooter.nextScreenshotTimestamp = nil
+		global.nextScreenshotTimestamp = nil
 	end
 end
 
@@ -160,11 +156,11 @@ local function renderScreenshot(index, resolution, position, zoom, folder, title
 end
 
 function shooter.hasNextScreenshot()
-	return shooter.nextScreenshot[1] ~= nil
+	return global.auto.nextScreenshot[1] ~= nil
 end
 
 function shooter.renderNextScreenshot()
-	local n = shooter.nextScreenshot[1]
+	local n = global.auto.nextScreenshot[1]
 	local posX = n.startpos.x + n.stepsize.x * n.offset.x
 	local posY = n.startpos.y + n.stepsize.y * n.offset.y
 
@@ -180,7 +176,7 @@ function shooter.renderNextScreenshot()
 		n.offset.x = 0
 		n.offset.y = n.offset.y + 1
 		if (n.offset.y >= n.numberOfTiles) then
-			table.remove(shooter.nextScreenshot, 1)
+			table.remove(global.auto.nextScreenshot, 1)
 		end
 	end
 end

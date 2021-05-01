@@ -1,12 +1,5 @@
 local tracker = {}
 
-tracker.limitX = 1
-tracker.limitY = 1
-tracker.minX = 1
-tracker.minY = 1
-tracker.maxX = 1
-tracker.maxY = 1
-
 local function hasEntities(chunk)
 	local count = game.surfaces[1].count_entities_filtered{
 		area=chunk.area,
@@ -52,8 +45,8 @@ function tracker.evaluateLimitsFromWholeBase()
 	-- if no blocks have been placed yet
 	if tchunk == nil then
 		log("tchunk is nil")
-		tracker.limitX = 1
-		tracker.limitY = 1
+		global.tracker.limitX = 1
+		global.tracker.limitY = 1
 	else
 		-- add 20 to have empty margin
 		local top = math.abs(tchunk.area.left_top.y)
@@ -69,20 +62,20 @@ function tracker.evaluateLimitsFromWholeBase()
 		end
 		
 		if (top > bottom) then
-			tracker.limitY = top
+			global.tracker.limitY = top
 		else
-			tracker.limitY = bottom
+			global.tracker.limitY = bottom
 		end
 		
 		if (left > right) then
-			tracker.limitX = left
+			global.tracker.limitX = left
 		else
-			tracker.limitX = right
+			global.tracker.limitX = right
 		end
 
 		if (global.verbose) then
-			log("limitX: " .. tracker.limitX)
-			log("limitY: " .. tracker.limitY)
+			log("limitX: " .. global.tracker.limitX)
+			log("limitY: " .. global.tracker.limitY)
 		end
 	end
 end
@@ -92,24 +85,24 @@ local function evaluateLimitsFromMinMax()
 		log("evaluate limits from min max")
 	end
 
-	if math.abs(tracker.minX) > tracker.maxX then
-		tracker.limitX =  math.abs(tracker.minX)
+	if math.abs(global.tracker.minX) > global.tracker.maxX then
+		global.tracker.limitX =  math.abs(global.tracker.minX)
 	else
-		tracker.limitX = tracker.maxX
+		global.tracker.limitX = global.tracker.maxX
 	end
 	
-	if math.abs(tracker.minY) > tracker.maxY then
-		tracker.limitY = math.abs(tracker.minY)
+	if math.abs(global.tracker.minY) > global.tracker.maxY then
+		global.tracker.limitY = math.abs(global.tracker.minY)
 	else
-		tracker.limitY = tracker.maxY
+		global.tracker.limitY = global.tracker.maxY
 	end
 end
 
 function tracker.checkForMinMaxChange() 
-	if tracker.minMaxChanged then
+	if global.tracker.minMaxChanged then
 		evaluateLimitsFromMinMax()
 		shooter.evaluateZoomForAllPlayers()
-		tracker.minMaxChanged = false
+		global.tracker.minMaxChanged = false
 	end
 end
 
@@ -117,36 +110,36 @@ function tracker.evaluateMinMaxFromPosition(pos)
 	if (global.verbose) then
 		log("Evaluate min max from position: " .. pos.x .. "x" .. pos.y)
 	end
-	if pos.x < tracker.minX then
-		tracker.minX = pos.x
-	elseif pos.x > tracker.maxX then
-		tracker.maxX = pos.x
+	if pos.x < global.tracker.minX then
+		global.tracker.minX = pos.x
+	elseif pos.x > global.tracker.maxX then
+		global.tracker.maxX = pos.x
 	end
 	
-	if pos.y < tracker.minY then
-		tracker.minY = pos.y
-	elseif pos.y > tracker.maxY then
-		tracker.maxY = pos.y
+	if pos.y < global.tracker.minY then
+		global.tracker.minY = pos.y
+	elseif pos.y > global.tracker.maxY then
+		global.tracker.maxY = pos.y
 	end
 
 	if (global.verbose) then
-		log("tracker.minX = " .. tracker.minX)
-		log("tracker.maxX = " .. tracker.maxX)
-		log("tracker.minY = " .. tracker.minY)
-		log("tracker.maxY = " .. tracker.maxY)
+		log("global.tracker.minX = " .. global.tracker.minX)
+		log("global.tracker.maxX = " .. global.tracker.maxX)
+		log("global.tracker.minY = " .. global.tracker.minY)
+		log("global.tracker.maxY = " .. global.tracker.maxY)
 	end
 	
-	tracker.minMaxChanged = true
+	global.tracker.minMaxChanged = true
 end
 
 function tracker.breaksCurrentLimits(pos)
 	if (global.verbose) then
 		log("breakscurrentLimits: pos: " .. pos.x .. "x" .. pos.y)
 	end
-	return (pos.x < tracker.minX or
-	pos.x > tracker.maxX or
-	pos.y < tracker.minY or
-	pos.y > tracker.maxY)
+	return (pos.x < global.tracker.minX or
+	pos.x > global.tracker.maxX or
+	pos.y < global.tracker.minY or
+	pos.y > global.tracker.maxY)
 end
 
 return tracker

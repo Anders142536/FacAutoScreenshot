@@ -1,19 +1,6 @@
 local modGui = require("mod-gui")
 local gui = {}
 
-gui.zoomLevels = {}
-gui.doesUnderstand = {}
-gui.components = {}
-
--- area selection
-gui.doesSelection = {}
-gui.areaLeftClick = {}
-gui.areaRightClick = {}
--- area selection rectangles. this is needed to be able
--- to delete the old rectangle on creating a new one
-gui.rec = {}
-gui.areas = {}
-
 -- handler methods have to be called the same as the element that shall trigger them
 local flowButtonName = "togglegui"
 local mainFrameName = "guiFrame"
@@ -70,10 +57,10 @@ function gui.togglegui(event)
         if guiFrame.visible then
             log("guiframe was visible")
             -- if we hide the gui, the tick on the "I understand" checkbox is removed, so that the user has to click it again the next time
-            if gui.doesUnderstand[event.player_index] then
-                gui.doesUnderstand[event.player_index] = false
-                gui.components[event.player_index].agree_checkbox.state = false
-                gui.components[event.player_index].start_area_screenshot_button.enabled = false
+            if global.snip.doesUnderstand[event.player_index] then
+                global.snip.doesUnderstand[event.player_index] = false
+                global.gui[event.player_index].agree_checkbox.state = false
+                global.gui[event.player_index].start_area_screenshot_button.enabled = false
             end
             guiFrame.visible = false
         else
@@ -92,12 +79,12 @@ end
 
 function gui.select_area_button(event)
     log("select area button was clicked")
-    gui.doesSelection[event.player_index] = not gui.doesSelection[event.player_index]
+    global.snip.doesSelection[event.player_index] = not global.snip.doesSelection[event.player_index]
     
-    if gui.doesSelection[event.player_index] then
+    if global.snip.doesSelection[event.player_index] then
         log("turned on")
         --swap styles of button
-        gui.components[event.player_index].select_area_button.style = "fas_clicked_tool_button"
+        global.gui[event.player_index].select_area_button.style = "fas_clicked_tool_button"
         --change this as the player is not correctly fetched
         game.get_player(event.player_index).cursor_stack.set_stack{
             name = "FAS-selection-tool"
@@ -105,37 +92,37 @@ function gui.select_area_button(event)
     else
         log("turned off")
         --swap styles of button
-        gui.components[event.player_index].select_area_button.style = "tool_button"
+        global.gui[event.player_index].select_area_button.style = "tool_button"
         game.get_player(event.player_index).cursor_stack.clear()
     end
 end
 
 local function refreshStartHighResScreenshotButton(index)
     -- {1, 16384}
-    local zoom = 1 / gui.zoomLevels[index]
-    if not gui.areas[index] then
-        gui.components[index].start_area_screenshot_button.enabled = false
+    local zoom = 1 / global.snip.zoomLevel[index]
+    if not global.snip.area[index] then
+        global.gui[index].start_area_screenshot_button.enabled = false
     else
-        local resX = math.floor((gui.areas[index].right - gui.areas[index].left) * 32 * zoom)
-        local resY = math.floor((gui.areas[index].bottom - gui.areas[index].top) * 32 * zoom)
+        local resX = math.floor((global.snip.area[index].right - global.snip.area[index].left) * 32 * zoom)
+        local resY = math.floor((global.snip.area[index].bottom - global.snip.area[index].top) * 32 * zoom)
         
-        gui.components[index].start_area_screenshot_button.enabled = gui.doesUnderstand[index]
+        global.gui[index].start_area_screenshot_button.enabled = global.snip.doesUnderstand[index]
             and resX < 16385
             and resY < 16385
     end
 end
 
 local function refreshEstimates(index)
-    if not gui.areas[index] then
+    if not global.snip.area[index] then
         -- happens if the zoom slider is moved before an area was selected so far
-        gui.components[index].resolution_value.caption = {"FAS-no-area-selected"}
-        gui.components[index].estimated_filesize_value.caption = "-"
+        global.gui[index].resolution_value.caption = {"FAS-no-area-selected"}
+        global.gui[index].estimated_filesize_value.caption = "-"
         return
     end
 
-    local zoom = 1 / gui.zoomLevels[index]
-    local width = math.floor((gui.areas[index].right - gui.areas[index].left) * 32 * zoom)
-    local height = math.floor((gui.areas[index].bottom - gui.areas[index].top) * 32 * zoom)
+    local zoom = 1 / global.snip.zoomLevel[index]
+    local width = math.floor((global.snip.area[index].right - global.snip.area[index].left) * 32 * zoom)
+    local height = math.floor((global.snip.area[index].bottom - global.snip.area[index].top) * 32 * zoom)
     
     local bytesPerPixel = 3
     local size = bytesPerPixel * width * height
@@ -150,37 +137,37 @@ local function refreshEstimates(index)
         size = size .. " B"
     end
     
-    gui.components[index].resolution_value.caption = width .. "x" .. height
-    gui.components[index].estimated_filesize_value.caption = size
+    global.gui[index].resolution_value.caption = width .. "x" .. height
+    global.gui[index].estimated_filesize_value.caption = size
 end
 
 function gui.delete_area_button(event)
     local i = event.player_index
-    if gui.areas[i] then
-        gui.areas[i] = nil
+    if global.snip.area[i] then
+        global.snip.area[i] = nil
     end
-    if gui.areaLeftClick[i] then
-        gui.areaLeftClick[i] = nil
+    if global.snip.areaLeftClick[i] then
+        global.snip.areaLeftClick[i] = nil
     end
-    if gui.areaRightClick[i] then
-        gui.areaRightClick[i] = nil
+    if global.snip.areaRightClick[i] then
+        global.snip.areaRightClick[i] = nil
     end
-    if gui.rec[i] then
-        rendering.destroy(gui.rec[i])
-        gui.rec[i] = nil
+    if global.snip.rec[i] then
+        rendering.destroy(global.snip.rec[i])
+        global.snip.rec[i] = nil
     end
 
-    gui.components[i].x_value.text = ""
-    gui.components[i].y_value.text = ""
-    gui.components[i].width_value.text = ""
-    gui.components[i].height_value.text = ""
+    global.gui[i].x_value.text = ""
+    global.gui[i].y_value.text = ""
+    global.gui[i].width_value.text = ""
+    global.gui[i].height_value.text = ""
 
     refreshEstimates(i)
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
 local function calculateArea(index)
-    if gui.areaLeftClick[index] == nil and gui.areaRightClick[index] == nil then
+    if global.snip.areaLeftClick[index] == nil and global.snip.areaRightClick[index] == nil then
         log("something went wrong when calculating selected area, aborting")
         return
     end
@@ -190,13 +177,13 @@ local function calculateArea(index)
     local bottom
     local right
 
-    if gui.areaLeftClick[index] then
-        top = gui.areaLeftClick[index].y
-        left = gui.areaLeftClick[index].x
+    if global.snip.areaLeftClick[index] then
+        top = global.snip.areaLeftClick[index].y
+        left = global.snip.areaLeftClick[index].x
     end
-    if gui.areaRightClick[index] then
-        bottom = gui.areaRightClick[index].y
-        right = gui.areaRightClick[index].x
+    if global.snip.areaRightClick[index] then
+        bottom = global.snip.areaRightClick[index].y
+        right = global.snip.areaRightClick[index].x
     end
 
     if not top then
@@ -227,23 +214,23 @@ local function calculateArea(index)
     local width = right - left
     local height = bottom - top
 
-    if not gui.areas[index] then
-        gui.areas[index] = {}
+    if not global.snip.area[index] then
+        global.snip.area[index] = {}
     end
-    gui.areas[index].top = top
-    gui.areas[index].left = left
-    gui.areas[index].right = right
-    gui.areas[index].bottom = bottom
+    global.snip.area[index].top = top
+    global.snip.area[index].left = left
+    global.snip.area[index].right = right
+    global.snip.area[index].bottom = bottom
  
-    gui.components[index].x_value.text = tostring(left)
-    gui.components[index].y_value.text = tostring(top)
-    gui.components[index].width_value.text = tostring(width)
-    gui.components[index].height_value.text = tostring(height)
+    global.gui[index].x_value.text = tostring(left)
+    global.gui[index].y_value.text = tostring(top)
+    global.gui[index].width_value.text = tostring(width)
+    global.gui[index].height_value.text = tostring(height)
     
-    if gui.rec[index] then
-        rendering.destroy(gui.rec[index])
+    if global.snip.rec[index] then
+        rendering.destroy(global.snip.rec[index])
     end
-    gui.rec[index] = rendering.draw_rectangle{
+    global.snip.rec[index] = rendering.draw_rectangle{
         color = {0.5, 0.5, 0.5, 0.5},
         width = 1,
         filled = false,
@@ -259,8 +246,8 @@ function gui.on_left_click(event)
     log("left click!")
     --remove this
     local player = game.connected_players[1]
-    if gui.doesSelection[event.player_index] then
-        gui.areaLeftClick[event.player_index] = event.cursor_position
+    if global.snip.doesSelection[event.player_index] then
+        global.snip.areaLeftClick[event.player_index] = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
         refreshStartHighResScreenshotButton(event.player_index)
@@ -269,8 +256,8 @@ end
 
 function gui.on_right_click(event)
     log("right click!")
-    if gui.doesSelection[event.player_index] then
-        gui.areaRightClick[event.player_index] = event.cursor_position
+    if global.snip.doesSelection[event.player_index] then
+        global.snip.areaRightClick[event.player_index] = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
         refreshStartHighResScreenshotButton(event.player_index)
@@ -280,12 +267,12 @@ end
 function gui.on_player_cursor_stack_changed(event)
     log("player " .. event.player_index .. " cursor stack changed")
     local i = event.player_index
-    if gui.doesSelection[i] then
+    if global.snip.doesSelection[i] then
         local stack = game.get_player(i).cursor_stack
         if stack and (not stack.valid_for_read or stack.name ~= "FAS-selection-tool") then
             log("reverting to not selecting area")
-            gui.doesSelection[i] = false
-            gui.components[i].select_area_button.style = "tool_button"
+            global.snip.doesSelection[i] = false
+            global.gui[i].select_area_button.style = "tool_button"
         end
     end
 end
@@ -293,7 +280,7 @@ end
 function gui.agree_checkbox(event)
     log("i understand was clicked, toggling button and value")
     local state = event.element.state
-    gui.doesUnderstand[event.player_index] = state
+    global.snip.doesUnderstand[event.player_index] = state
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
@@ -301,14 +288,14 @@ function gui.start_area_screenshot_button(event)
     log("start high res screenshot button was pressed")
     local i = event.player_index
 
-    shooter.renderAreaScreenshot(i, gui.areas[i], gui.zoomLevels[i])
+    shooter.renderAreaScreenshot(i, global.snip.area[i], global.snip.zoomLevel[i])
 end
 
 function gui.zoom_slider(event)
     if (global.verbose) then log("zoom slider was moved") end
     local level = event.element.slider_value
-    gui.components[event.player_index].zoom_value.text = tostring(level)
-    gui.zoomLevels[event.player_index] = level
+    global.gui[event.player_index].zoom_value.text = tostring(level)
+    global.snip.zoomLevel[event.player_index] = level
     refreshEstimates(event.player_index)
     refreshStartHighResScreenshotButton(event.player_index)
 end
@@ -324,14 +311,14 @@ function gui.createGuiFrame(player)
     local max_width = 350
     
     -- [[ GENERAL ]] --
-    gui.components[player.index] = {}
+    global.gui[player.index] = {}
     local guiFrame = player.gui.screen.add{
         type = "frame",
         name = mainFrameName,
         direction = "vertical"
     }
     guiFrame.auto_center = true
-    gui.components[player.index].mainFrame = guiFrame
+    global.gui[player.index].mainFrame = guiFrame
     local header = guiFrame.add{ type = "flow" }
     header.style.horizontal_spacing = 8
     header.drag_target = guiFrame
@@ -393,7 +380,7 @@ function gui.createGuiFrame(player)
         caption = {"FAS-status-caption"}
     }
     status_label.style.width = label_width
-    gui.components[player.index].status_value = status_flow.add{
+    global.gui[player.index].status_value = status_flow.add{
         type = "label",
         name = "status_value",
         caption = gui.getStatusValue(player)
@@ -405,7 +392,7 @@ function gui.createGuiFrame(player)
         visible = "false"
     }
     progressbar.style.width = 350
-    gui.components[player.index].progress_bar = progressbar
+    global.gui[player.index].progress_bar = progressbar
 
     -- surface flow
     local surface_flow = vertical_flow.add{
@@ -454,7 +441,7 @@ function gui.createGuiFrame(player)
         tooltip = {"FAS-area-tooltip"}
     }
 
-    gui.components[player.index].select_area_button = area_select_flow.add{
+    global.gui[player.index].select_area_button = area_select_flow.add{
         type = "sprite-button",
         name = "select_area_button",
         sprite = "FAS-area-select-icon",
@@ -497,7 +484,7 @@ function gui.createGuiFrame(player)
         enabled = "false",
         style = "fas_numeric_input"
     }
-    gui.components[player.index].width_value = width_value
+    global.gui[player.index].width_value = width_value
 
     area_input_table.add{
         type = "label",
@@ -512,7 +499,7 @@ function gui.createGuiFrame(player)
         enabled = "false",
         style = "fas_numeric_input"
     }
-    gui.components[player.index].height_value = height_value
+    global.gui[player.index].height_value = height_value
 
     area_input_table.add{
         type = "label",
@@ -527,7 +514,7 @@ function gui.createGuiFrame(player)
         enabled = "false",
         style = "fas_numeric_input"
     }
-    gui.components[player.index].x_value = x_value
+    global.gui[player.index].x_value = x_value
 
 
     area_input_table.add{
@@ -543,7 +530,7 @@ function gui.createGuiFrame(player)
         enabled = "false",
         style = "fas_numeric_input"
     }
-    gui.components[player.index].y_value = y_value
+    global.gui[player.index].y_value = y_value
 
     -- zoom flow
     local zoom_flow = vertical_flow.add{
@@ -569,7 +556,7 @@ function gui.createGuiFrame(player)
     }
     zoom_slider.style.right_margin = 8
     zoom_slider.style.width = 124
-    gui.components[player.index].zoom_slider = zoom_slider
+    global.gui[player.index].zoom_slider = zoom_slider
     local zoom_value = zoom_flow.add{
         type = "textfield",
         name = "zoom_value",
@@ -580,8 +567,8 @@ function gui.createGuiFrame(player)
         style = "fas_numeric_input"
     }
     -- zoom_value.style.disabled_font_color = {1, 1, 1}
-    gui.components[player.index].zoom_value = zoom_value
-    gui.zoomLevels[player.index] = 1
+    global.gui[player.index].zoom_value = zoom_value
+    global.snip.zoomLevel[player.index] = 1
 
     -- estimated resolution flow
     local resolution_flow = vertical_flow.add{
@@ -595,7 +582,7 @@ function gui.createGuiFrame(player)
         caption = {"FAS-resolution-caption"}
     }
     resolution_label.style.width = label_width
-    gui.components[player.index].resolution_value = resolution_flow.add{
+    global.gui[player.index].resolution_value = resolution_flow.add{
         type = "label",
         name = "resolution_value",
         caption = {"FAS-no-area-selected"}
@@ -613,7 +600,7 @@ function gui.createGuiFrame(player)
         caption = {"FAS-estimated-filesize"}
     }
     estimated_filesize_label.style.width = label_width
-    gui.components[player.index].estimated_filesize_value = estimated_filesize_flow.add{
+    global.gui[player.index].estimated_filesize_value = estimated_filesize_flow.add{
         type = "label",
         name = "estimated_filesize_value",
         caption = "-"
@@ -636,7 +623,7 @@ function gui.createGuiFrame(player)
     }
 
     agree_flow.style.vertical_align = "center"
-    gui.components[player.index].agree_checkbox = agree_flow.add{
+    global.gui[player.index].agree_checkbox = agree_flow.add{
         type = "checkbox",
         name = "agree_checkbox",
         caption = {"FAS-i-understand-caption"},
@@ -647,7 +634,7 @@ function gui.createGuiFrame(player)
         name = "spreader"
     }
     spreader.style.horizontally_stretchable = true
-    gui.components[player.index].start_area_screenshot_button = agree_flow.add{
+    global.gui[player.index].start_area_screenshot_button = agree_flow.add{
         type = "button",
         name = "start_area_screenshot_button",
         caption = {"FAS-start-area-screenshot-button-caption"},
@@ -667,7 +654,7 @@ function gui.setStatusValue(amount, total)
     gui.amount = amount
     gui.total = total
     gui.progressValue = amount / total
-    for index, player in pairs(gui.components) do
+    for index, player in pairs(global.gui) do
         if player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. index .. " with amount " .. amount .. " / " .. total) end
             player.status_value.caption = amount .. " / " .. total
@@ -702,14 +689,14 @@ function gui.refreshStatusCountdown()
         gui.amount = nil
         gui.total = nil
         gui.progressValue = nil
-        for _, player in pairs(gui.components) do
+        for _, player in pairs(global.gui) do
             player.progress_bar.visible = false
             -- reset flowbutton pie progress value
         end
     end
     
     local countdown = calculateCountdown()
-    for index, player in pairs(gui.components) do
+    for index, player in pairs(global.gui) do
         if player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. index .. " with countdown " .. countdown) end
             player.status_value.caption = countdown
