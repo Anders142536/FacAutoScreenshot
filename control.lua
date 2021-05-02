@@ -2,37 +2,55 @@ gui = require("scripts.gui")
 basetracker = require("scripts.basetracker")
 shooter = require("scripts.shooter")
 
-local function loadDefaultsForEmptySettings(player_index)
-	log("loading defaults for player " .. player_index)
+local function loadDefaultsForEmptySettings(index)
+	log("loading defaults for player " .. index)
 
-	if not global.auto.interval[player_index] then global.auto.interval[player_index] = 5 end
-	if not global.auto.resX[player_index] then global.auto.resX[player_index] = 7680 end
-	if not global.auto.resY[player_index] then global.auto.resY[player_index] = 4320 end
+	-- on removing settings support, remove settings and fetching of player
+	-- instead use default values of settings directly
+	local player_settings = settings.get_player_settings(game.get_player(index))
 
-	if not global.snip.zoomLevel[player_index] then global.snip.zoomLevel[player_index] = 1 end
+	if global.auto.doScreenshot[index] == nil then
+		global.auto.doScreenshot[index] = player_settings["FAS-do-screenshot"].value
+	end
 
-	-- local resolution = settings.get_player_settings(player)["FAS-Resolution"].value
-	-- global.auto.resX[player_index] = 7680;
-	-- global.auto.resY[player_index] = 4320;
-	-- if (resolution == "3840x2160 (4K)") then
-	-- 	global.auto.resX[player_index] = 3840;
-	-- 	global.auto.resY[player_index] = 2160;
-	-- elseif (resolution == "1920x1080 (FullHD)") then
-	-- 	global.auto.resX[player_index] = 1920;
-	-- 	global.auto.resY[player_index] = 1080;
-	-- elseif (resolution == "1280x720  (HD)") then
-	-- 	global.auto.resX[player_index] = 1280;
-	-- 	global.auto.resY[player_index] = 720;
-	-- end
+	if global.auto.interval[index] == nil then
+		global.auto.interval[index] = player_settings["FAS-Screenshot-interval"].value * 60 * 60
+	end
+
+	if global.auto.resX[index] == nil then
+		local resolution = player_settings["FAS-Resolution"].value
+		global.auto.resX[index] = 7680;
+		global.auto.resY[index] = 4320;
+		if (resolution == "3840x2160 (4K)") then
+			global.auto.resX[index] = 3840;
+			global.auto.resY[index] = 2160;
+		elseif (resolution == "1920x1080 (FullHD)") then
+			global.auto.resX[index] = 1920;
+			global.auto.resY[index] = 1080;
+		elseif (resolution == "1280x720  (HD)") then
+			global.auto.resX[index] = 1280;
+			global.auto.resY[index] = 720;
+		end
+	end
+
+	if global.auto.singleScreenshot[index] == nil then
+		global.auto.singleScreenshot[index] = player_settings["FAS-single-screenshot"].value
+	end
+
+	if global.auto.splittingFactor[index] == nil then
+		global.auto.splittingFactor[index] = settings.global["FAS-increased-splitting"].value
+	end
 	
-	-- confirmation prints reading back the set settings in chat.
-	if (global.auto.doScreenshot[player_index]) then
-		log("Player " .. player_index .. " does screenshots with resolution " .. 
-		global.auto.resX[player_index] .. "x" .. global.auto.resY[player_index] .. 
-		" every " .. (global.auto.interval[player_index] / 3600) .. " minutes")
-		shooter.evaluateZoomForPlayer(player_index)
+	if not global.snip.zoomLevel[index] then global.snip.zoomLevel[index] = 1 end
+
+	-- confirmation logs reading back the set settings in chat.
+	if (global.auto.doScreenshot[index]) then
+		log("Player " .. index .. " does screenshots with resolution " .. 
+		global.auto.resX[index] .. "x" .. global.auto.resY[index] .. 
+		" every " .. (global.auto.interval[index] / 3600) .. " minutes")
+		shooter.evaluateZoomForPlayer(index)
 	else
-		log("Player " .. player_index .. " does no screenshots")
+		log("Player " .. index .. " does no screenshots")
 	end
 end
 
@@ -48,10 +66,13 @@ local function initialize()
 
 	global.verbose = settings.global["FAS-enable-debug"].value
 
-	if not global.auto.nextScreenshot then global.auto.nextScreenshot = {} end
+	if not global.auto.nextScreenshot then
+		global.auto.nextScreenshot = {}
+	end
 	global.auto.doScreenshot = {}
 	global.auto.interval = {}
 	global.auto.singleScreenshot = {}
+	global.auto.splittingFactor = {}
 	global.auto.resX = {}
 	global.auto.resY = {}
 	global.auto.zoom = {}
@@ -125,13 +146,13 @@ local function on_nth_tick(event)
 	for _, player in pairs(game.connected_players) do
 		if global.verbose then
 			log("player " .. player.name .. " with index " .. player.index .. " found")
-			log("do screenshot:    " .. (global.auto.doScreenshot[player.index] or "false"))
+			log("do screenshot:    " .. (global.auto.doScreenshot[player.index] and "true" or "false"))
 			log("interval:         " .. global.auto.interval[player.index])
 			log("singleScreenshot: " .. (global.auto.singleScreenshot[player.index] or "false"))
 			log("tick:             " .. game.tick)
 		end
 		if global.auto.doScreenshot[player.index] and (event.tick % global.auto.interval[player.index] == 0) then
-			if shooter.hasNextScreenshot then
+			if shooter.hasNextScreenshot() then
 				log("there was still a screenshot queued on nth tick event trigger")
 				game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set, make less players do screenshots or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
 				return

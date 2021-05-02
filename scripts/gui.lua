@@ -103,7 +103,7 @@ local function buildAutoStatus(index, auto_content)
         name = "progress",
         visible = "false"
     }
-    progressbar.style.width = 350
+    progressbar.style.width = 334
     global.gui[index].progress_bar = progressbar
 end
 
@@ -127,6 +127,88 @@ local function buildAutoSurface(index, auto_content)
     }
 end
 
+local function buildAutoDoScreenshots(index, auto_content)
+    local do_screenshots_flow = auto_content.add{
+        type = "flow",
+        name = "do_flow",
+        direction = "horizontal"
+    }
+
+    do_screenshots_flow.add{
+        type = "label",
+        name = "do_screenshots_label",
+        caption = {"FAS-do-screenshots-caption"},
+        style = "fas_label"
+    }
+
+    global.gui[index].do_screenshots_checkbox = do_screenshots_flow.add{
+        type = "checkbox",
+        name = "do_screenshots_checkbox",
+        state = global.auto.doScreenshot[index]
+    }
+end
+
+local function buildAutoResolution(index, auto_screenshot_config)
+    local resolution_flow = auto_screenshot_config.add{
+        type = "flow",
+        name = "do_flow",
+        direction = "horizontal"
+    }
+
+    resolution_flow.add{
+        type = "label",
+        name = "resolution_label",
+        caption = {"FAS-resolution-caption"},
+        style = "fas_label"
+    }
+end
+
+local function buildAutoInterval(index, auto_screenshot_config)
+    local interval_flow = auto_screenshot_config.add{
+        type = "flow",
+        name = "interval_flow",
+        direction = "horizontal"
+    }
+
+    interval_flow.add{
+        type = "label",
+        name = "interval_label",
+        caption = {"FAS-interval-label"},
+        style = "fas_label"
+    }
+end
+
+local function buildAutoSingleTick(index, auto_screenshot_config)
+    local single_tick_flow = auto_screenshot_config.add{
+        type = "flow",
+        name = "single_tick_flow",
+        direction = "horizontal"
+    }
+
+    single_tick_flow.add{
+        type = "label",
+        name = "single_tick_label",
+        caption = {"FAS-single-tick-label"},
+        style = "fas_label"
+    }
+end
+
+local function buildAutoSplittingFactor(index, auto_screenshot_config)
+    local splitting_factor_flow = auto_screenshot_config.add{
+        type = "flow",
+        name = "splitting_factor_flow",
+        direction = "horizontal"
+    }
+
+    global.gui[index].splitting_factor_label = splitting_factor_flow.add{
+        type = "label",
+        name = "splitting_factor_label",
+        caption = {"FAS-splitting-factor-label"},
+        style = "fas_label",
+        visible = global.auto.singleScreenshot[index]
+    }
+end
+
 local function buildAutoScreenshotSection(index, auto_frame)
     buildAutoHeader(index, auto_frame.add{
         type = "flow",
@@ -141,6 +223,19 @@ local function buildAutoScreenshotSection(index, auto_frame)
 
     buildAutoStatus(index, auto_content)
     buildAutoSurface(index, auto_content)
+    buildAutoDoScreenshots(index, auto_content)
+
+    -- to make toggling visibilities easier they are added to a seperate child frame
+    local auto_screenshot_config = auto_content.add{
+        type = "flow",
+        direction = "vertical",
+        visible = global.auto.doScreenshot[index]
+    }
+    global.gui[index].auto_screenshot_config = auto_screenshot_config
+    buildAutoResolution(index, auto_screenshot_config)
+    buildAutoInterval(index, auto_screenshot_config)
+    buildAutoSingleTick(index, auto_screenshot_config)
+    buildAutoSplittingFactor(index, auto_screenshot_config)
 end
 
 
@@ -667,8 +762,6 @@ end
 
 function gui.on_left_click(event)
     log("left click!")
-    --remove this
-    local player = game.connected_players[1]
     if global.snip.doesSelection[event.player_index] then
         global.snip.areaLeftClick[event.player_index] = event.cursor_position
         calculateArea(event.player_index)

@@ -50,11 +50,12 @@ function shooter.evaluateZoomForPlayer(player)
 	end
 end
 
-local function getDivisor(zoomLevel)
+local function getDivisor(index)
 	-- rough expected result:
 	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16
 	--  1,  2,  2,  2,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
 
+	local zoomLevel = global.auto.zoomLevel[index]
 	local divisor
 	if zoomLevel == 1 then
 		divisor = 1
@@ -68,7 +69,7 @@ local function getDivisor(zoomLevel)
 		divisor = 16
 	end
 	
-	divisor = divisor * (math.sqrt(global.increasedSplitting))
+	divisor = divisor * (math.sqrt(global.auto.splittingFactor[index]))
 
 	if (global.verbose) then
 		log("returned divisor " .. divisor .. " from input " .. zoomLevel)
@@ -80,7 +81,7 @@ end
 function shooter.registerPlayerToScreenshotlist(index)
 	log("registering player to screenshot list")
 
-	local numberOfTiles = getDivisor(global.auto.zoomLevel[index])
+	local numberOfTiles = getDivisor(index)
 	local resX = global.auto.resX[index]
 	local resY = global.auto.resY[index]
 	local zoom = global.auto.zoom[index]

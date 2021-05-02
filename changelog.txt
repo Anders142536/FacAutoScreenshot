@@ -5,6 +5,8 @@ Version: 2.0.4
   Bugfixes:
     - Fixed issue of debug setting not being applied when being set in-game
     - Fixed major persistancy issue that made the game crash within 1 second on loading a save that has the mod in use
+    - Fixed nasty issue with base analysis that caused issues with detecting the borders of the base correctly on loading the mod on an already existing base
+    - Fixed crash on placing the very first block of a base
   Optimizations:
     - Refactored big parts of the code and increased maintainability a lot
 ---------------------------------------------------------------------------------------------------

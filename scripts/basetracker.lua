@@ -11,7 +11,6 @@ end
 
 function tracker.evaluateLimitsFromWholeBase()
 	log("Evaluating whole base")
-	game.print("FAS: Evaluating whole base")
 	
 	local surface = game.surfaces[1];
 	local tchunk = nil;
@@ -48,12 +47,23 @@ function tracker.evaluateLimitsFromWholeBase()
 		global.tracker.limitX = 1
 		global.tracker.limitY = 1
 	else
-		-- add 20 to have empty margin
-		local top = math.abs(tchunk.area.left_top.y)
+		global.tracker.minX = lchunk.area.left_top.x
+		global.tracker.maxX = rchunk.area.right_bottom.x
+		global.tracker.minY = tchunk.area.left_top.y
+		global.tracker.maxY = bchunk.area.right_bottom.y
+
+		if global.verbose then
+			log("global.tracker.minX: " .. global.tracker.minX)
+			log("global.tracker.maxX: " .. global.tracker.maxX)
+			log("global.tracker.minY: " .. global.tracker.minY)
+			log("global.tracker.maxY: " .. global.tracker.maxY)
+		end
+
+		local top = math.abs(tchunk.area.left_top.x)
 		local right = math.abs(rchunk.area.right_bottom.x)
 		local bottom = math.abs(bchunk.area.right_bottom.y)
 		local left =  math.abs(lchunk.area.left_top.x)
-		
+
 		if (global.verbose) then
 			log("top: " .. top)
 			log("right: " .. right)
