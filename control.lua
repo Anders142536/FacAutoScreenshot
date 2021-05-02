@@ -58,7 +58,6 @@ local function initialize()
 	global.auto.zoomLevel = {}
 
 	global.snip.zoomLevel = {}
-	global.snip.doesUnderstand = {}
 	global.snip.doesSelection = {}
 	global.snip.areaLeftClick = {}
 	global.snip.areaRightClick = {}

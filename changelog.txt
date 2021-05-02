@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.4
+  Features:
+    - Changed the gui to be collapsable
+  Bugfixes:
+    - Fixed issue of debug setting not being applied when being set in-game
+    - Fixed major persistancy issue that made the game crash within 1 second on loading a save that has the mod in use
+  Optimizations:
+    - Refactored big parts of the code and increased maintainability a lot
+---------------------------------------------------------------------------------------------------
 Version: 2.0.3
   Bugfixes:
     - Area selection is now correctly canceled on pressing 'Q' or copy pasting whilst selecting an area

@@ -31,6 +31,416 @@ end
 
 
 
+--[[ GUI CREATION CHAOS ]]--
+local function buildHeader(guiFrame)
+    local header = guiFrame.add{ type = "flow" }
+    header.style.horizontal_spacing = 8
+    header.drag_target = guiFrame
+
+    local title = header.add{
+        type = "label",
+        style = "frame_title",
+        caption = "Screenshot Toolkit Panel"
+    }
+    title.drag_target = guiFrame
+    local dragHandle = header.add{
+        type = "empty-widget",
+        style = "fas_draghandle"
+    }
+    dragHandle.drag_target = guiFrame
+    header.add{
+        type = "sprite-button",
+        name = "gui_close",
+        style = "frame_action_button",
+        sprite = "utility/close_white",
+        hovered_sprite = "utility/close_black",
+        clicked_sprite = "utility/close_black",
+        mouse_button_filter = {"left"},
+    }
+end
+
+
+-- auto
+local function buildAutoHeader(index, auto_header)
+    global.gui[index].auto_content_collapse = auto_header.add{
+        type = "sprite-button",
+        name = "auto_content_collapse",
+        style = "control_settings_section_button",
+        sprite = "utility/collapse",
+        hovered_sprite = "utility/collapse_dark",
+        clicked_sprite = "utility/collapse_dark",
+        mouse_button_filter = {"left"}
+    }
+
+    auto_header.add{
+        type = "label",
+        name = "auto_screenshots_label",
+        caption = "Auto Screenshots",
+        style = "caption_label"
+    }
+end
+
+local function buildAutoStatus(index, auto_content)
+    local status_flow = auto_content.add{
+        type = "flow",
+        name = "status_flow",
+        direction = "horizontal"
+    }
+    status_flow.add{
+        type = "label",
+        name = "status_label",
+        caption = {"FAS-status-caption"},
+        style = "fas_label"
+    }
+    global.gui[index].status_value = status_flow.add{
+        type = "label",
+        name = "status_value",
+        caption = gui.getStatusValue()
+    }
+
+    local progressbar = auto_content.add{
+        type = "progressbar",
+        name = "progress",
+        visible = "false"
+    }
+    progressbar.style.width = 350
+    global.gui[index].progress_bar = progressbar
+end
+
+local function buildAutoSurface(index, auto_content)
+    local surface_flow = auto_content.add{
+        type = "flow",
+        name = "surface_flow",
+        direction = "horizontal"
+    }
+    surface_flow.add{
+        type = "label",
+        name = "surface_label",
+        caption = {"FAS-surface-label-caption"},
+        style = "fas_label"
+    }
+    surface_flow.add{
+        type = "label",
+        name = "surface_value",
+        caption = {"FAS-surface-value-caption"},
+        tooltip = {"FAS-surface-value-tooltip"}
+    }
+end
+
+local function buildAutoScreenshotSection(index, auto_frame)
+    buildAutoHeader(index, auto_frame.add{
+        type = "flow",
+        style = "player_input_horizontal_flow"
+    })
+
+    local auto_content = auto_frame.add{
+        type = "flow",
+        direction = "vertical"
+    }
+    global.gui[index].auto_content = auto_content
+
+    buildAutoStatus(index, auto_content)
+    buildAutoSurface(index, auto_content)
+end
+
+
+-- area
+local function buildAreaHeader(index, area_header)
+    global.gui[index].area_content_collapse = area_header.add{
+        type = "sprite-button",
+        name = "area_content_collapse",
+        style = "control_settings_section_button",
+        sprite = "utility/collapse",
+        hovered_sprite = "utility/collapse_dark",
+        clicked_sprite = "utility/collapse_dark",
+        mouse_button_filter = {"left"}
+    }
+
+    area_header.add{
+        type = "label",
+        name = "area_screenshots_label",
+        caption = "Area Screenshots",
+        style = "caption_label"
+    }
+end
+
+local function buildAreaArea(index, area_content)
+    local area_select_flow = area_content.add{
+        type = "flow",
+        name = "area_select_flow",
+        direction = "horizontal"
+    }
+
+    area_select_flow.add{
+        type = "label",
+        name = "area-label",
+        caption = {"FAS-area-caption"},
+        tooltip = {"FAS-area-tooltip"}
+    }
+
+    global.gui[index].select_area_button = area_select_flow.add{
+        type = "sprite-button",
+        name = "select_area_button",
+        sprite = "FAS-area-select-icon",
+        mouse_button_filter = {"left"},
+        tooltip = {"FAS-area-select-button-tooltip"},
+        style = "tool_button"
+    }
+
+    area_select_flow.add{
+        type = "sprite-button",
+        name = "delete_area_button",
+        sprite = "FAS-delete-selection-icon",
+        mouse_button_filter = {"left"},
+        tooltip = {"FAS-delete-area-button-tooltip"},
+        style = "tool_button_red"
+    }
+
+    local area_spreader = area_select_flow.add{
+        type = "empty-widget",
+        name = "area_spreader"
+    }
+    area_spreader.style.horizontally_stretchable = true
+
+    -- Area select table
+    local area_input_table = area_select_flow.add{
+        type = "table",
+        name = "area_select_table",
+        column_count = 4
+    }
+    area_input_table.add{
+        type = "label",
+        name = "width-label",
+        caption = {"FAS-width-label-caption", ":"}
+    }
+
+    local width_value = area_input_table.add{
+        type = "textfield",
+        name = "width_value",
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
+    }
+    global.gui[index].width_value = width_value
+
+    area_input_table.add{
+        type = "label",
+        name = "height-label",
+        caption = {"FAS-height-label-caption", ":"}
+    }
+
+    local height_value = area_input_table.add{
+        type = "textfield",
+        name = "height_value",
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
+    }
+    global.gui[index].height_value = height_value
+
+    area_input_table.add{
+        type = "label",
+        name = "x-label",
+        caption = "X:"
+    }
+
+    local x_value = area_input_table.add{
+        type = "textfield",
+        name = "x_value",
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
+    }
+    global.gui[index].x_value = x_value
+
+
+    area_input_table.add{
+        type = "label",
+        name = "y-label",
+        caption = "Y:",
+    }
+
+    local y_value = area_input_table.add{
+        type = "textfield",
+        name = "y_value",
+        numeric = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
+    }
+    global.gui[index].y_value = y_value
+end
+
+local function buildAreaZoom(index, area_content)
+    local zoom_flow = area_content.add{
+        type = "flow",
+        name = "zoom_flow",
+        direction = "horizontal"
+    }
+    zoom_flow.style.vertical_align = "center"
+    zoom_flow.add{
+        type = "label",
+        name = "zoom_label",
+        caption = {"FAS-zoom-label-caption"},
+        style = "fas_label"
+    }
+    local zoom_slider = zoom_flow.add{
+        type = "slider",
+        name = "zoom_slider",
+        maximum_value = "5",
+        minimum_value = "0.25",
+        value = global.snip.zoomLevel[index],
+        value_step = "0.25",
+        style = "notched_slider"
+    }
+    zoom_slider.style.right_margin = 8
+    zoom_slider.style.width = 127
+    global.gui[index].zoom_slider = zoom_slider
+    local zoom_value = zoom_flow.add{
+        type = "textfield",
+        name = "zoom_value",
+        text = global.snip.zoomLevel[index],
+        numeric = "true",
+        allow_decimal = "true",
+        enabled = "false",
+        style = "fas_numeric_input"
+    }
+    zoom_value.style.width = 41
+    -- zoom_value.style.disabled_font_color = {1, 1, 1}
+    global.gui[index].zoom_value = zoom_value
+end
+
+local function buildAreaResolution(index, area_content)
+    local resolution_flow = area_content.add{
+        type = "flow",
+        name = "resolution_flow",
+        direction = "horizontal"
+    }
+    resolution_flow.add{
+        type = "label",
+        name = "resolution_label",
+        caption = {"FAS-resolution-caption"},
+        style = "fas_label"
+    }
+    global.gui[index].resolution_value = resolution_flow.add{
+        type = "label",
+        name = "resolution_value",
+        caption = {"FAS-no-area-selected"}
+    }
+end
+
+local function buildAreaFilesize(index, area_content)
+    local estimated_filesize_flow = area_content.add{
+        type = "flow",
+        name = "estimated_filesize_flow",
+        direction = "horizontal"
+    }
+    estimated_filesize_flow.add{
+        type = "label",
+        name = "estimated_filesize_label",
+        caption = {"FAS-estimated-filesize"},
+        style = "fas_label"
+    }
+    global.gui[index].estimated_filesize_value = estimated_filesize_flow.add{
+        type = "label",
+        name = "estimated_filesize_value",
+        caption = "-"
+    }
+end
+
+local function buildAreaStartButton(index, area_content)
+    local agree_flow = area_content.add{
+        type = "flow",
+        name = "agree_flow",
+        direction = "horizontal"
+    }
+    agree_flow.style.vertical_align = "center"
+    local spreader = agree_flow.add{
+        type = "empty-widget",
+        name = "spreader"
+    }
+    spreader.style.horizontally_stretchable = true
+    global.gui[index].start_area_screenshot_button = agree_flow.add{
+        type = "button",
+        name = "start_area_screenshot_button",
+        caption = {"FAS-start-area-screenshot-button-caption"},
+        mouse_button_filter = {"left"},
+        enabled = "false"
+    }
+end
+
+local function buildAreaScreenshotSection(index, area_frame)
+    buildAreaHeader(index, area_frame.add{
+        type = "flow",
+        style = "player_input_horizontal_flow"
+    })
+
+    local area_content = area_frame.add{
+        type = "flow",
+        direction = "vertical"
+    }
+    global.gui[index].area_content = area_content
+
+
+    buildAreaArea(index, area_content)
+    buildAreaZoom(index, area_content)
+    buildAreaResolution(index, area_content)
+    buildAreaFilesize(index, area_content)
+    
+    -- warning
+    local warning = area_content.add{
+        type = "label",
+        name = "warning_label",
+        caption = {"FAS-warning"}
+    }
+    warning.style.width = 334
+    warning.style.single_line = false
+
+    buildAreaStartButton(index, area_content)
+end
+
+local function createGuiFrame(player)
+    log("creating gui for player " .. player.index)
+    
+    -- [[ GENERAL ]] --
+    global.gui[player.index] = {}
+    local guiFrame = player.gui.screen.add{
+        type = "frame",
+        name = mainFrameName,
+        direction = "vertical"
+    }
+    guiFrame.auto_center = true
+    global.gui[player.index].mainFrame = guiFrame
+
+    buildHeader(guiFrame)
+
+    -- content frame below the header
+    local content_frame = guiFrame.add{
+        type = "frame",
+        name = "content_frame",
+        direction = "vertical",
+        style = "window_content_frame_deep"
+    }
+    
+    buildAutoScreenshotSection(player.index, content_frame.add{
+        type = "frame",
+        name = "auto_frame",
+        direction = "vertical",
+        style = "fas_section"
+    })
+
+    buildAreaScreenshotSection(player.index, content_frame.add{
+        type = "frame",
+        name = "area_frame",
+        direction = "vertical",
+        style = "fas_section"
+    })
+end
+--[[ END GUI CREATION CHAOS ]]--
+
+
+
+
+
 --[[ EVENT CATCHERS ]]--
 function gui.on_gui_event(event)
     log("on gui event triggered with element name " .. event.element.name)
@@ -52,29 +462,44 @@ function gui.togglegui(event)
     local player = game.get_player(event.player_index)
     local guiFrame = player.gui.screen[mainFrameName]
     if not guiFrame then
-        gui.createGuiFrame(player)
+        createGuiFrame(player)
     else
-        if guiFrame.visible then
-            log("guiframe was visible")
-            -- if we hide the gui, the tick on the "I understand" checkbox is removed, so that the user has to click it again the next time
-            if global.snip.doesUnderstand[event.player_index] then
-                global.snip.doesUnderstand[event.player_index] = false
-                global.gui[event.player_index].agree_checkbox.state = false
-                global.gui[event.player_index].start_area_screenshot_button.enabled = false
-            end
-            guiFrame.visible = false
-        else
-            log("guiframe was not visible")
-            guiFrame.visible = true
-            if not gui.amount then
+        if not guiFrame.visible and not global.auto.amount then
                 gui.refreshStatusCountdown()
-            end
         end
+        guiFrame.visible = not guiFrame.visible
     end
 end
 
 function gui.gui_close(event)
     gui.togglegui(event)
+end
+
+function gui.auto_content_collapse(event)
+    if global.gui[event.player_index].auto_content.visible then
+        global.gui[event.player_index].auto_content_collapse.sprite = "utility/expand"
+        global.gui[event.player_index].auto_content_collapse.hovered_sprite = "utility/expand_dark"
+        global.gui[event.player_index].auto_content_collapse.clicked_sprite = "utility/expand_dark"
+    else
+        global.gui[event.player_index].auto_content_collapse.sprite = "utility/collapse"
+        global.gui[event.player_index].auto_content_collapse.hovered_sprite = "utility/collapse_dark"
+        global.gui[event.player_index].auto_content_collapse.clicked_sprite = "utility/collapse_dark"
+    end
+    global.gui[event.player_index].auto_content.visible = not global.gui[event.player_index].auto_content.visible
+end
+
+function gui.area_content_collapse(event)
+    if global.gui[event.player_index].area_content.visible then
+        global.gui[event.player_index].area_content_collapse.sprite = "utility/expand"
+        global.gui[event.player_index].area_content_collapse.hovered_sprite = "utility/expand_dark"
+        global.gui[event.player_index].area_content_collapse.clicked_sprite = "utility/expand_dark"
+    else
+        global.gui[event.player_index].area_content_collapse.sprite = "utility/collapse"
+        global.gui[event.player_index].area_content_collapse.hovered_sprite = "utility/collapse_dark"
+        global.gui[event.player_index].area_content_collapse.clicked_sprite = "utility/collapse_dark"
+    end
+    global.gui[event.player_index].area_content.visible = not global.gui[event.player_index].area_content.visible
+
 end
 
 function gui.select_area_button(event)
@@ -106,9 +531,7 @@ local function refreshStartHighResScreenshotButton(index)
         local resX = math.floor((global.snip.area[index].right - global.snip.area[index].left) * 32 * zoom)
         local resY = math.floor((global.snip.area[index].bottom - global.snip.area[index].top) * 32 * zoom)
         
-        global.gui[index].start_area_screenshot_button.enabled = global.snip.doesUnderstand[index]
-            and resX < 16385
-            and resY < 16385
+        global.gui[index].start_area_screenshot_button.enabled = resX < 16385 and resY < 16385
     end
 end
 
@@ -277,13 +700,6 @@ function gui.on_player_cursor_stack_changed(event)
     end
 end
 
-function gui.agree_checkbox(event)
-    log("i understand was clicked, toggling button and value")
-    local state = event.element.state
-    global.snip.doesUnderstand[event.player_index] = state
-    refreshStartHighResScreenshotButton(event.player_index)
-end
-
 function gui.start_area_screenshot_button(event)
     log("start high res screenshot button was pressed")
     local i = event.player_index
@@ -303,357 +719,17 @@ end
 
 
 
-function gui.createGuiFrame(player)
-    log("creating gui for player " .. player.index)
-
-    --TODO change these into proper styles
-    local label_width = 150
-    local max_width = 350
-    
-    -- [[ GENERAL ]] --
-    global.gui[player.index] = {}
-    local guiFrame = player.gui.screen.add{
-        type = "frame",
-        name = mainFrameName,
-        direction = "vertical"
-    }
-    guiFrame.auto_center = true
-    global.gui[player.index].mainFrame = guiFrame
-    local header = guiFrame.add{ type = "flow" }
-    header.style.horizontal_spacing = 8
-    header.drag_target = guiFrame
-
-    local title = header.add{
-        type = "label",
-        style = "frame_title",
-        caption = "Screenshot Toolkit Panel"
-    }
-    title.drag_target = guiFrame
-    local dragHandle = header.add{
-        type = "empty-widget",
-        style = "fas_draghandle"
-    }
-    dragHandle.drag_target = guiFrame
-    header.add{
-        type = "sprite-button",
-        name = "gui_close",
-        style = "frame_action_button",
-        sprite = "utility/close_white",
-        hovered_sprite = "utility/close_black",
-        clicked_sprite = "utility/close_black",
-        mouse_button_filter = {"left"},
-    }
-
-
-    local content_frame = guiFrame.add{
-        type = "frame",
-        name = "content_frame",
-        direction = "vertical",
-        style = "inside_shallow_frame_with_padding"
-    }
-
-    local vertical_flow = content_frame.add{
-        type = "flow",
-        name = "vertical_flow",
-        direction = "vertical"
-    }
-
-
-
-    -- [[ AUTO SCREENSHOT AREA ]] --
-    vertical_flow.add{
-        type = "label",
-        name = "auto_screenshots_label",
-        caption = "Auto Screenshots",
-        style = "caption_label"
-    }
-
-    -- status flow
-    local status_flow = vertical_flow.add{
-        type = "flow",
-        name = "status_flow",
-        direction = "horizontal"
-    }
-    local status_label = status_flow.add{
-        type = "label",
-        name = "status_label",
-        caption = {"FAS-status-caption"}
-    }
-    status_label.style.width = label_width
-    global.gui[player.index].status_value = status_flow.add{
-        type = "label",
-        name = "status_value",
-        caption = gui.getStatusValue(player)
-    }
-
-    local progressbar = vertical_flow.add{
-        type = "progressbar",
-        name = "progress",
-        visible = "false"
-    }
-    progressbar.style.width = 350
-    global.gui[player.index].progress_bar = progressbar
-
-    -- surface flow
-    local surface_flow = vertical_flow.add{
-        type = "flow",
-        name = "surface_flow",
-        direction = "horizontal"
-    }
-    local surface_label = surface_flow.add{
-        type = "label",
-        name = "surface_label",
-        caption = {"FAS-surface-label-caption"}
-    }
-    surface_label.style.width = label_width
-    surface_flow.add{
-        type = "label",
-        name = "surface_value",
-        caption = {"FAS-surface-value-caption"},
-        tooltip = {"FAS-surface-value-tooltip"}
-    }
-
-    -- separator line
-    local line = vertical_flow.add{ type = "line" }
-    line.style.height = 10
-
-
-
-    -- [[ AREA SCREENSHOTS AREA ]] --
-    vertical_flow.add{
-        type = "label",
-        name = "area_screenshots_label",
-        caption = {"FAS-area-screenshots-label"},
-        style = "caption_label"
-    }
-
-    -- Area select area
-    local area_select_flow = vertical_flow.add{
-        type = "flow",
-        name = "area_select_flow",
-        direction = "horizontal"
-    }
-
-    area_select_flow.add{
-        type = "label",
-        name = "area-label",
-        caption = {"FAS-area-caption"},
-        tooltip = {"FAS-area-tooltip"}
-    }
-
-    global.gui[player.index].select_area_button = area_select_flow.add{
-        type = "sprite-button",
-        name = "select_area_button",
-        sprite = "FAS-area-select-icon",
-        mouse_button_filter = {"left"},
-        tooltip = {"FAS-area-select-button-tooltip"},
-        style = "tool_button"
-    }
-
-    area_select_flow.add{
-        type = "sprite-button",
-        name = "delete_area_button",
-        sprite = "FAS-delete-selection-icon",
-        mouse_button_filter = {"left"},
-        tooltip = {"FAS-delete-area-button-tooltip"},
-        style = "tool_button_red"
-    }
-
-    local area_spreader = area_select_flow.add{
-        type = "empty-widget",
-        name = "area_spreader"
-    }
-    area_spreader.style.horizontally_stretchable = true
-
-    -- Area select table
-    local area_input_table = area_select_flow.add{
-        type = "table",
-        name = "area_select_table",
-        column_count = 4
-    }
-    area_input_table.add{
-        type = "label",
-        name = "width-label",
-        caption = {"FAS-width-label-caption", ":"}
-    }
-
-    local width_value = area_input_table.add{
-        type = "textfield",
-        name = "width_value",
-        numeric = "true",
-        enabled = "false",
-        style = "fas_numeric_input"
-    }
-    global.gui[player.index].width_value = width_value
-
-    area_input_table.add{
-        type = "label",
-        name = "height-label",
-        caption = {"FAS-height-label-caption", ":"}
-    }
-
-    local height_value = area_input_table.add{
-        type = "textfield",
-        name = "height_value",
-        numeric = "true",
-        enabled = "false",
-        style = "fas_numeric_input"
-    }
-    global.gui[player.index].height_value = height_value
-
-    area_input_table.add{
-        type = "label",
-        name = "x-label",
-        caption = "X:"
-    }
-
-    local x_value = area_input_table.add{
-        type = "textfield",
-        name = "x_value",
-        numeric = "true",
-        enabled = "false",
-        style = "fas_numeric_input"
-    }
-    global.gui[player.index].x_value = x_value
-
-
-    area_input_table.add{
-        type = "label",
-        name = "y-label",
-        caption = "Y:",
-    }
-
-    local y_value = area_input_table.add{
-        type = "textfield",
-        name = "y_value",
-        numeric = "true",
-        enabled = "false",
-        style = "fas_numeric_input"
-    }
-    global.gui[player.index].y_value = y_value
-
-    -- zoom flow
-    local zoom_flow = vertical_flow.add{
-        type = "flow",
-        name = "zoom_flow",
-        direction = "horizontal"
-    }
-    zoom_flow.style.vertical_align = "center"
-    local zoom_label = zoom_flow.add{
-        type = "label",
-        name = "zoom_label",
-        caption = {"FAS-zoom-label-caption"}
-    }
-    zoom_label.style.width = label_width
-    local zoom_slider = zoom_flow.add{
-        type = "slider",
-        name = "zoom_slider",
-        maximum_value = "5",
-        minimum_value = "0.25",
-        value = "1",
-        value_step = "0.25",
-        style = "notched_slider"
-    }
-    zoom_slider.style.right_margin = 8
-    zoom_slider.style.width = 124
-    global.gui[player.index].zoom_slider = zoom_slider
-    local zoom_value = zoom_flow.add{
-        type = "textfield",
-        name = "zoom_value",
-        text = "1",
-        numeric = "true",
-        allow_decimal = "true",
-        enabled = "false",
-        style = "fas_numeric_input"
-    }
-    -- zoom_value.style.disabled_font_color = {1, 1, 1}
-    global.gui[player.index].zoom_value = zoom_value
-    global.snip.zoomLevel[player.index] = 1
-
-    -- estimated resolution flow
-    local resolution_flow = vertical_flow.add{
-        type = "flow",
-        name = "resolution_flow",
-        direction = "horizontal"
-    }
-    local resolution_label = resolution_flow.add{
-        type = "label",
-        name = "resolution_label",
-        caption = {"FAS-resolution-caption"}
-    }
-    resolution_label.style.width = label_width
-    global.gui[player.index].resolution_value = resolution_flow.add{
-        type = "label",
-        name = "resolution_value",
-        caption = {"FAS-no-area-selected"}
-    }
-
-    -- estimated filesize flow
-    local estimated_filesize_flow = vertical_flow.add{
-        type = "flow",
-        name = "estimated_filesize_flow",
-        direction = "horizontal"
-    }
-    local estimated_filesize_label = estimated_filesize_flow.add{
-        type = "label",
-        name = "estimated_filesize_label",
-        caption = {"FAS-estimated-filesize"}
-    }
-    estimated_filesize_label.style.width = label_width
-    global.gui[player.index].estimated_filesize_value = estimated_filesize_flow.add{
-        type = "label",
-        name = "estimated_filesize_value",
-        caption = "-"
-    }
-
-    -- warning
-    local warning = vertical_flow.add{
-        type = "label",
-        name = "warning_label",
-        caption = {"FAS-warning"}
-    }
-    warning.style.width = max_width
-    warning.style.single_line = false
-
-    -- agree flow
-    local agree_flow = vertical_flow.add{
-        type = "flow",
-        name = "agree_flow",
-        direction = "horizontal"
-    }
-
-    agree_flow.style.vertical_align = "center"
-    global.gui[player.index].agree_checkbox = agree_flow.add{
-        type = "checkbox",
-        name = "agree_checkbox",
-        caption = {"FAS-i-understand-caption"},
-        state = "false"
-    }
-    local spreader = agree_flow.add{
-        type = "empty-widget",
-        name = "spreader"
-    }
-    spreader.style.horizontally_stretchable = true
-    global.gui[player.index].start_area_screenshot_button = agree_flow.add{
-        type = "button",
-        name = "start_area_screenshot_button",
-        caption = {"FAS-start-area-screenshot-button-caption"},
-        mouse_button_filter = {"left"},
-        enabled = "false"
-    }
-end
-
-function gui.getStatusValue(player)
-    if gui.amount then
-        return gui.amount .. " / " .. gui.total
+function gui.getStatusValue()
+    if global.auto.amount then
+        return global.auto.amount .. " / " .. global.auto.total
     end
 
 end
 
 function gui.setStatusValue(amount, total)
-    gui.amount = amount
-    gui.total = total
-    gui.progressValue = amount / total
+    global.auto.amount = amount
+    global.auto.total = total
+    global.auto.progressValue = amount / total
     for index, player in pairs(global.gui) do
         if player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. index .. " with amount " .. amount .. " / " .. total) end
@@ -661,7 +737,7 @@ function gui.setStatusValue(amount, total)
             if player.progress_bar.visible == false then
                 player.progress_bar.visible = true
             end
-            player.progress_bar.value = gui.progressValue
+            player.progress_bar.value = global.auto.progressValue
         end
         -- set flowbutton pie progress value
     end
@@ -685,10 +761,10 @@ end
 
 function gui.refreshStatusCountdown()
     --reset status values if still present, necessary on the first time the cooldown is set
-    if gui.amount then
-        gui.amount = nil
-        gui.total = nil
-        gui.progressValue = nil
+    if global.auto.amount then
+        global.auto.amount = nil
+        global.auto.total = nil
+        global.auto.progressValue = nil
         for _, player in pairs(global.gui) do
             player.progress_bar.visible = false
             -- reset flowbutton pie progress value
