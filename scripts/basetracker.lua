@@ -44,8 +44,12 @@ function tracker.evaluateLimitsFromWholeBase()
 	-- if no blocks have been placed yet
 	if tchunk == nil then
 		log("tchunk is nil")
-		global.tracker.limitX = 1
-		global.tracker.limitY = 1
+		global.tracker.limitX = 64
+		global.tracker.limitY = 64
+		global.tracker.minX = -64
+		global.tracker.maxX = 64
+		global.tracker.minY = -64
+		global.tracker.maxY = 64
 	else
 		global.tracker.minX = lchunk.area.left_top.x
 		global.tracker.maxX = rchunk.area.right_bottom.x

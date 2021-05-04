@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.5
+  Bugfixes:
+    - Fixed crash on placing the first block in a new save.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.4
   Features:
     - Changed the gui to be collapsable
