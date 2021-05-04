@@ -19,17 +19,21 @@ local function loadDefaultsForEmptySettings(index)
 
 	if global.auto.resX[index] == nil then
 		local resolution = player_settings["FAS-Resolution"].value
+		global.auto.resolution_index[index] = 1
 		global.auto.resX[index] = 7680;
 		global.auto.resY[index] = 4320;
-		if (resolution == "3840x2160 (4K)") then
-			global.auto.resX[index] = 3840;
-			global.auto.resY[index] = 2160;
-		elseif (resolution == "1920x1080 (FullHD)") then
-			global.auto.resX[index] = 1920;
-			global.auto.resY[index] = 1080;
-		elseif (resolution == "1280x720  (HD)") then
-			global.auto.resX[index] = 1280;
-			global.auto.resY[index] = 720;
+		if resolution == "3840x2160 (4K)" then
+			global.auto.resolution_index[index] = 2
+			global.auto.resX[index] = 3840
+			global.auto.resY[index] = 2160
+		elseif resolution == "1920x1080 (FullHD)" then
+			global.auto.resolution_index[index] = 3
+			global.auto.resX[index] = 1920
+			global.auto.resY[index] = 1080
+		elseif resolution == "1280x720  (HD)" then
+			global.auto.resolution_index[index] = 4
+			global.auto.resX[index] = 1280
+			global.auto.resY[index] = 720
 		end
 	end
 
@@ -73,6 +77,7 @@ local function initialize()
 	global.auto.interval = {}
 	global.auto.singleScreenshot = {}
 	global.auto.splittingFactor = {}
+	global.auto.resolution_index = {}
 	global.auto.resX = {}
 	global.auto.resY = {}
 	global.auto.zoom = {}
@@ -148,7 +153,7 @@ local function on_nth_tick(event)
 			log("player " .. player.name .. " with index " .. player.index .. " found")
 			log("do screenshot:    " .. (global.auto.doScreenshot[player.index] and "true" or "false"))
 			log("interval:         " .. global.auto.interval[player.index])
-			log("singleScreenshot: " .. (global.auto.singleScreenshot[player.index] or "false"))
+			log("singleScreenshot: " .. (global.auto.singleScreenshot[player.index] and "true" or "false"))
 			log("tick:             " .. game.tick)
 		end
 		if global.auto.doScreenshot[player.index] and (event.tick % global.auto.interval[player.index] == 0) then
@@ -188,7 +193,9 @@ script.on_event(defines.events.on_built_entity, on_built_entity)
 
 -- GUI
 script.on_event(defines.events.on_gui_click, gui.on_gui_event)
-script.on_event(defines.events.on_gui_value_changed, gui.on_gui_event)
+script.on_event(defines.events.on_gui_value_changed, gui.on_gui_value_changed)
+script.on_event(defines.events.on_gui_text_changed, gui.on_gui_text_changed)
+script.on_event(defines.events.on_gui_selection_state_changed, gui.on_gui_selection_state_changed)
 script.on_event("FAS-left-click", gui.on_left_click)
 script.on_event("FAS-right-click", gui.on_right_click)
 script.on_event(defines.events.on_player_cursor_stack_changed, gui.on_player_cursor_stack_changed)

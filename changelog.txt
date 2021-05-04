@@ -2,6 +2,7 @@
 Version: 2.0.4
   Features:
     - Changed the gui to be collapsable
+    - Moved the auto screenshot settings to the gui. Settings are now hidden, but are read if you had them set in a non-default way. Do not worry!
   Bugfixes:
     - Fixed issue of debug setting not being applied when being set in-game
     - Fixed major persistancy issue that made the game crash within 1 second on loading a save that has the mod in use

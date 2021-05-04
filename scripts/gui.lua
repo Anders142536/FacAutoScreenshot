@@ -40,7 +40,7 @@ local function buildHeader(guiFrame)
     local title = header.add{
         type = "label",
         style = "frame_title",
-        caption = "Screenshot Toolkit Panel"
+        caption = {"FAS-screenshot-toolkit-panel"}
     }
     title.drag_target = guiFrame
     local dragHandle = header.add{
@@ -65,7 +65,7 @@ local function buildAutoHeader(index, auto_header)
     global.gui[index].auto_content_collapse = auto_header.add{
         type = "sprite-button",
         name = "auto_content_collapse",
-        style = "control_settings_section_button",
+        style = "fas_expand_button",
         sprite = "utility/collapse",
         hovered_sprite = "utility/collapse_dark",
         clicked_sprite = "utility/collapse_dark",
@@ -75,7 +75,7 @@ local function buildAutoHeader(index, auto_header)
     auto_header.add{
         type = "label",
         name = "auto_screenshots_label",
-        caption = "Auto Screenshots",
+        caption = {"FAS-auto-screenshots-label"},
         style = "caption_label"
     }
 end
@@ -84,7 +84,8 @@ local function buildAutoStatus(index, auto_content)
     local status_flow = auto_content.add{
         type = "flow",
         name = "status_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
     status_flow.add{
         type = "label",
@@ -111,7 +112,8 @@ local function buildAutoSurface(index, auto_content)
     local surface_flow = auto_content.add{
         type = "flow",
         name = "surface_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
     surface_flow.add{
         type = "label",
@@ -131,7 +133,8 @@ local function buildAutoDoScreenshots(index, auto_content)
     local do_screenshots_flow = auto_content.add{
         type = "flow",
         name = "do_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
 
     do_screenshots_flow.add{
@@ -152,7 +155,8 @@ local function buildAutoResolution(index, auto_screenshot_config)
     local resolution_flow = auto_screenshot_config.add{
         type = "flow",
         name = "do_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
 
     resolution_flow.add{
@@ -161,20 +165,43 @@ local function buildAutoResolution(index, auto_screenshot_config)
         caption = {"FAS-resolution-caption"},
         style = "fas_label"
     }
+
+    resolution_flow.add{
+        type = "drop-down",
+        name = "auto_resolution_value",
+        selected_index = global.auto.resolution_index[index],
+        items = {"7680x4320 (8K)", "3840x2160 (4K)", "1920x1080 (FullHD)", "1280x720  (HD)"}
+    }
 end
 
 local function buildAutoInterval(index, auto_screenshot_config)
     local interval_flow = auto_screenshot_config.add{
         type = "flow",
         name = "interval_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
 
     interval_flow.add{
         type = "label",
         name = "interval_label",
-        caption = {"FAS-interval-label"},
+        caption = {"FAS-interval-label-caption"},
         style = "fas_label"
+    }
+
+    global.gui[index].interval_value = interval_flow.add{
+        type = "textfield",
+        name = "interval_value",
+        tooltip = {"FAS-interval-value-tooltip"},
+        text = global.auto.interval[index] / 3600,
+        numeric = true,
+        style = "fas_slim_numeric_output"
+    }
+
+    interval_flow.add{
+        type = "label",
+        name = "interval_unit",
+        caption = "min"
     }
 end
 
@@ -182,14 +209,21 @@ local function buildAutoSingleTick(index, auto_screenshot_config)
     local single_tick_flow = auto_screenshot_config.add{
         type = "flow",
         name = "single_tick_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
 
     single_tick_flow.add{
         type = "label",
         name = "single_tick_label",
-        caption = {"FAS-single-tick-label"},
+        caption = {"FAS-single-tick-caption"},
         style = "fas_label"
+    }
+
+    global.gui[index].single_tick_value = single_tick_flow.add{
+        type = "checkbox",
+        name = "single_tick_value",
+        state = global.auto.singleScreenshot[index]
     }
 end
 
@@ -197,15 +231,37 @@ local function buildAutoSplittingFactor(index, auto_screenshot_config)
     local splitting_factor_flow = auto_screenshot_config.add{
         type = "flow",
         name = "splitting_factor_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow",
+        visible = not global.auto.singleScreenshot[index]
     }
+    global.gui[index].splitting_factor_flow = splitting_factor_flow
 
-    global.gui[index].splitting_factor_label = splitting_factor_flow.add{
+    splitting_factor_flow.add{
         type = "label",
         name = "splitting_factor_label",
-        caption = {"FAS-splitting-factor-label"},
-        style = "fas_label",
-        visible = global.auto.singleScreenshot[index]
+        caption = {"FAS-splitting-factor-caption"},
+        tooltip = {"FAS-splitting-factor-tooltip"},
+        style = "fas_label"
+    }
+
+    splitting_factor_flow.add{
+        type = "slider",
+        name = "splitting_factor_slider",
+        minimum_value = "0",
+        maximum_value = "3",
+        -- x in 4^x, log_4(x), as log_a(b) is ln(b)/ln(a) -- credits to curiosity!
+        value = math.log(global.auto.splittingFactor[index])/math.log(4),
+        style = "fas_slider"
+    }
+
+    global.gui[index].splitting_factor_value = splitting_factor_flow.add{
+        type = "textfield",
+        name = "splitting_factor_value",
+        text = global.auto.splittingFactor[index],
+        numeric = "true",
+        enabled = false,
+        style = "fas_slim_numeric_output"
     }
 end
 
@@ -244,7 +300,7 @@ local function buildAreaHeader(index, area_header)
     global.gui[index].area_content_collapse = area_header.add{
         type = "sprite-button",
         name = "area_content_collapse",
-        style = "control_settings_section_button",
+        style = "fas_expand_button",
         sprite = "utility/collapse",
         hovered_sprite = "utility/collapse_dark",
         clicked_sprite = "utility/collapse_dark",
@@ -254,7 +310,7 @@ local function buildAreaHeader(index, area_header)
     area_header.add{
         type = "label",
         name = "area_screenshots_label",
-        caption = "Area Screenshots",
+        caption = {"FAS-area-screenshots-label"},
         style = "caption_label"
     }
 end
@@ -266,12 +322,13 @@ local function buildAreaArea(index, area_content)
         direction = "horizontal"
     }
 
-    area_select_flow.add{
+    local area_label = area_select_flow.add{
         type = "label",
         name = "area-label",
         caption = {"FAS-area-caption"},
         tooltip = {"FAS-area-tooltip"}
     }
+    area_label.style.top_margin = 4
 
     global.gui[index].select_area_button = area_select_flow.add{
         type = "sprite-button",
@@ -314,7 +371,7 @@ local function buildAreaArea(index, area_content)
         name = "width_value",
         numeric = "true",
         enabled = "false",
-        style = "fas_numeric_input"
+        style = "fas_numeric_output"
     }
     global.gui[index].width_value = width_value
 
@@ -329,7 +386,7 @@ local function buildAreaArea(index, area_content)
         name = "height_value",
         numeric = "true",
         enabled = "false",
-        style = "fas_numeric_input"
+        style = "fas_numeric_output"
     }
     global.gui[index].height_value = height_value
 
@@ -344,7 +401,7 @@ local function buildAreaArea(index, area_content)
         name = "x_value",
         numeric = "true",
         enabled = "false",
-        style = "fas_numeric_input"
+        style = "fas_numeric_output"
     }
     global.gui[index].x_value = x_value
 
@@ -360,7 +417,7 @@ local function buildAreaArea(index, area_content)
         name = "y_value",
         numeric = "true",
         enabled = "false",
-        style = "fas_numeric_input"
+        style = "fas_numeric_output"
     }
     global.gui[index].y_value = y_value
 end
@@ -369,46 +426,41 @@ local function buildAreaZoom(index, area_content)
     local zoom_flow = area_content.add{
         type = "flow",
         name = "zoom_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
-    zoom_flow.style.vertical_align = "center"
     zoom_flow.add{
         type = "label",
         name = "zoom_label",
         caption = {"FAS-zoom-label-caption"},
         style = "fas_label"
     }
-    local zoom_slider = zoom_flow.add{
+    global.gui[index].zoom_slider = zoom_flow.add{
         type = "slider",
         name = "zoom_slider",
         maximum_value = "5",
         minimum_value = "0.25",
         value = global.snip.zoomLevel[index],
         value_step = "0.25",
-        style = "notched_slider"
+        style = "fas_slider"
     }
-    zoom_slider.style.right_margin = 8
-    zoom_slider.style.width = 127
-    global.gui[index].zoom_slider = zoom_slider
-    local zoom_value = zoom_flow.add{
+    global.gui[index].zoom_value = zoom_flow.add{
         type = "textfield",
         name = "zoom_value",
         text = global.snip.zoomLevel[index],
         numeric = "true",
         allow_decimal = "true",
         enabled = "false",
-        style = "fas_numeric_input"
+        style = "fas_slim_numeric_output"
     }
-    zoom_value.style.width = 41
-    -- zoom_value.style.disabled_font_color = {1, 1, 1}
-    global.gui[index].zoom_value = zoom_value
 end
 
 local function buildAreaResolution(index, area_content)
     local resolution_flow = area_content.add{
         type = "flow",
         name = "resolution_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
     resolution_flow.add{
         type = "label",
@@ -427,7 +479,8 @@ local function buildAreaFilesize(index, area_content)
     local estimated_filesize_flow = area_content.add{
         type = "flow",
         name = "estimated_filesize_flow",
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
     estimated_filesize_flow.add{
         type = "label",
@@ -537,16 +590,34 @@ end
 
 
 --[[ EVENT CATCHERS ]]--
-function gui.on_gui_event(event)
-    log("on gui event triggered with element name " .. event.element.name)
-
+local function callHandler(event, suffix)
     -- handler methods have to be called the same as the element that shall trigger them
-    local handlerMethod = gui[event.element.name]
+    local handlerMethod = gui[event.element.name .. suffix]
 
     -- if a handler method exists the gui press was for an element of this mod
     if handlerMethod then
         handlerMethod(event)
     end
+end
+
+function gui.on_gui_event(event)
+    log("on gui event triggered with element name " .. event.element.name)
+    callHandler(event, "")
+end
+
+function gui.on_gui_value_changed(event)
+    log("on_gui_value_changed triggered with element name " .. event.element.name)
+    callHandler(event, "_value_changed")
+end
+
+function gui.on_gui_text_changed(event)
+    log("on gui text changed triggered with element name " .. event.element.name)
+    callHandler(event, "_text_changed")
+end
+
+function gui.on_gui_selection_state_changed(event)
+    log("on_gui_selection_state_changed event triggered with element name " .. event.element.name)
+    callHandler(event, "_selection")
 end
 
 
@@ -595,6 +666,69 @@ function gui.area_content_collapse(event)
     end
     global.gui[event.player_index].area_content.visible = not global.gui[event.player_index].area_content.visible
 
+end
+
+function gui.do_screenshots_checkbox(event)
+    log("do screenshots was triggered for player " .. event.player_index)
+    local doesScreenshots = event.element.state
+    global.auto.doScreenshot[event.player_index] = doesScreenshots
+    global.gui[event.player_index].auto_screenshot_config.visible = doesScreenshots
+    
+    shooter.refreshNextScreenshotTimestamp()
+    gui.refreshStatusCountdown()
+end
+
+function gui.auto_resolution_value_selection(event)
+    log("resolution setting was changed for player " .. event.player_index)
+    local resolution_index = event.element.selected_index
+    if resolution_index == 1 then
+        global.auto.resolution_index[event.player_index] = 1
+        global.auto.resX[event.player_index] = 7680;
+        global.auto.resY[event.player_index] = 4320;
+    elseif resolution_index == 2 then
+        global.auto.resolution_index[event.player_index] = 2
+        global.auto.resX[event.player_index] = 3840
+        global.auto.resY[event.player_index] = 2160
+    elseif resolution_index == 3 then
+        global.auto.resolution_index[event.player_index] = 3
+        global.auto.resX[event.player_index] = 1920
+        global.auto.resY[event.player_index] = 1080
+    elseif resolution_index == 4 then
+        global.auto.resolution_index[event.player_index] = 4
+        global.auto.resX[event.player_index] = 1280
+        global.auto.resY[event.player_index] = 720
+    end
+
+end
+
+function gui.interval_value_text_changed(event)
+    log("interval was changed for player " .. event.player_index)
+    local suggestion = tonumber(event.text)
+    if suggestion == nil then return end
+    if suggestion < 1 or suggestion > 60 then
+        event.element.text = tostring(global.auto.interval[event.player_index] / 3600)
+        return
+    end
+
+    global.auto.interval[event.player_index] = suggestion * 60 * 60
+
+    shooter.refreshNextScreenshotTimestamp()
+    gui.refreshStatusCountdown()
+end
+
+function gui.single_tick_value(event)
+    log(("single tick value was changed for player " .. event.player_index))
+    local doesSingle = event.element.state
+    global.auto.singleScreenshot[event.player_index] = doesSingle
+    global.gui[event.player_index].splitting_factor_flow.visible = not doesSingle
+    
+end
+
+function gui.splitting_factor_slider_value_changed(event)
+    log("splitting factor was changed for player " .. event.player_index)
+    local splittingFactor = math.pow(4, event.element.slider_value)
+    global.auto.splittingFactor[event.player_index] = splittingFactor
+    global.gui[event.player_index].splitting_factor_value.text = tostring(splittingFactor)
 end
 
 function gui.select_area_button(event)
@@ -681,6 +815,22 @@ function gui.delete_area_button(event)
     global.gui[i].height_value.text = ""
 
     refreshEstimates(i)
+    refreshStartHighResScreenshotButton(event.player_index)
+end
+
+function gui.start_area_screenshot_button(event)
+    log("start high res screenshot button was pressed")
+    local i = event.player_index
+
+    shooter.renderAreaScreenshot(i, global.snip.area[i], global.snip.zoomLevel[i])
+end
+
+function gui.zoom_slider_value_changed(event)
+    if (global.verbose) then log("zoom slider was moved") end
+    local level = event.element.slider_value
+    global.gui[event.player_index].zoom_value.text = tostring(level)
+    global.snip.zoomLevel[event.player_index] = level
+    refreshEstimates(event.player_index)
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
@@ -793,21 +943,6 @@ function gui.on_player_cursor_stack_changed(event)
     end
 end
 
-function gui.start_area_screenshot_button(event)
-    log("start high res screenshot button was pressed")
-    local i = event.player_index
-
-    shooter.renderAreaScreenshot(i, global.snip.area[i], global.snip.zoomLevel[i])
-end
-
-function gui.zoom_slider(event)
-    if (global.verbose) then log("zoom slider was moved") end
-    local level = event.element.slider_value
-    global.gui[event.player_index].zoom_value.text = tostring(level)
-    global.snip.zoomLevel[event.player_index] = level
-    refreshEstimates(event.player_index)
-    refreshStartHighResScreenshotButton(event.player_index)
-end
 --[[ END HANDLER METHODS ]]--
 
 
@@ -837,8 +972,8 @@ function gui.setStatusValue(amount, total)
 end
 
 local function calculateCountdown()
-    if (shooter.nextScreenshotTimestamp ~= nil) then
-        local timediff = (shooter.nextScreenshotTimestamp - game.tick) / 60
+    if global.nextScreenshotTimestamp ~= nil then
+        local timediff = (global.nextScreenshotTimestamp - game.tick) / 60
 
         local diffSec = math.floor(timediff % 60)
         if timediff > 59 then
