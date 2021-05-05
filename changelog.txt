@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.6
+  Bugfixes:
+    - Fixed crash on loading a game in multiplayer that was saved in single player with the gui open.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.5
   Bugfixes:
     - Fixed crash on placing the first block in a new save.
