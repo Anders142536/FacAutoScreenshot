@@ -12,8 +12,9 @@ TODO:
 [√] add instructions to gui
 [√] resolve conflicts with existing area selection hotkeys (CTRL-C, CTRL-X, etc) and Q presses
 [√] add "x" button to top right
-[ ] hide settings and read them for defaults
-[ ] move settings to gui
+[√] hide settings and read them for defaults
+[√] move settings to gui
+[ ] investigate area controls being default when loading save that had area set/button clicked
 [ ] make icon in flow button animated when doing auto screenshots
 [ ] only show warning when in multiplayer if doable
 [ ] show where the user left clicked or right clicked with colored squares and "L" or "R" inside

@@ -177,7 +177,10 @@ function shooter.renderNextScreenshot()
 		n.offset.x = 0
 		n.offset.y = n.offset.y + 1
 		if (n.offset.y >= n.numberOfTiles) then
+			--all screenshots have been done, return to countdown
+			log("end of doing screenshots")
 			table.remove(global.auto.nextScreenshot, 1)
+			shooter.refreshNextScreenshotTimestamp()
 		end
 	end
 end
