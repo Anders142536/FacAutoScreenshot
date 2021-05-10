@@ -3,49 +3,48 @@ local shooter = {}
 function shooter.evaluateZoomForAllPlayers()
     log("ev zoom for all players")
 	for _, player in pairs(game.connected_players) do
-		if global.auto.doScreenshot[player.index] then
+		if global.auto[player.index].doScreenshot then
 			shooter.evaluateZoomForPlayer(player.index)
 		end
 	end
 end
 
-function shooter.evaluateZoomForPlayer(player)
+function shooter.evaluateZoomForPlayer(index)
 	if(global.verbose) then
-		log("ev zoom for player " .. player)
-		log("resX: " .. global.auto.resX[player])
-		log("resY: " .. global.auto.resY[player])
+		log("ev zoom for player " .. index)
+		log("resX: " .. global.auto[index].resX)
+		log("resY: " .. global.auto[index].resY)
 		log("global.tracker.limitX: " .. global.tracker.limitX)
 		log("global.tracker.limitY: " .. global.tracker.limitY)
-		log("old zoom: " .. (global.auto.zoom[player] or "nil"))
-		log("zoomLevel: " .. (global.auto.zoomLevel[player] or "nil"))
+		log("old zoom: " .. (global.auto[index].zoom or "nil"))
+		log("zoomLevel: " .. (global.auto[index].zoomLevel or "nil"))
 	end
 
-	if not global.auto.zoom[player] then global.auto.zoom[player] = 1 end
-	if not global.auto.zoomLevel[player] then global.auto.zoomLevel[player] = 1 end
+	if not global.auto[index].zoom then global.auto[index].zoom = 1 end
+	if not global.auto[index].zoomLevel then global.auto[index].zoomLevel = 1 end
 
 	-- 7680					global.auto.resX
 	-- -------- = 0,3		------------------ = zoom
 	-- 800  32				leftRight resTiles
-	local zoomX = global.auto.resX[player] / (global.tracker.limitX * 2 * 32)
-	local zoomY = global.auto.resY[player] / (global.tracker.limitY * 2 * 32)
+	local zoomX = global.auto[index].resX / (global.tracker.limitX * 2 * 32)
+	local zoomY = global.auto[index].resY / (global.tracker.limitY * 2 * 32)
 
 	local newZoom = zoomX
 	if zoomX > zoomY then
 		newZoom = zoomY
 	end
 
-	local oldZoom = global.auto.zoom[player]
-	while newZoom < global.auto.zoom[player] and global.auto.zoomLevel[player] < 32 do
-		global.auto.zoomLevel[player] = global.auto.zoomLevel[player] + 1
-		global.auto.zoom[player] = 1 / global.auto.zoomLevel[player]
-		log("Adjusting zoom for player " .. player .. " to " .. global.auto.zoom[player] .. " and zoomlevel to " .. global.auto.zoomLevel[player])
+	local oldZoom = global.auto[index].zoom
+	while newZoom < global.auto[index].zoom and global.auto[index].zoomLevel < 32 do
+		global.auto[index].zoomLevel = global.auto[index].zoomLevel + 1
+		global.auto[index].zoom = 1 / global.auto[index].zoomLevel
+		log("Adjusting zoom for player " .. index .. " to " .. global.auto[index].zoom .. " and zoomlevel to " .. global.auto[index].zoomLevel)
 	end
-	if oldZoom > global.auto.zoom[player] then
-		log("Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.auto.zoom[player])
-		game.print("FAS: Adjusted zoom for player " .. player .. " from " .. oldZoom .. " to " .. global.auto.zoom[player] .. " (zoomlevel: " .. global.auto.zoomLevel[player] .. ")")
-		if (global.auto.zoom[player] == 32) then
-			log("Player " .. player .. " reached maximum zoomlevel")
-			game.print("FAS: Player " .. player .. " reached maximum zoom level of 32. No further zooming out possible. Entities exceeding the screenshot limits will not be shown on the screenshots!")
+	if oldZoom > global.auto[index].zoom then
+		log("Adjusted zoom for player " .. index .. " from " .. oldZoom .. " to " .. global.auto[index].zoom)
+		if (global.auto[index].zoom == 32) then
+			log("Player " .. index .. " reached maximum zoomlevel")
+			game.print("FAS: Player " .. index .. " reached maximum zoom level of 32. No further zooming out possible. Entities exceeding the screenshot limits will not be shown on the screenshots!")
 		end
 	end
 end
@@ -55,7 +54,7 @@ local function getDivisor(index)
 	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16
 	--  1,  2,  2,  2,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
 
-	local zoomLevel = global.auto.zoomLevel[index]
+	local zoomLevel = global.auto[index].zoomLevel
 	local divisor
 	if zoomLevel == 1 then
 		divisor = 1
@@ -69,7 +68,7 @@ local function getDivisor(index)
 		divisor = 16
 	end
 	
-	divisor = divisor * (math.sqrt(global.auto.splittingFactor[index]))
+	divisor = divisor * (math.sqrt(global.auto[index].splittingFactor))
 
 	if (global.verbose) then
 		log("returned divisor " .. divisor .. " from input " .. zoomLevel)
@@ -82,9 +81,9 @@ function shooter.registerPlayerToScreenshotlist(index)
 	log("registering player to screenshot list")
 
 	local numberOfTiles = getDivisor(index)
-	local resX = global.auto.resX[index]
-	local resY = global.auto.resY[index]
-	local zoom = global.auto.zoom[index]
+	local resX = global.auto[index].resX
+	local resY = global.auto[index].resY
+	local zoom = global.auto[index].zoom
 
 	-- like calculating zoom, but reverse
 	-- cannot take limits from global, as we want the border of the screenshot, not the base
@@ -99,7 +98,7 @@ function shooter.registerPlayerToScreenshotlist(index)
 	temp["res"] = {x = resX / numberOfTiles, y = resY / numberOfTiles}
 	temp["numberOfTiles"] = numberOfTiles
 	temp["offset"] = {x=0, y=0}
-	temp["startpos"] = {x = -rightborder + posXStepsize / 2, y = -bottomborder + posYStepsize}
+	temp["startpos"] = {x = -rightborder + posXStepsize / 2, y = -bottomborder + posYStepsize / 2}
 	temp["stepsize"] = {x = posXStepsize, y = posYStepsize}
 	temp["zoom"] = zoom
 	temp["title"] = "screenshot" .. game.tick
@@ -115,15 +114,15 @@ function shooter.registerPlayerToScreenshotlist(index)
 		log("title:      " .. temp["title"])
 	end
 
-	table.insert(global.auto.nextScreenshot, temp)
+	table.insert(global.schedule.nextScreenshot, temp)
 end
 
 function shooter.refreshNextScreenshotTimestamp()
 	local closest
 	for _, player in pairs(game.connected_players) do
-		if global.auto.doScreenshot[player.index] then
-			local times = math.floor(game.tick / global.auto.interval[player.index])
-			local next = global.auto.interval[player.index] * (times + 1)
+		if global.auto[player.index].doScreenshot then
+			local times = math.floor(game.tick / global.auto[player.index].interval)
+			local next = global.auto[player.index].interval * (times + 1)
 			if closest == nil or next < closest then
 				closest = next
 			end
@@ -157,11 +156,17 @@ local function renderScreenshot(index, resolution, position, zoom, folder, title
 end
 
 function shooter.hasNextScreenshot()
-	return global.auto.nextScreenshot[1] ~= nil
+	return global.schedule.nextScreenshot[1] ~= nil
+end
+
+function shooter.renderSingleScreenshot(index)
+
+	renderScreenshot(index, {global.auto[index].resX, global.auto[index].resY}, {0, 0}, global.auto[index].zoom, "", "screenshot" .. game.tick) -- set params
+			
 end
 
 function shooter.renderNextScreenshot()
-	local n = global.auto.nextScreenshot[1]
+	local n = global.schedule.nextScreenshot[1]
 	local posX = n.startpos.x + n.stepsize.x * n.offset.x
 	local posY = n.startpos.y + n.stepsize.y * n.offset.y
 
@@ -179,7 +184,7 @@ function shooter.renderNextScreenshot()
 		if (n.offset.y >= n.numberOfTiles) then
 			--all screenshots have been done, return to countdown
 			log("end of doing screenshots")
-			table.remove(global.auto.nextScreenshot, 1)
+			table.remove(global.schedule.nextScreenshot, 1)
 			shooter.refreshNextScreenshotTimestamp()
 		end
 	end

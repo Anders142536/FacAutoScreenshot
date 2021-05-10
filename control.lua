@@ -5,53 +5,57 @@ shooter = require("scripts.shooter")
 local function loadDefaultsForEmptySettings(index)
 	log("loading defaults for player " .. index)
 
+	if not global.auto[index] then global.auto[index] = {} end
+	if not global.snip[index] then global.snip[index] = {} end
+
 	-- on removing settings support, remove settings and fetching of player
 	-- instead use default values of settings directly
 	local player_settings = settings.get_player_settings(game.get_player(index))
 
-	if global.auto.doScreenshot[index] == nil then
-		global.auto.doScreenshot[index] = player_settings["FAS-do-screenshot"].value
+
+	if global.auto[index].doScreenshot == nil then
+		global.auto[index].doScreenshot = player_settings["FAS-do-screenshot"].value
 	end
 
-	if global.auto.interval[index] == nil then
-		global.auto.interval[index] = player_settings["FAS-Screenshot-interval"].value * 60 * 60
+	if global.auto[index].interval == nil then
+		global.auto[index].interval = player_settings["FAS-Screenshot-interval"].value * 60 * 60
 	end
 
-	if global.auto.resX[index] == nil then
+	if global.auto[index].resX == nil then
 		local resolution = player_settings["FAS-Resolution"].value
-		global.auto.resolution_index[index] = 1
-		global.auto.resX[index] = 7680;
-		global.auto.resY[index] = 4320;
+		global.auto[index].resolution_index = 1
+		global.auto[index].resX = 7680;
+		global.auto[index].resY = 4320;
 		if resolution == "3840x2160 (4K)" then
-			global.auto.resolution_index[index] = 2
-			global.auto.resX[index] = 3840
-			global.auto.resY[index] = 2160
+			global.auto[index].resolution_index = 2
+			global.auto[index].resX = 3840
+			global.auto[index].resY = 2160
 		elseif resolution == "1920x1080 (FullHD)" then
-			global.auto.resolution_index[index] = 3
-			global.auto.resX[index] = 1920
-			global.auto.resY[index] = 1080
+			global.auto[index].resolution_index = 3
+			global.auto[index].resX = 1920
+			global.auto[index].resY = 1080
 		elseif resolution == "1280x720  (HD)" then
-			global.auto.resolution_index[index] = 4
-			global.auto.resX[index] = 1280
-			global.auto.resY[index] = 720
+			global.auto[index].resolution_index = 4
+			global.auto[index].resX = 1280
+			global.auto[index].resY = 720
 		end
 	end
 
-	if global.auto.singleScreenshot[index] == nil then
-		global.auto.singleScreenshot[index] = player_settings["FAS-single-screenshot"].value
+	if global.auto[index].singleScreenshot == nil then
+		global.auto[index].singleScreenshot = player_settings["FAS-single-screenshot"].value
 	end
 
-	if global.auto.splittingFactor[index] == nil then
-		global.auto.splittingFactor[index] = settings.global["FAS-increased-splitting"].value
+	if global.auto[index].splittingFactor == nil then
+		global.auto[index].splittingFactor = settings.global["FAS-increased-splitting"].value
 	end
 	
-	if not global.snip.zoomLevel[index] then global.snip.zoomLevel[index] = 1 end
+	if not global.snip[index].zoomLevel then global.snip[index].zoomLevel = 1 end
 
 	-- confirmation logs reading back the set settings in chat.
-	if (global.auto.doScreenshot[index]) then
+	if (global.auto[index].doScreenshot) then
 		log("Player " .. index .. " does screenshots with resolution " .. 
-		global.auto.resX[index] .. "x" .. global.auto.resY[index] .. 
-		" every " .. (global.auto.interval[index] / 3600) .. " minutes")
+		global.auto[index].resX .. "x" .. global.auto[index].resY .. 
+		" every " .. (global.auto[index].interval / 3600) .. " minutes")
 		shooter.evaluateZoomForPlayer(index)
 	else
 		log("Player " .. index .. " does no screenshots")
@@ -64,33 +68,14 @@ local function initialize()
 
 	global.auto = {}
 	global.snip = {}
-	-- tracker doesnt need to hold values based on players, hence no table init below
 	global.tracker = {}
 	global.gui = {}
+	global.schedule = {
+		nextScreenshot = {}
+	}
+
 
 	global.verbose = settings.global["FAS-enable-debug"].value
-
-	if not global.auto.nextScreenshot then
-		global.auto.nextScreenshot = {}
-	end
-	global.auto.doScreenshot = {}
-	global.auto.interval = {}
-	global.auto.singleScreenshot = {}
-	global.auto.splittingFactor = {}
-	global.auto.resolution_index = {}
-	global.auto.resX = {}
-	global.auto.resY = {}
-	global.auto.zoom = {}
-	global.auto.zoomLevel = {}
-
-	global.snip.zoomLevel = {}
-	global.snip.doesSelection = {}
-	global.snip.areaLeftClick = {}
-	global.snip.areaRightClick = {}
-	global.snip.rec = {}
-	global.snip.area = {}
-
-	global.gui = {}
 
 	basetracker.evaluateLimitsFromWholeBase()
 
@@ -151,19 +136,19 @@ local function on_nth_tick(event)
 	for _, player in pairs(game.connected_players) do
 		if global.verbose then
 			log("player " .. player.name .. " with index " .. player.index .. " found")
-			log("do screenshot:    " .. (global.auto.doScreenshot[player.index] and "true" or "false"))
-			log("interval:         " .. global.auto.interval[player.index])
-			log("singleScreenshot: " .. (global.auto.singleScreenshot[player.index] and "true" or "false"))
+			log("do screenshot:    " .. (global.auto[player.index].doScreenshot and "true" or "false"))
+			log("interval:         " .. global.auto[player.index].interval)
+			log("singleScreenshot: " .. (global.auto[player.index].singleScreenshot and "true" or "false"))
 			log("tick:             " .. game.tick)
 		end
-		if global.auto.doScreenshot[player.index] and (event.tick % global.auto.interval[player.index] == 0) then
+		if global.auto[player.index].doScreenshot and (event.tick % global.auto[player.index].interval == 0) then
 			if shooter.hasNextScreenshot() then
 				log("there was still a screenshot queued on nth tick event trigger")
 				game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set, make less players do screenshots or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
 				return
 			end
-			if global.auto.singleScreenshot[player.index] then
-				shooter.renderScreenshot(player.index, {global.auto.resX[player.index], global.auto.resY[player.index]}, {0, 0}, global.auto.zoom[player.index], "", "screenshot" .. game.tick) -- set params
+			if global.auto[player.index].singleScreenshot then
+				shooter.renderSingleScreenshot(player.index)
 			else
 				shooter.registerPlayerToScreenshotlist(player.index)
 			end
@@ -171,7 +156,6 @@ local function on_nth_tick(event)
 	end
 
 end
-
 
 
 --[[ EVENT REGISTRATION ]]--

@@ -147,7 +147,7 @@ local function buildAutoDoScreenshots(index, auto_content)
     global.gui[index].do_screenshots_checkbox = do_screenshots_flow.add{
         type = "checkbox",
         name = "do_screenshots_checkbox",
-        state = global.auto.doScreenshot[index]
+        state = global.auto[index].doScreenshot
     }
 end
 
@@ -169,7 +169,7 @@ local function buildAutoResolution(index, auto_screenshot_config)
     resolution_flow.add{
         type = "drop-down",
         name = "auto_resolution_value",
-        selected_index = global.auto.resolution_index[index],
+        selected_index = global.auto[index].resolution_index,
         items = {"7680x4320 (8K)", "3840x2160 (4K)", "1920x1080 (FullHD)", "1280x720  (HD)"}
     }
 end
@@ -193,7 +193,7 @@ local function buildAutoInterval(index, auto_screenshot_config)
         type = "textfield",
         name = "interval_value",
         tooltip = {"FAS-interval-value-tooltip"},
-        text = global.auto.interval[index] / 3600,
+        text = global.auto[index].interval / 3600,
         numeric = true,
         style = "fas_slim_numeric_output"
     }
@@ -223,7 +223,7 @@ local function buildAutoSingleTick(index, auto_screenshot_config)
     global.gui[index].single_tick_value = single_tick_flow.add{
         type = "checkbox",
         name = "single_tick_value",
-        state = global.auto.singleScreenshot[index]
+        state = global.auto[index].singleScreenshot
     }
 end
 
@@ -233,7 +233,7 @@ local function buildAutoSplittingFactor(index, auto_screenshot_config)
         name = "splitting_factor_flow",
         direction = "horizontal",
         style = "fas_flow",
-        visible = not global.auto.singleScreenshot[index]
+        visible = not global.auto[index].singleScreenshot
     }
     global.gui[index].splitting_factor_flow = splitting_factor_flow
 
@@ -251,14 +251,14 @@ local function buildAutoSplittingFactor(index, auto_screenshot_config)
         minimum_value = "0",
         maximum_value = "3",
         -- x in 4^x, log_4(x), as log_a(b) is ln(b)/ln(a) -- credits to curiosity!
-        value = math.log(global.auto.splittingFactor[index])/math.log(4),
+        value = math.log(global.auto[index].splittingFactor)/math.log(4),
         style = "fas_slider"
     }
 
     global.gui[index].splitting_factor_value = splitting_factor_flow.add{
         type = "textfield",
         name = "splitting_factor_value",
-        text = global.auto.splittingFactor[index],
+        text = global.auto[index].splittingFactor,
         numeric = "true",
         enabled = false,
         style = "fas_slim_numeric_output"
@@ -285,7 +285,7 @@ local function buildAutoScreenshotSection(index, auto_frame)
     local auto_screenshot_config = auto_content.add{
         type = "flow",
         direction = "vertical",
-        visible = global.auto.doScreenshot[index]
+        visible = global.auto[index].doScreenshot
     }
     global.gui[index].auto_screenshot_config = auto_screenshot_config
     buildAutoResolution(index, auto_screenshot_config)
@@ -440,14 +440,14 @@ local function buildAreaZoom(index, area_content)
         name = "zoom_slider",
         maximum_value = "5",
         minimum_value = "0.25",
-        value = global.snip.zoomLevel[index],
+        value = global.snip[index].zoomLevel,
         value_step = "0.25",
         style = "fas_slider"
     }
     global.gui[index].zoom_value = zoom_flow.add{
         type = "textfield",
         name = "zoom_value",
-        text = global.snip.zoomLevel[index],
+        text = global.snip[index].zoomLevel,
         numeric = "true",
         allow_decimal = "true",
         enabled = "false",
@@ -671,7 +671,7 @@ end
 function gui.do_screenshots_checkbox(event)
     log("do screenshots was triggered for player " .. event.player_index)
     local doesScreenshots = event.element.state
-    global.auto.doScreenshot[event.player_index] = doesScreenshots
+    global.auto[event.player_index].doScreenshot = doesScreenshots
     global.gui[event.player_index].auto_screenshot_config.visible = doesScreenshots
     
     shooter.refreshNextScreenshotTimestamp()
@@ -682,21 +682,21 @@ function gui.auto_resolution_value_selection(event)
     log("resolution setting was changed for player " .. event.player_index)
     local resolution_index = event.element.selected_index
     if resolution_index == 1 then
-        global.auto.resolution_index[event.player_index] = 1
-        global.auto.resX[event.player_index] = 7680;
-        global.auto.resY[event.player_index] = 4320;
+        global.auto[event.player_index].resolution_index = 1
+        global.auto[event.player_index].resX = 7680;
+        global.auto[event.player_index].resY = 4320;
     elseif resolution_index == 2 then
-        global.auto.resolution_index[event.player_index] = 2
-        global.auto.resX[event.player_index] = 3840
-        global.auto.resY[event.player_index] = 2160
+        global.auto[event.player_index].resolution_index = 2
+        global.auto[event.player_index].resX = 3840
+        global.auto[event.player_index].resY = 2160
     elseif resolution_index == 3 then
-        global.auto.resolution_index[event.player_index] = 3
-        global.auto.resX[event.player_index] = 1920
-        global.auto.resY[event.player_index] = 1080
+        global.auto[event.player_index].resolution_index = 3
+        global.auto[event.player_index].resX = 1920
+        global.auto[event.player_index].resY = 1080
     elseif resolution_index == 4 then
-        global.auto.resolution_index[event.player_index] = 4
-        global.auto.resX[event.player_index] = 1280
-        global.auto.resY[event.player_index] = 720
+        global.auto[event.player_index].resolution_index = 4
+        global.auto[event.player_index].resX = 1280
+        global.auto[event.player_index].resY = 720
     end
 
 end
@@ -706,11 +706,11 @@ function gui.interval_value_text_changed(event)
     local suggestion = tonumber(event.text)
     if suggestion == nil then return end
     if suggestion < 1 or suggestion > 60 then
-        event.element.text = tostring(global.auto.interval[event.player_index] / 3600)
+        event.element.text = tostring(global.auto[event.player_index].interval / 3600)
         return
     end
 
-    global.auto.interval[event.player_index] = suggestion * 60 * 60
+    global.auto[event.player_index].interval = suggestion * 60 * 60
 
     shooter.refreshNextScreenshotTimestamp()
     gui.refreshStatusCountdown()
@@ -719,7 +719,7 @@ end
 function gui.single_tick_value(event)
     log(("single tick value was changed for player " .. event.player_index))
     local doesSingle = event.element.state
-    global.auto.singleScreenshot[event.player_index] = doesSingle
+    global.auto[event.player_index].singleScreenshot = doesSingle
     global.gui[event.player_index].splitting_factor_flow.visible = not doesSingle
     
 end
@@ -727,15 +727,15 @@ end
 function gui.splitting_factor_slider_value_changed(event)
     log("splitting factor was changed for player " .. event.player_index)
     local splittingFactor = math.pow(4, event.element.slider_value)
-    global.auto.splittingFactor[event.player_index] = splittingFactor
+    global.auto[event.player_index].splittingFactor = splittingFactor
     global.gui[event.player_index].splitting_factor_value.text = tostring(splittingFactor)
 end
 
 function gui.select_area_button(event)
     log("select area button was clicked")
-    global.snip.doesSelection[event.player_index] = not global.snip.doesSelection[event.player_index]
+    global.snip[event.player_index].doesSelection = not global.snip[event.player_index].doesSelection
     
-    if global.snip.doesSelection[event.player_index] then
+    if global.snip[event.player_index].doesSelection then
         log("turned on")
         --swap styles of button
         global.gui[event.player_index].select_area_button.style = "fas_clicked_tool_button"
@@ -753,28 +753,28 @@ end
 
 local function refreshStartHighResScreenshotButton(index)
     -- {1, 16384}
-    local zoom = 1 / global.snip.zoomLevel[index]
-    if not global.snip.area[index] then
+    local zoom = 1 / global.snip[index].zoomLevel
+    if not global.snip[index].area then
         global.gui[index].start_area_screenshot_button.enabled = false
     else
-        local resX = math.floor((global.snip.area[index].right - global.snip.area[index].left) * 32 * zoom)
-        local resY = math.floor((global.snip.area[index].bottom - global.snip.area[index].top) * 32 * zoom)
+        local resX = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
+        local resY = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
         
         global.gui[index].start_area_screenshot_button.enabled = resX < 16385 and resY < 16385
     end
 end
 
 local function refreshEstimates(index)
-    if not global.snip.area[index] then
+    if not global.snip[index].area then
         -- happens if the zoom slider is moved before an area was selected so far
         global.gui[index].resolution_value.caption = {"FAS-no-area-selected"}
         global.gui[index].estimated_filesize_value.caption = "-"
         return
     end
 
-    local zoom = 1 / global.snip.zoomLevel[index]
-    local width = math.floor((global.snip.area[index].right - global.snip.area[index].left) * 32 * zoom)
-    local height = math.floor((global.snip.area[index].bottom - global.snip.area[index].top) * 32 * zoom)
+    local zoom = 1 / global.snip[index].zoomLevel
+    local width = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
+    local height = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
     
     local bytesPerPixel = 3
     local size = bytesPerPixel * width * height
@@ -794,48 +794,48 @@ local function refreshEstimates(index)
 end
 
 function gui.delete_area_button(event)
-    local i = event.player_index
-    if global.snip.area[i] then
-        global.snip.area[i] = nil
+    local index = event.player_index
+    if global.snip[index].area then
+        global.snip[index].area = nil
     end
-    if global.snip.areaLeftClick[i] then
-        global.snip.areaLeftClick[i] = nil
+    if global.snip[index].areaLeftClick then
+        global.snip[index].areaLeftClick = nil
     end
-    if global.snip.areaRightClick[i] then
-        global.snip.areaRightClick[i] = nil
+    if global.snip[index].areaRightClick then
+        global.snip[index].areaRightClick = nil
     end
-    if global.snip.rec[i] then
-        rendering.destroy(global.snip.rec[i])
-        global.snip.rec[i] = nil
+    if global.snip[index].rec then
+        rendering.destroy(global.snip[index].rec)
+        global.snip[index].rec = nil
     end
 
-    global.gui[i].x_value.text = ""
-    global.gui[i].y_value.text = ""
-    global.gui[i].width_value.text = ""
-    global.gui[i].height_value.text = ""
+    global.gui[index].x_value.text = ""
+    global.gui[index].y_value.text = ""
+    global.gui[index].width_value.text = ""
+    global.gui[index].height_value.text = ""
 
-    refreshEstimates(i)
+    refreshEstimates(index)
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
 function gui.start_area_screenshot_button(event)
     log("start high res screenshot button was pressed")
-    local i = event.player_index
+    local index = event.player_index
 
-    shooter.renderAreaScreenshot(i, global.snip.area[i], global.snip.zoomLevel[i])
+    shooter.renderAreaScreenshot(index, global.snip[index].area, global.snip[index].zoomLevel)
 end
 
 function gui.zoom_slider_value_changed(event)
     if (global.verbose) then log("zoom slider was moved") end
     local level = event.element.slider_value
     global.gui[event.player_index].zoom_value.text = tostring(level)
-    global.snip.zoomLevel[event.player_index] = level
+    global.snip[event.player_index].zoomLevel = level
     refreshEstimates(event.player_index)
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
 local function calculateArea(index)
-    if global.snip.areaLeftClick[index] == nil and global.snip.areaRightClick[index] == nil then
+    if global.snip[index].areaLeftClick == nil and global.snip[index].areaRightClick == nil then
         log("something went wrong when calculating selected area, aborting")
         return
     end
@@ -845,13 +845,13 @@ local function calculateArea(index)
     local bottom
     local right
 
-    if global.snip.areaLeftClick[index] then
-        top = global.snip.areaLeftClick[index].y
-        left = global.snip.areaLeftClick[index].x
+    if global.snip[index].areaLeftClick then
+        top = global.snip[index].areaLeftClick.y
+        left = global.snip[index].areaLeftClick.x
     end
-    if global.snip.areaRightClick[index] then
-        bottom = global.snip.areaRightClick[index].y
-        right = global.snip.areaRightClick[index].x
+    if global.snip[index].areaRightClick then
+        bottom = global.snip[index].areaRightClick.y
+        right = global.snip[index].areaRightClick.x
     end
 
     if not top then
@@ -882,23 +882,23 @@ local function calculateArea(index)
     local width = right - left
     local height = bottom - top
 
-    if not global.snip.area[index] then
-        global.snip.area[index] = {}
+    if not global.snip[index].area then
+        global.snip[index].area = {}
     end
-    global.snip.area[index].top = top
-    global.snip.area[index].left = left
-    global.snip.area[index].right = right
-    global.snip.area[index].bottom = bottom
+    global.snip[index].area.top = top
+    global.snip[index].area.left = left
+    global.snip[index].area.right = right
+    global.snip[index].area.bottom = bottom
  
     global.gui[index].x_value.text = tostring(left)
     global.gui[index].y_value.text = tostring(top)
     global.gui[index].width_value.text = tostring(width)
     global.gui[index].height_value.text = tostring(height)
     
-    if global.snip.rec[index] then
-        rendering.destroy(global.snip.rec[index])
+    if global.snip[index].rec then
+        rendering.destroy(global.snip[index].rec)
     end
-    global.snip.rec[index] = rendering.draw_rectangle{
+    global.snip[index].rec = rendering.draw_rectangle{
         color = {0.5, 0.5, 0.5, 0.5},
         width = 1,
         filled = false,
@@ -912,8 +912,8 @@ end
 
 function gui.on_left_click(event)
     log("left click!")
-    if global.snip.doesSelection[event.player_index] then
-        global.snip.areaLeftClick[event.player_index] = event.cursor_position
+    if global.snip[event.player_index].doesSelection then
+        global.snip[event.player_index].areaLeftClick = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
         refreshStartHighResScreenshotButton(event.player_index)
@@ -922,8 +922,8 @@ end
 
 function gui.on_right_click(event)
     log("right click!")
-    if global.snip.doesSelection[event.player_index] then
-        global.snip.areaRightClick[event.player_index] = event.cursor_position
+    if global.snip[event.player_index].doesSelection then
+        global.snip[event.player_index].areaRightClick = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
         refreshStartHighResScreenshotButton(event.player_index)
@@ -932,13 +932,13 @@ end
 
 function gui.on_player_cursor_stack_changed(event)
     log("player " .. event.player_index .. " cursor stack changed")
-    local i = event.player_index
-    if global.snip.doesSelection[i] then
-        local stack = game.get_player(i).cursor_stack
+    local index = event.player_index
+    if global.snip[index].doesSelection then
+        local stack = game.get_player(index).cursor_stack
         if stack and (not stack.valid_for_read or stack.name ~= "FAS-selection-tool") then
             log("reverting to not selecting area")
-            global.snip.doesSelection[i] = false
-            global.gui[i].select_area_button.style = "tool_button"
+            global.snip[index].doesSelection = false
+            global.gui[index].select_area_button.style = "tool_button"
         end
     end
 end

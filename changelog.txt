@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.9
+  Bugfixes:
+    - Fixed issue of auto screenshots not actually being centered on the base, but being moved vertically. I am sorry if this caused some timelapses to be broken.
+  Optimizations:
+    - Pretty big refactor of the code to prepare the code for the upcoming changes.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.8
   Bugfixes:
     - Fixed issue of countdown always being < 1min after finishing screenshots, no matter the set interval

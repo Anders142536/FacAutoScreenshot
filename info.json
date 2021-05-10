@@ -1,6 +1,6 @@
 {
   "name": "FacAutoScreenshot",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "title": "Screenshot Toolkit",
   "author": "Anders142536",
   "description": "Automatically does screenshots of the whole base in set minute intervals.\nAllows for screenshots of selected areas.\n\nWritten to be performance friendly with various settings giving you control over how the screenshots are done and how much the performance is impacted. For more information check the FAQ on the mod portal.",
