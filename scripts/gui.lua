@@ -674,7 +674,7 @@ function gui.do_screenshots_checkbox(event)
     global.auto[event.player_index].doScreenshot = doesScreenshots
     global.gui[event.player_index].auto_screenshot_config.visible = doesScreenshots
     
-    shooter.refreshNextScreenshotTimestamp()
+    queue.refreshNextScreenshotTimestamp()
     gui.refreshStatusCountdown()
 end
 
@@ -712,7 +712,7 @@ function gui.interval_value_text_changed(event)
 
     global.auto[event.player_index].interval = suggestion * 60 * 60
 
-    shooter.refreshNextScreenshotTimestamp()
+    queue.refreshNextScreenshotTimestamp()
     gui.refreshStatusCountdown()
 end
 
@@ -822,7 +822,7 @@ function gui.start_area_screenshot_button(event)
     log("start high res screenshot button was pressed")
     local index = event.player_index
 
-    shooter.renderAreaScreenshot(index, global.snip[index].area, global.snip[index].zoomLevel)
+    shooter.renderAreaScreenshot(index)
 end
 
 function gui.zoom_slider_value_changed(event)
