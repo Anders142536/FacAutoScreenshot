@@ -1,6 +1,7 @@
 gui = require("scripts.gui")
 basetracker = require("scripts.basetracker")
 shooter = require("scripts.shooter")
+queue = require("scripts.queue")
 
 local function loadDefaultsForEmptySettings(index)
 	log("loading defaults for player " .. index)
@@ -60,7 +61,7 @@ local function loadDefaultsForEmptySettings(index)
 		log("Player " .. index .. " does screenshots with resolution " .. 
 		global.auto[index].resX .. "x" .. global.auto[index].resY .. 
 		" every " .. (global.auto[index].interval / 3600) .. " minutes")
-		shooter.evaluateZoomForPlayer(index)
+		shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 	else
 		log("Player " .. index .. " does no screenshots")
 	end
@@ -70,18 +71,22 @@ end
 local function initialize()
 	log("initialize")
 
-	global.auto = {}
+	global.auto = {
+		-- surface specific, therefore indexed after surfaces
+		zoom = {},
+		zoomLevel = {}
+	}
 	global.snip = {}
 	global.tracker = {}
 	global.gui = {}
-	global.schedule = {
+	global.queue = {
 		nextScreenshot = {}
 	}
 
 
 	global.verbose = settings.global["FAS-enable-debug"].value
 
-	basetracker.evaluateLimitsFromWholeBase()
+	basetracker.evaluateLimitsOfSurface()
 
 	--this should only find the host player if hosted directly
 	for _, player in pairs(game.connected_players) do
@@ -90,19 +95,19 @@ local function initialize()
 		gui.initialize(player)
 	end
 
-	shooter.refreshNextScreenshotTimestamp()
+	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_player_joined_game(event)
 	log("player " .. event.player_index .. " joined")
 	gui.initialize(game.get_player(event.player_index))
 	loadDefaultsForEmptySettings(event.player_index)
-	shooter.refreshNextScreenshotTimestamp()
+	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_player_left_game(event)
 	log("player " .. event.player_index .. " left")
-	shooter.refreshNextScreenshotTimestamp()
+	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_runtime_mod_setting_changed(event)
@@ -114,17 +119,18 @@ end
 
 local function on_built_entity(event)
 	local pos = event.created_entity.position
+	local surface = event.created_entity.surface.index
 	if (global.verbose) then
-		log("pos: " .. pos.x .. "x" .. pos.y)
+		log("entity built on surface " .. surface .. event " at pos: " .. pos.x .. "x" .. pos.y)
 	end
-	if basetracker.breaksCurrentLimits(pos) then
-		basetracker.evaluateMinMaxFromPosition(pos)
+	if basetracker.breaksCurrentLimits(pos, surface) then
+		basetracker.evaluateMinMaxFromPosition(pos, surface)
 	end
 end
 
 local function on_tick()
-	if (shooter.hasNextScreenshot()) then
-		shooter.renderNextScreenshot()
+	if not queue.isEmpty() then
+		shooter.renderAutoScreenshotFragment()
 	else
 		if game.tick % 60  == 0 then
 			gui.refreshStatusCountdown()
@@ -135,7 +141,9 @@ end
 local function on_nth_tick(event)
 	log("on nth tick")
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
-	basetracker.checkForMinMaxChange()
+	for _, surface in pairs(game.surfaces) do
+		basetracker.checkForMinMaxChange(surface.index)
+	end
 
 	for _, player in pairs(game.connected_players) do
 		if global.verbose then
@@ -146,15 +154,16 @@ local function on_nth_tick(event)
 			log("tick:             " .. game.tick)
 		end
 		if global.auto[player.index].doScreenshot and (event.tick % global.auto[player.index].interval == 0) then
-			if shooter.hasNextScreenshot() then
+			if not queue.isEmpty() then
 				log("there was still a screenshot queued on nth tick event trigger")
 				game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set, make less players do screenshots or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
 				return
 			end
 			if global.auto[player.index].singleScreenshot then
-				shooter.renderSingleScreenshot(player.index)
+				-- register single screenshots
+				-- shooter.renderAutoSingleScreenshot(player.index)
 			else
-				shooter.registerPlayerToScreenshotlist(player.index)
+				queue.registerPlayerToScreenshotlist(player.index)
 			end
 		end
 	end
