@@ -1,7 +1,7 @@
 local tracker = {}
 
-local function hasEntities(chunk)
-	local count = game.surfaces[1].count_entities_filtered{
+local function hasEntities(chunk, surface)
+	local count = game.surfaces[surface].count_entities_filtered{
 		area=chunk.area,
 		force="player",
 		limit=1
@@ -9,10 +9,10 @@ local function hasEntities(chunk)
 	return (count ~= 0)
 end
 
-function tracker.evaluateLimitsFromWholeBase()
-	log("Evaluating whole base")
+function tracker.evaluateLimitsOfSurface(surface)
+	log("Evaluating whole surface: " .. surface)
 	
-	local surface = game.surfaces[1];
+	local surface = game.surfaces[surface];
 	local tchunk = nil;
 	local rchunk = nil;
 	local bchunk = nil;
@@ -44,23 +44,23 @@ function tracker.evaluateLimitsFromWholeBase()
 	-- if no blocks have been placed yet
 	if tchunk == nil then
 		log("tchunk is nil")
-		global.tracker.limitX = 64
-		global.tracker.limitY = 64
-		global.tracker.minX = -64
-		global.tracker.maxX = 64
-		global.tracker.minY = -64
-		global.tracker.maxY = 64
+		global.tracker[surface].limitX = 64
+		global.tracker[surface].limitY = 64
+		global.tracker[surface].minX = -64
+		global.tracker[surface].maxX = 64
+		global.tracker[surface].minY = -64
+		global.tracker[surface].maxY = 64
 	else
-		global.tracker.minX = lchunk.area.left_top.x
-		global.tracker.maxX = rchunk.area.right_bottom.x
-		global.tracker.minY = tchunk.area.left_top.y
-		global.tracker.maxY = bchunk.area.right_bottom.y
+		global.tracker[surface].minX = lchunk.area.left_top.x
+		global.tracker[surface].maxX = rchunk.area.right_bottom.x
+		global.tracker[surface].minY = tchunk.area.left_top.y
+		global.tracker[surface].maxY = bchunk.area.right_bottom.y
 
 		if global.verbose then
-			log("global.tracker.minX: " .. global.tracker.minX)
-			log("global.tracker.maxX: " .. global.tracker.maxX)
-			log("global.tracker.minY: " .. global.tracker.minY)
-			log("global.tracker.maxY: " .. global.tracker.maxY)
+			log("global.tracker[" .. surface .. "].minX: " .. global.tracker[surface].minX)
+			log("global.tracker[" .. surface .. "].maxX: " .. global.tracker[surface].maxX)
+			log("global.tracker[" .. surface .. "].minY: " .. global.tracker[surface].minY)
+			log("global.tracker[" .. surface .. "].maxY: " .. global.tracker[surface].maxY)
 		end
 
 		local top = math.abs(tchunk.area.left_top.x)
@@ -76,84 +76,84 @@ function tracker.evaluateLimitsFromWholeBase()
 		end
 		
 		if (top > bottom) then
-			global.tracker.limitY = top
+			global.tracker[surface].limitY = top
 		else
-			global.tracker.limitY = bottom
+			global.tracker[surface].limitY = bottom
 		end
 		
 		if (left > right) then
-			global.tracker.limitX = left
+			global.tracker[surface].limitX = left
 		else
-			global.tracker.limitX = right
+			global.tracker[surface].limitX = right
 		end
 
 		if (global.verbose) then
-			log("limitX: " .. global.tracker.limitX)
-			log("limitY: " .. global.tracker.limitY)
+			log("limitX: " .. global.tracker[surface].limitX)
+			log("limitY: " .. global.tracker[surface].limitY)
 		end
 	end
 end
 
-local function evaluateLimitsFromMinMax()
+local function evaluateLimitsFromMinMax(surface)
 	if (global.verbose) then
 		log("evaluate limits from min max")
 	end
 
-	if math.abs(global.tracker.minX) > global.tracker.maxX then
-		global.tracker.limitX =  math.abs(global.tracker.minX)
+	if math.abs(global.tracker[surface].minX) > global.tracker[surface].maxX then
+		global.tracker[surface].limitX =  math.abs(global.trackerv.minX)
 	else
-		global.tracker.limitX = global.tracker.maxX
+		global.tracker[surface].limitX = global.tracker[surface].maxX
 	end
 	
-	if math.abs(global.tracker.minY) > global.tracker.maxY then
-		global.tracker.limitY = math.abs(global.tracker.minY)
+	if math.abs(global.tracker[surface].minY) > global.tracker[surface].maxY then
+		global.tracker[surface].limitY = math.abs(global.tracker[surface].minY)
 	else
-		global.tracker.limitY = global.tracker.maxY
+		global.tracker[surface].limitY = global.tracker[surface].maxY
 	end
 end
 
-function tracker.checkForMinMaxChange() 
-	if global.tracker.minMaxChanged then
-		evaluateLimitsFromMinMax()
-		shooter.evaluateZoomForAllPlayers()
-		global.tracker.minMaxChanged = false
+function tracker.checkForMinMaxChange(surface)
+	if global.tracker[surface].minMaxChanged then
+		evaluateLimitsFromMinMax(surface)
+		shooter.evaluateZoomForAllPlayersAndAllSurfaces(surface)
+		global.tracker[surface].minMaxChanged = false
 	end
 end
 
-function tracker.evaluateMinMaxFromPosition(pos)
+function tracker.evaluateMinMaxFromPosition(pos, surface)
 	if (global.verbose) then
-		log("Evaluate min max from position: " .. pos.x .. "x" .. pos.y)
+		log("Evaluate min max on surface " .. surface .. " from position: " .. pos.x .. "x" .. pos.y)
 	end
-	if pos.x < global.tracker.minX then
-		global.tracker.minX = pos.x
-	elseif pos.x > global.tracker.maxX then
-		global.tracker.maxX = pos.x
+	if pos.x < global.tracker[surface].minX then
+		global.tracker[surface].minX = pos.x
+	elseif pos.x > global.tracker[surface].maxX then
+		global.tracker[surface].maxX = pos.x
 	end
 	
-	if pos.y < global.tracker.minY then
-		global.tracker.minY = pos.y
-	elseif pos.y > global.tracker.maxY then
-		global.tracker.maxY = pos.y
+	if pos.y < global.tracker[surface].minY then
+		global.tracker[surface].minY = pos.y
+	elseif pos.y > global.tracker[surface].maxY then
+		global.tracker[surface].maxY = pos.y
 	end
 
 	if (global.verbose) then
-		log("global.tracker.minX = " .. global.tracker.minX)
-		log("global.tracker.maxX = " .. global.tracker.maxX)
-		log("global.tracker.minY = " .. global.tracker.minY)
-		log("global.tracker.maxY = " .. global.tracker.maxY)
+		log("global.tracker[" .. surface .. "].minX = " .. global.tracker[surface].minX)
+		log("global.tracker[" .. surface .. "].maxX = " .. global.tracker[surface].maxX)
+		log("global.tracker[" .. surface .. "].minY = " .. global.tracker[surface].minY)
+		log("global.tracker[" .. surface .. "].maxY = " .. global.tracker[surface].maxY)
 	end
 	
-	global.tracker.minMaxChanged = true
+	global.tracker[surface].minMaxChanged = true
 end
 
-function tracker.breaksCurrentLimits(pos)
+function tracker.breaksCurrentLimits(pos, surface)
 	if (global.verbose) then
-		log("breakscurrentLimits: pos: " .. pos.x .. "x" .. pos.y)
+		log("breakscurrentLimits on surface " .. surface .. ": pos: " .. pos.x .. "x" .. pos.y)
 	end
-	return (pos.x < global.tracker.minX or
-	pos.x > global.tracker.maxX or
-	pos.y < global.tracker.minY or
-	pos.y > global.tracker.maxY)
+	return (pos.x < global.tracker[surface].minX or
+	pos.x > global.tracker[surface].maxX or
+	pos.y < global.tracker[surface].minY or
+	pos.y > global.tracker[surface].maxY)
 end
 
 return tracker
