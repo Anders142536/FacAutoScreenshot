@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+  Features:
+    - 
+  Bugfixes:
+    -
+  Optimizations:
+    - Removed "Panel" from the panel name
+    - Great refactor due to the changes, increased stability and maintainability
+---------------------------------------------------------------------------------------------------
 Version: 2.0.12
   Bugfixes:
     - Hopefully fixed an unreproducable crash reported by Silv3RKill3R
