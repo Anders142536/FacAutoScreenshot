@@ -959,7 +959,11 @@ function gui.setStatusValue(amount, total)
     global.auto.total = total
     global.auto.progressValue = amount / total
     for index, player in pairs(global.gui) do
-        if player.mainFrame.visible then
+        if global.verbose then
+            log("player " .. index .. " found")
+            log("player.mainframe nil? " .. (player.mainFrame == nil and "true" or "false"))
+        end
+        if player.mainFrame and player.mainFrame.valid and player.mainFrame.visible then
             if global.verbose then log("setting status value for player " .. index .. " with amount " .. amount .. " / " .. total) end
             player.status_value.caption = amount .. " / " .. total
             if player.progress_bar.visible == false then
