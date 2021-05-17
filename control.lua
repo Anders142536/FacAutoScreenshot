@@ -76,7 +76,7 @@ local function initialize()
 	global.tracker = {}
 	global.gui = {}
 	global.queue = {
-		nextScreenshot = {}
+		hasAnyEntries = false
 	}
 
 
@@ -89,6 +89,7 @@ local function initialize()
 		log("found player already connected: " .. player.name)
 		loadDefaultsForEmptySettings(player.index)
 		gui.initialize(player)
+		queue.initialize(player.index)
 	end
 
 	queue.refreshNextScreenshotTimestamp()
@@ -125,8 +126,8 @@ local function on_built_entity(event)
 end
 
 local function on_tick()
-	if not queue.isEmpty() then
-		shooter.renderAutoScreenshotFragment()
+	if queue.hasAnyEntries() then
+		shooter.renderNextQueueStep()
 	else
 		if game.tick % 60  == 0 then
 			gui.refreshStatusCountdown()
@@ -137,9 +138,7 @@ end
 local function on_nth_tick(event)
 	log("on nth tick")
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
-	for _, surface in pairs(game.surfaces) do
-		basetracker.checkForMinMaxChange(surface.index)
-	end
+	basetracker.checkForMinMaxChange()
 
 	for _, player in pairs(game.connected_players) do
 		if global.verbose then
@@ -150,17 +149,12 @@ local function on_nth_tick(event)
 			log("tick:             " .. game.tick)
 		end
 		if global.auto[player.index].doScreenshot and (event.tick % global.auto[player.index].interval == 0) then
-			if not queue.isEmpty() then
+			if queue.hasEntries(player.index) then
 				log("there was still a screenshot queued on nth tick event trigger")
 				game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set, make less players do screenshots or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
 				return
 			end
-			if global.auto[player.index].singleScreenshot then
-				-- register single screenshots
-				-- shooter.renderAutoSingleScreenshot(player.index)
-			else
-				queue.registerPlayerToScreenshotlist(player.index)
-			end
+			queue.registerPlayerToScreenshotlist(player.index)
 		end
 	end
 

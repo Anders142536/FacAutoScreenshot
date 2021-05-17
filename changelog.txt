@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.0
+  Features:
+    - 
+  Bugfixes:
+    -
+  Optimizations:
+    - Removed "Panel" from the panel name
+    - Great refactor due to the changes, increased stability and maintainability
+---------------------------------------------------------------------------------------------------
 Version: 2.0.9
   Bugfixes:
     - Fixed issue of auto screenshots not actually being centered on the base, but being moved vertically. I am sorry if this caused some timelapses to be broken.
