@@ -42,8 +42,8 @@ local function evaluateZoomForPlayer(index, surface)
 end
 
 function shooter.evaluateZoomForPlayerAndAllSurfaces(index)
-	for _, surface in pairs(game.surfaces) do
-		evaluateZoomForPlayer(index, surface)
+	for surface_index, surface in pairs(game.surfaces) do
+		evaluateZoomForPlayer(index, surface_index)
 	end
 end
 
@@ -63,24 +63,6 @@ local function buildPath(folder, title)
 	return "./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. folder .. title .. ".png"
 end
 
--- local function renderScreenshot(index, resolution, position, zoom, folder, title)
--- 	if global.verbose then
--- 		log("rendering screenshot")
--- 		log("resolution: " .. resolution[1] .. " " .. resolution[2])
--- 		log("position:   " .. position[1] .. " " .. position[2])
--- 		log("zoom:       " .. zoom)
--- 		log("title:      " .. title)
--- 	end
--- 	game.take_screenshot{
--- 		resolution=resolution,
--- 		position=position,
--- 		zoom=zoom,		-- lower means further zoomed out
--- 		daytime=0,		-- bright daylight
--- 		water_tick=0,
--- 		by_player=index,
--- 		path="./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. folder .. title .. ".png"
--- 	}
--- end
 function shooter.renderNextQueueStep()
 	-- get next queue level
 	-- do fragments, do single screenshots
@@ -107,13 +89,13 @@ function shooter.renderAutoSingleScreenshot(index, surface)
 	}
 end
 
-function shooter.renderAutoScreenshotFragment(fragment)
+function shooter.renderAutoScreenshotFragment(index, fragment)
 	local posX = fragment.startpos.x + fragment.stepsize.x * fragment.offset.x
 	local posY = fragment.startpos.y + fragment.stepsize.y * fragment.offset.y
 
 	if global.verbose then
 		log("rendering next auto screenshot fragment")
-		log("index:   " .. fragment.index)
+		log("index:   " .. index)
 		log("surface: " .. fragment.surface)
 		log("res:     " .. fragment.res.x .. "x " .. fragment.res.y .. "y")
 		log("zoom:    " .. fragment.zoom)
@@ -125,7 +107,7 @@ function shooter.renderAutoScreenshotFragment(fragment)
 		position = {posX, posY},
 		zoom = fragment.zoom,
 		surface = fragment.surface,
-		by_player = fragment.index,
+		by_player = index,
 		water_tick = 0,
 		daytime = 0,
 		path = buildPath("auto_split/", fragment.title .. "_x" .. fragment.offset.x .. "_y" .. fragment.offset.y)
