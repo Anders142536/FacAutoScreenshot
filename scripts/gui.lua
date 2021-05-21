@@ -998,7 +998,9 @@ function gui.refreshStatusCountdown()
         global.auto.total = nil
         global.auto.progressValue = nil
         for _, player in pairs(global.gui) do
-            player.progress_bar.visible = false
+            if player.progress_bar and player.progress_bar.valid then
+                player.progress_bar.visible = false
+            end
             -- reset flowbutton pie progress value
         end
     end

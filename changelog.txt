@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.11
+  Bugfixes:
+    - Fixed crash when client is connecting, not opening the ui and auto screenshots finished
+---------------------------------------------------------------------------------------------------
 Version: 2.0.10
   Bugfixes:
     - Fixed crash when a client is connecting a second time
