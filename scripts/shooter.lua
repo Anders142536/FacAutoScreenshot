@@ -54,7 +54,13 @@ local function getDivisor(index)
 	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16
 	--  1,  2,  2,  2,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
 
+	if not global.auto[index].zoomLevel then
+		log("unexpectedly, the zoomlevel was missing.")
+		game.print("Screenshot Toolkit was running into an unexpected, but handleable state. Do not worry, everything still works, this is just the mod author being careful. Please send the mod author your log file for investigation.")
+		shooter.evaluateZoomForPlayer(index)
+	end
 	local zoomLevel = global.auto[index].zoomLevel
+	if global.verbose then log("getDivisor zoomlevel: " .. (zoomLevel or "nil")) end
 	local divisor
 	if zoomLevel == 1 then
 		divisor = 1

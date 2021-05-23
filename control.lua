@@ -137,7 +137,7 @@ local function on_nth_tick(event)
 		if global.verbose then
 			log("player " .. player.name .. " with index " .. player.index .. " found")
 			log("do screenshot:    " .. (global.auto[player.index].doScreenshot and "true" or "false"))
-			log("interval:         " .. global.auto[player.index].interval)
+			log("interval:         " .. (global.auto[player.index].interval or "nil"))
 			log("singleScreenshot: " .. (global.auto[player.index].singleScreenshot and "true" or "false"))
 			log("tick:             " .. game.tick)
 		end

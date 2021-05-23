@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.12
+  Bugfixes:
+    - Hopefully fixed an unreproducable crash reported by Silv3RKill3R
+---------------------------------------------------------------------------------------------------
 Version: 2.0.11
   Bugfixes:
     - Fixed crash when client is connecting, not opening the ui and auto screenshots finished
