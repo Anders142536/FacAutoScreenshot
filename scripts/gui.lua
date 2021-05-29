@@ -170,7 +170,7 @@ local function buildAutoResolution(index, auto_screenshot_config)
         type = "drop-down",
         name = "auto_resolution_value",
         selected_index = global.auto[index].resolution_index,
-        items = {"7680x4320 (8K)", "3840x2160 (4K)", "1920x1080 (FullHD)", "1280x720  (HD)"}
+        items = {"15360x8640 (16K)", "7680x4320 (8K)", "3840x2160 (4K)", "1920x1080 (FullHD)", "1280x720  (HD)"}
     }
 end
 

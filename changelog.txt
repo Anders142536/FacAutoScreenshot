@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.13
+  Features:
+    - Added 16K screenshot option to auto screenshots as requested by Silv3RKill3R
+---------------------------------------------------------------------------------------------------
 Version: 2.0.12
   Bugfixes:
     - Hopefully fixed an unreproducable crash reported by Silv3RKill3R

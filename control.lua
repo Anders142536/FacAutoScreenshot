@@ -24,18 +24,22 @@ local function loadDefaultsForEmptySettings(index)
 	if global.auto[index].resX == nil then
 		local resolution = player_settings["FAS-Resolution"].value
 		global.auto[index].resolution_index = 1
-		global.auto[index].resX = 7680;
-		global.auto[index].resY = 4320;
-		if resolution == "3840x2160 (4K)" then
+		global.auto[index].resX = 15360
+		global.auto[index].resY = 8640
+		if resolution == "7680x4320 (8K)" then
 			global.auto[index].resolution_index = 2
+			global.auto[index].resX = 7680
+			global.auto[index].resY = 4320
+		elseif resolution == "3840x2160 (4K)" then
+			global.auto[index].resolution_index = 3
 			global.auto[index].resX = 3840
 			global.auto[index].resY = 2160
 		elseif resolution == "1920x1080 (FullHD)" then
-			global.auto[index].resolution_index = 3
+			global.auto[index].resolution_index = 4
 			global.auto[index].resX = 1920
 			global.auto[index].resY = 1080
 		elseif resolution == "1280x720  (HD)" then
-			global.auto[index].resolution_index = 4
+			global.auto[index].resolution_index = 5
 			global.auto[index].resX = 1280
 			global.auto[index].resY = 720
 		end
