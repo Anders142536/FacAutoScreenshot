@@ -142,9 +142,7 @@ end
 local function on_nth_tick(event)
 	log("on nth tick")
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
-	for _, surface in pairs(game.surfaces) do
-		basetracker.checkForMinMaxChange(surface.index)
-	end
+	basetracker.checkForMinMaxChange()
 
 	for _, player in pairs(game.connected_players) do
 		if global.verbose then

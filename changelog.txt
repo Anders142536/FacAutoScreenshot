@@ -8,6 +8,7 @@ Version: 2.1.0
     - Removed "Panel" from the panel name
     - Great refactor due to the changes, increased stability and maintainability
 ---------------------------------------------------------------------------------------------------
+<<<<<<< HEAD
 Version: 2.0.13
   Features:
     - Added 16K screenshot option to auto screenshots as requested by Silv3RKill3R
@@ -24,6 +25,8 @@ Version: 2.0.10
   Bugfixes:
     - Fixed crash when a client is connecting a second time
 ---------------------------------------------------------------------------------------------------
+=======
+>>>>>>> f24d0e9 (continued working on surface support)
 Version: 2.0.9
   Bugfixes:
     - Fixed issue of auto screenshots not actually being centered on the base, but being moved vertically. I am sorry if this caused some timelapses to be broken.
