@@ -976,8 +976,8 @@ function gui.setStatusValue(amount, total)
 end
 
 local function calculateCountdown()
-    if global.nextScreenshotTimestamp ~= nil then
-        local timediff = (global.nextScreenshotTimestamp - game.tick) / 60
+    if global.queue.nextScreenshotTimestamp ~= nil then
+        local timediff = (global.queue.nextScreenshotTimestamp - game.tick) / 60
 
         local diffSec = math.floor(timediff % 60)
         if timediff > 59 then

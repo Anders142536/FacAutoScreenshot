@@ -67,33 +67,38 @@ local function loadDefaultsForEmptySettings(index)
 	end
 end
 
+local function initializePlayer(player)
+	-- surface specific, need to be indexed via surface index
+	global.auto[player.index] = {
+		zoom = {},
+		zoomLevel = {}
+	}
+	loadDefaultsForEmptySettings(player.index)
+	gui.initialize(player)
+	queue.initialize(player.index)
+end
+
 -- this method resets everything to a default state apart from already registered screenshots
 local function initialize()
 	log("initialize")
 
-	global.auto = {
-		-- surface specific, therefore indexed after surfaces
-		zoom = {},
-		zoomLevel = {}
-	}
+	global.auto = {}
 	global.snip = {}
 	global.tracker = {}
 	global.gui = {}
-	global.queue = {
-		hasAnyEntries = false
-	}
+	global.queue = {}
 
 
 	global.verbose = settings.global["FAS-enable-debug"].value
 
-	basetracker.evaluateLimitsOfSurface()
+	for _, surface in pairs(game.surfaces) do
+		basetracker.initializeSurface(surface.index)
+	end
 
 	--this should only find the host player if hosted directly
 	for _, player in pairs(game.connected_players) do
 		log("found player already connected: " .. player.name)
-		loadDefaultsForEmptySettings(player.index)
-		gui.initialize(player)
-		queue.initialize(player.index)
+		initializePlayer(player)
 	end
 
 	queue.refreshNextScreenshotTimestamp()
@@ -101,8 +106,7 @@ end
 
 local function on_player_joined_game(event)
 	log("player " .. event.player_index .. " joined")
-	gui.initialize(game.get_player(event.player_index))
-	loadDefaultsForEmptySettings(event.player_index)
+	initializePlayer(game.get_player(event.player_index))
 	queue.refreshNextScreenshotTimestamp()
 end
 
@@ -153,12 +157,7 @@ local function on_nth_tick(event)
 			log("tick:             " .. game.tick)
 		end
 		if global.auto[player.index].doScreenshot and (event.tick % global.auto[player.index].interval == 0) then
-			if queue.hasEntries(player.index) then
-				log("there was still a screenshot queued on nth tick event trigger")
-				game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set, make less players do screenshots or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
-				return
-			end
-			queue.registerPlayerToScreenshotlist(player.index)
+			queue.registerPlayerToQueue(player.index)
 		end
 	end
 

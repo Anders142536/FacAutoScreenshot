@@ -3,20 +3,20 @@ local q = {}
 --[[ Queue explanation
 	The queue has one entry for every player
 
-	Every player entry has a queue for every type of screenshot,
-	with lower indexi being next
+	Every player queue has an entry for every surface, indexed with surface
+	index, with lower indexi being next
 ]]--
 
 function q.initialize(index)
 	global.queue[index] = {}
 end
 
-local function getDivisor(index)
+local function getDivisor(index, surface)
 	-- rough expected result:
 	--  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16
 	--  1,  2,  2,  2,  4,  4,  4,  4,  8,  8,  8,  8,  8,  8,  8,  8, 16 from there
 
-	local zoomLevel = global.auto[index].zoomLevel
+	local zoomLevel = global.auto[index].zoomLevel[surface]
 	local divisor
 	if zoomLevel == 1 then
 		divisor = 1
@@ -41,16 +41,22 @@ end
 
 local function registerPlayerSingleScreenshots(index)
 	for _, surface in pairs(game.surfaces) do
-		-- TODO this
+		global.queue[index][surface.index] = {
+			isSingleScreenshot = true,
+			surface = surface.index,
+			resX = global.auto[index].resX,
+			resY = global.auto[index].resY,
+			zoom = global.auto[index].zoom[index]
+		}
 	end
 end
 
 local function registerPlayerFragmentedScreenshots(index)
 	for _, surface in pairs(game.surfaces) do
-		local numberOfTiles = getDivisor(index)
+		local numberOfTiles = getDivisor(index, surface.index)
 		local resX = global.auto[index].resX
 		local resY = global.auto[index].resY
-		local zoom = global.auto[index].zoom
+		local zoom = global.auto[index].zoom[surface.index]
 
 		-- like calculating zoom, but reverse
 		-- cannot take limits from global, as we want the border of the screenshot, not the base
@@ -60,7 +66,9 @@ local function registerPlayerFragmentedScreenshots(index)
 		local posXStepsize = rightborder * 2 / numberOfTiles
 		local posYStepsize = bottomborder * 2 / numberOfTiles
 		
-		local temp = {
+		local fragment = {
+			isFragmentedScreenshot = true,
+			surface = surface.index,
 			res = {x = resX / numberOfTiles, y = resY / numberOfTiles},
 			numberOfTiles = numberOfTiles,
 			offset = {x=0, y=0},
@@ -71,29 +79,34 @@ local function registerPlayerFragmentedScreenshots(index)
 		}
 
 		if (global.verbose) then
-			log("surface:    " .. temp["surface"])
-			log("res:        " .. temp["res"].x .. "x" .. temp["res"].y)
-			log("numOfTiles: " .. temp["numberOfTiles"])
-			log("offset:     " .. temp["offset"].x .. " " .. temp["offset"].y)
-			log("startpos:   " .. temp["startpos"].x .. " " .. temp["startpos"].y)
-			log("stepsize:   " .. temp["stepsize"].x .. " " .. temp["stepsize"].y)
-			log("zoom:       " .. temp["zoom"])
-			log("title:      " .. temp["title"])
+			log("surface:    " .. fragment["surface"])
+			log("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)
+			log("numOfTiles: " .. fragment["numberOfTiles"])
+			log("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)
+			log("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)
+			log("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)
+			log("zoom:       " .. fragment["zoom"])
+			log("title:      " .. fragment["title"])
 		end
 
-		table.insert(global.queue.nextScreenshot, temp)
+		global.queue[index][surface.index] = fragment
 	end
 end
 
--- CHANGE THIS
 function q.registerPlayerToQueue(index)
 	log("registering player to screenshot list")
+	if queue.hasAnyEntries() then
+		log("there was still a screenshot queued when trying to register a player to queue")
+		game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
+		return
+	end
 	if global.auto[index].singleScreenshot then
 		registerPlayerSingleScreenshots(index)
 	else
 		registerPlayerFragmentedScreenshots(index)
 	end
 
+	global.debugding = true
 end
 
 -- CHANGE THIS
@@ -116,23 +129,46 @@ function q.refreshNextScreenshotTimestamp()
 	end
 end
 
--- DO THIS
-function q.remove(fragment)
-
+-- CHECK IF THIS WORKS
+function q.remove(index, surface)
+	global.queue[index][surface] = nil
 end
 
--- DO THIS
+local function getNextEntry(index)
+	for _, surface in pairs(game.surfaces) do
+		local entry = global.queue[index][surface.index]
+		if entry then
+			return entry
+		end
+	end
+	if global.verbose then log("there was no entry for player " .. index) end
+	return nil
+end
+
+-- CHECK IF THIS WORKS
 function q.getNextStep()
-
+	local step = {}
+	for _, player in pairs(game.connected_players) do
+		local entry = getNextEntry(player.index)
+		if entry then
+			step[player.index] = {
+				index = player.index,
+				specs = entry
+			}
+		end
+	end
+	return step
 end
 
--- CHANGE THIS
+-- CHECK IF THIS WORKS
 function q.hasAnyEntries()
-	return global.queue.hasAnyEntries
-end
-
-function q.hasEntries(index)
-
+	if global.verbose then log("checking for queue entries") end
+	for _, player in pairs(game.connected_players) do
+		if getNextEntry(player.index) then
+			return true
+		end
+	end
+	return false
 end
 
 return q

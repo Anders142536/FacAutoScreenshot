@@ -8,8 +8,8 @@ local function evaluateZoomForPlayer(index, surface)
 		log("resY: " .. global.auto[index].resY)
 		log("global.tracker[" .. surface .."].limitX: " .. global.tracker[surface].limitX)
 		log("global.tracker[" .. surface .. "].limitY: " .. global.tracker[surface].limitY)
-		log("old zoom: " .. (global.auto[index].zoom or "nil"))
-		log("zoomLevel: " .. (global.auto[index].zoomLevel or "nil"))
+		log("old zoom: " .. (global.auto[index].zoom[surface] or "nil"))
+		log("zoomLevel: " .. (global.auto[index].zoomLevel[surface] or "nil"))
 	end
 
 	if not global.auto[index].zoom[surface] then global.auto[index].zoom[surface] = 1 end
@@ -42,8 +42,8 @@ local function evaluateZoomForPlayer(index, surface)
 end
 
 function shooter.evaluateZoomForPlayerAndAllSurfaces(index)
-	for surface_index, surface in pairs(game.surfaces) do
-		evaluateZoomForPlayer(index, surface_index)
+	for _, surface in pairs(game.surfaces) do
+		evaluateZoomForPlayer(index, surface.index)
 	end
 end
 
@@ -63,33 +63,29 @@ local function buildPath(folder, title)
 	return "./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. folder .. title .. ".png"
 end
 
-function shooter.renderNextQueueStep()
-	-- get next queue level
-	-- do fragments, do single screenshots
-	local step = queue.getNextStep()
-end
 
-function shooter.renderAutoSingleScreenshot(index, surface)
+local function renderAutoSingleScreenshot(index, specs)
 	if global.verbose then
 		log("rendering auto screenshot as single screenshot")
 		log("index:   " .. index)
-		log("surface: " .. surface)
-		log("res:     " .. global.auto[index].resX .. "x " .. global.auto[index].resY .. "y")
-		log("zoom:    " .. global.auto[index].zoom[surface])
+		log("surface: " .. specs.surface)
+		log("res:     " .. specs.resX .. "x " .. specs.resY .. "y")
+		log("zoom:    " .. specs.zoom)
 	end
 	game.take_screenshot{
-		resolution = {global.auto[index].resX, global.auto[index].resY},
+		resolution = {specs.resX, specs.resY},
 		position = {0, 0},
-		zoom = global.auto[index].zoom[surface],
-		surface = surface,
+		zoom = specs.zoom,
+		surface = specs.surface,
 		daytime = 0,
 		water_tick = 0,
 		by_player = index,
 		path = buildPath("auto_singleTick/", "screenshot" .. game.tick)
 	}
+	queue.remove(index, specs.surface)
 end
 
-function shooter.renderAutoScreenshotFragment(index, fragment)
+local function renderAutoScreenshotFragment(index, fragment)
 	local posX = fragment.startpos.x + fragment.stepsize.x * fragment.offset.x
 	local posY = fragment.startpos.y + fragment.stepsize.y * fragment.offset.y
 
@@ -126,7 +122,17 @@ function shooter.renderAutoScreenshotFragment(index, fragment)
 			--all screenshots have been done, return to countdown
 			-- table.remove(global.queue.nextScreenshot, 1)
 			-- queue.refreshNextScreenshotTimestamp()
-			queue.remove(fragment)
+			queue.remove(index, fragment.surface)
+		end
+	end
+end
+
+function shooter.renderNextQueueStep()
+	for _, job in pairs(queue.getNextStep()) do
+		if job.specs.isSingleScreenshot then
+			renderAutoSingleScreenshot(job.index, job.specs)
+		elseif job.specs.isFragmentedScreenshot then
+			renderAutoScreenshotFragment(job.index, job.specs)
 		end
 	end
 end

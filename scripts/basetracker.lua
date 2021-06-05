@@ -1,7 +1,12 @@
 local tracker = {}
 
+function tracker.initializeSurface(index)
+	global.tracker[index] = {}
+	tracker.evaluateLimitsOfSurface(index)
+end
+
 local function hasEntities(chunk, surface)
-	local count = game.surfaces[surface].count_entities_filtered{
+	local count = surface.count_entities_filtered{
 		area=chunk.area,
 		force="player",
 		limit=1
@@ -9,17 +14,17 @@ local function hasEntities(chunk, surface)
 	return (count ~= 0)
 end
 
-function tracker.evaluateLimitsOfSurface(surface)
-	log("Evaluating whole surface: " .. surface)
+function tracker.evaluateLimitsOfSurface(surface_index)
+	log("Evaluating whole surface: " .. surface_index)
 	
-	local surface = game.surfaces[surface];
+	local surface = game.surfaces[surface_index];
 	local tchunk = nil;
 	local rchunk = nil;
 	local bchunk = nil;
 	local lchunk = nil;
 	
 	for chunk in surface.get_chunks() do
-		if hasEntities(chunk) then
+		if hasEntities(chunk, surface) then
 			if (tchunk == nil) then
 				tchunk = chunk
 				rchunk = chunk
@@ -44,23 +49,23 @@ function tracker.evaluateLimitsOfSurface(surface)
 	-- if no blocks have been placed yet
 	if tchunk == nil then
 		log("tchunk is nil")
-		global.tracker[surface].limitX = 64
-		global.tracker[surface].limitY = 64
-		global.tracker[surface].minX = -64
-		global.tracker[surface].maxX = 64
-		global.tracker[surface].minY = -64
-		global.tracker[surface].maxY = 64
+		global.tracker[surface_index].limitX = 64
+		global.tracker[surface_index].limitY = 64
+		global.tracker[surface_index].minX = -64
+		global.tracker[surface_index].maxX = 64
+		global.tracker[surface_index].minY = -64
+		global.tracker[surface_index].maxY = 64
 	else
-		global.tracker[surface].minX = lchunk.area.left_top.x
-		global.tracker[surface].maxX = rchunk.area.right_bottom.x
-		global.tracker[surface].minY = tchunk.area.left_top.y
-		global.tracker[surface].maxY = bchunk.area.right_bottom.y
+		global.tracker[surface_index].minX = lchunk.area.left_top.x
+		global.tracker[surface_index].maxX = rchunk.area.right_bottom.x
+		global.tracker[surface_index].minY = tchunk.area.left_top.y
+		global.tracker[surface_index].maxY = bchunk.area.right_bottom.y
 
 		if global.verbose then
-			log("global.tracker[" .. surface .. "].minX: " .. global.tracker[surface].minX)
-			log("global.tracker[" .. surface .. "].maxX: " .. global.tracker[surface].maxX)
-			log("global.tracker[" .. surface .. "].minY: " .. global.tracker[surface].minY)
-			log("global.tracker[" .. surface .. "].maxY: " .. global.tracker[surface].maxY)
+			log("global.tracker[" .. surface_index .. "].minX: " .. global.tracker[surface_index].minX)
+			log("global.tracker[" .. surface_index .. "].maxX: " .. global.tracker[surface_index].maxX)
+			log("global.tracker[" .. surface_index .. "].minY: " .. global.tracker[surface_index].minY)
+			log("global.tracker[" .. surface_index .. "].maxY: " .. global.tracker[surface_index].maxY)
 		end
 
 		local top = math.abs(tchunk.area.left_top.x)
@@ -76,20 +81,20 @@ function tracker.evaluateLimitsOfSurface(surface)
 		end
 		
 		if (top > bottom) then
-			global.tracker[surface].limitY = top
+			global.tracker[surface_index].limitY = top
 		else
-			global.tracker[surface].limitY = bottom
+			global.tracker[surface_index].limitY = bottom
 		end
 		
 		if (left > right) then
-			global.tracker[surface].limitX = left
+			global.tracker[surface_index].limitX = left
 		else
-			global.tracker[surface].limitX = right
+			global.tracker[surface_index].limitX = right
 		end
 
 		if (global.verbose) then
-			log("limitX: " .. global.tracker[surface].limitX)
-			log("limitY: " .. global.tracker[surface].limitY)
+			log("limitX: " .. global.tracker[surface_index].limitX)
+			log("limitY: " .. global.tracker[surface_index].limitY)
 		end
 	end
 end
@@ -114,7 +119,7 @@ end
 
 function tracker.checkForMinMaxChange()
 	for _, surface in pairs(game.surfaces) do
-		if global.tracker[surface].minMaxChanged then
+		if global.tracker[surface.index].minMaxChanged then
 			evaluateLimitsFromMinMax(surface)
 			shooter.evaluateZoomForAllPlayersAndAllSurfaces(surface)
 			global.tracker[surface].minMaxChanged = false
