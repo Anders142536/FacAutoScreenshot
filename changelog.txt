@@ -1,9 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
   Features:
-    - 
-  Bugfixes:
-    -
+  - Dropped support for old settings values. For some time now the settings have been made invisible, but were still read to avoid people not doing screenshots all of a sudden or vice versa. This is now dropped as regular users will have used the mod since then at least once, which causes the values to be stored in the new system and users from months ago should have a fresh look at the ui and new controls anyways.
+  - Added surface support! Now several surfaces can be screenshotted
+  - Now several players can screenshot in parallel instead of one after another
+  - Added gui to support the new features
   Optimizations:
     - Removed "Panel" from the panel name
     - Great refactor due to the changes, increased stability and maintainability
