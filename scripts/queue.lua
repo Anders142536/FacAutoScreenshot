@@ -93,11 +93,26 @@ local function registerPlayerFragmentedScreenshots(index)
 	end
 end
 
+local function getNextEntry(index)
+	for _, surface in pairs(game.surfaces) do
+		local entry = global.queue[index][surface.index]
+		if entry then
+			return entry
+		end
+	end
+	if global.verbose then log("there was no entry for player " .. index) end
+	return nil
+end
+
+local function hasEntriesForPlayer(index)
+	return getNextEntry(index) ~= nil
+end
+
 function q.registerPlayerToQueue(index)
 	log("registering player to screenshot list")
-	if queue.hasAnyEntries() then
+	if hasEntriesForPlayer(index) then
 		log("there was still a screenshot queued when trying to register a player to queue")
-		game.print("FAS: The script is not yet done with the screenshots but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which you do screenshots longer. Changing the resolution will not prevent this from happening.")
+		game.print("FAS: The script is not yet done with the screenshots for player " .. game.get_player(index).name .. " but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which screenshots are done longer. Changing the resolution will not prevent this from happening.")
 		return
 	end
 	if global.auto[index].singleScreenshot then
@@ -105,11 +120,8 @@ function q.registerPlayerToQueue(index)
 	else
 		registerPlayerFragmentedScreenshots(index)
 	end
-
-	global.debugding = true
 end
 
--- CHANGE THIS
 function q.refreshNextScreenshotTimestamp()
 	local closest
 	for _, player in pairs(game.connected_players) do
@@ -129,23 +141,11 @@ function q.refreshNextScreenshotTimestamp()
 	end
 end
 
--- CHECK IF THIS WORKS
 function q.remove(index, surface)
 	global.queue[index][surface] = nil
 end
 
-local function getNextEntry(index)
-	for _, surface in pairs(game.surfaces) do
-		local entry = global.queue[index][surface.index]
-		if entry then
-			return entry
-		end
-	end
-	if global.verbose then log("there was no entry for player " .. index) end
-	return nil
-end
 
--- CHECK IF THIS WORKS
 function q.getNextStep()
 	local step = {}
 	for _, player in pairs(game.connected_players) do
@@ -160,7 +160,6 @@ function q.getNextStep()
 	return step
 end
 
--- CHECK IF THIS WORKS
 function q.hasAnyEntries()
 	if global.verbose then log("checking for queue entries") end
 	for _, player in pairs(game.connected_players) do
