@@ -1,3 +1,4 @@
+l = require("scripts.logger")
 gui = require("scripts.gui")
 basetracker = require("scripts.basetracker")
 shooter = require("scripts.shooter")
