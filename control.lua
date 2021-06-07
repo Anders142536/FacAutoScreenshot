@@ -64,6 +64,7 @@ end
 -- this method resets everything to a default state apart from already registered screenshots
 local function initialize()
 	log("initialize")
+	l.refreshDoDebug()
 
 	global.auto = {}
 	global.snip = {}
@@ -78,9 +79,8 @@ local function initialize()
 		basetracker.initializeSurface(surface.index)
 	end
 
-	--this should only find the host player if hosted directly
 	for _, player in pairs(game.connected_players) do
-		log("found player already connected: " .. player.name)
+		log("found player: " .. player.name)
 		initializePlayer(player)
 	end
 
