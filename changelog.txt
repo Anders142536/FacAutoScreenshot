@@ -8,6 +8,7 @@ Version: 2.1.0
   Optimizations:
     - Removed "Panel" from the panel name
     - Great refactor due to the changes, increased stability and maintainability
+    - added proper logging
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.13
   Features:

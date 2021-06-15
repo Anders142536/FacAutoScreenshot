@@ -11,29 +11,29 @@ local function loadDefaultsForPlayer(index)
 	if not global.snip[index] then global.snip[index] = {} end
 
 	if global.auto[index].doScreenshot == nil then
-		if global.verbose then log("setting doScreenshot to false") end
+		l.debug("setting doScreenshot to false")
 		global.auto[index].doScreenshot = false
 	end
 
 	if global.auto[index].interval == nil then
-		if global.verbose then log("setting interval to 10 min") end
+		l.debug("setting interval to 10 min")
 		global.auto[index].interval = 10 * 60 * 60
 	end
 
 	if global.auto[index].resX == nil then
-		if global.verbose then log("setting resolution to 4k") end
+		l.debug("setting resolution to 4k")
 		global.auto[index].resolution_index = 3
 		global.auto[index].resX = 3840
 		global.auto[index].resY = 2160
 	end
 
 	if global.auto[index].singleScreenshot == nil then
-		if global.verbose then log("setting singleScreenshot to false") end
+		l.debug("setting singleScreenshot to false")
 		global.auto[index].singleScreenshot = false
 	end
 
 	if global.auto[index].splittingFactor == nil then
-		if global.verbose then log("setting splittingFactor to 1") end
+		l.debug("setting splittingFactor to 1")
 		global.auto[index].splittingFactor = 1
 	end
 	
@@ -72,9 +72,6 @@ local function initialize()
 	global.gui = {}
 	global.queue = {}
 
-
-	global.verbose = settings.global["FAS-enable-debug"].value
-
 	for _, surface in pairs(game.surfaces) do
 		basetracker.initializeSurface(surface.index)
 	end
@@ -101,16 +98,14 @@ end
 local function on_runtime_mod_setting_changed(event)
 	if (event.setting_type == "runtime-global") then
 		log("global settings changed")
-		global.verbose = settings.global["FAS-enable-debug"].value
+		l.refreshDoDebug()
 	end
 end
 
 local function on_built_entity(event)
 	local pos = event.created_entity.position
 	local surface = event.created_entity.surface.index
-	if (global.verbose) then
-		log("entity built on surface " .. surface .. event " at pos: " .. pos.x .. "x" .. pos.y)
-	end
+	l.debug("entity built on surface", surface, event "at pos:", pos.x, "x", pos.y)
 	if basetracker.breaksCurrentLimits(pos, surface) then
 		basetracker.evaluateMinMaxFromPosition(pos, surface)
 	end
@@ -132,13 +127,13 @@ local function on_nth_tick(event)
 	basetracker.checkForMinMaxChange()
 
 	for _, player in pairs(game.connected_players) do
-		if global.verbose then
-			log("player " .. player.name .. " with index " .. player.index .. " found")
-			log("do screenshot:    " .. (global.auto[player.index].doScreenshot and "true" or "false"))
-			log("interval:         " .. (global.auto[player.index].interval or "nil"))
-			log("singleScreenshot: " .. (global.auto[player.index].singleScreenshot and "true" or "false"))
-			log("tick:             " .. game.tick)
-		end
+
+		l.debug("player", player.name, "with index", player.index, "found")
+		l.debug("do screenshot:   ", global.auto[player.index].doScreenshot)
+		l.debug("interval:        ", global.auto[player.index].interval)
+		l.debug("singleScreenshot:", global.auto[player.index].singleScreenshot)
+		l.debug("tick:            ", game.tick)
+
 		if global.auto[player.index].doScreenshot and (event.tick % global.auto[player.index].interval == 0) then
 			queue.registerPlayerToQueue(player.index)
 		end

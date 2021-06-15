@@ -61,24 +61,20 @@ function tracker.evaluateLimitsOfSurface(surface_index)
 		global.tracker[surface_index].minY = tchunk.area.left_top.y
 		global.tracker[surface_index].maxY = bchunk.area.right_bottom.y
 
-		if global.verbose then
-			log("global.tracker[" .. surface_index .. "].minX: " .. global.tracker[surface_index].minX)
-			log("global.tracker[" .. surface_index .. "].maxX: " .. global.tracker[surface_index].maxX)
-			log("global.tracker[" .. surface_index .. "].minY: " .. global.tracker[surface_index].minY)
-			log("global.tracker[" .. surface_index .. "].maxY: " .. global.tracker[surface_index].maxY)
-		end
+		l.debug("global.tracker[", surface_index, "].minX: ", global.tracker[surface_index].minX)
+		l.debug("global.tracker[", surface_index, "].maxX: ", global.tracker[surface_index].maxX)
+		l.debug("global.tracker[", surface_index, "].minY: ", global.tracker[surface_index].minY)
+		l.debug("global.tracker[", surface_index, "].maxY: ", global.tracker[surface_index].maxY)
 
 		local top = math.abs(tchunk.area.left_top.x)
 		local right = math.abs(rchunk.area.right_bottom.x)
 		local bottom = math.abs(bchunk.area.right_bottom.y)
 		local left =  math.abs(lchunk.area.left_top.x)
 
-		if (global.verbose) then
-			log("top: " .. top)
-			log("right: " .. right)
-			log("bottom: " .. bottom)
-			log("left: " .. left)
-		end
+		l.debug("top: ", top)
+		l.debug("right: ", right)
+		l.debug("bottom: ", bottom)
+		l.debug("left: ", left)
 		
 		if (top > bottom) then
 			global.tracker[surface_index].limitY = top
@@ -92,17 +88,13 @@ function tracker.evaluateLimitsOfSurface(surface_index)
 			global.tracker[surface_index].limitX = right
 		end
 
-		if (global.verbose) then
-			log("limitX: " .. global.tracker[surface_index].limitX)
-			log("limitY: " .. global.tracker[surface_index].limitY)
-		end
+		l.debug("limitX: ", global.tracker[surface_index].limitX)
+		l.debug("limitY: ", global.tracker[surface_index].limitY)
 	end
 end
 
 local function evaluateLimitsFromMinMax(surface)
-	if (global.verbose) then
-		log("evaluate limits from min max")
-	end
+	l.debug("evaluate limits from min max")
 
 	if math.abs(global.tracker[surface].minX) > global.tracker[surface].maxX then
 		global.tracker[surface].limitX =  math.abs(global.trackerv.minX)
@@ -128,9 +120,8 @@ function tracker.checkForMinMaxChange()
 end
 
 function tracker.evaluateMinMaxFromPosition(pos, surface)
-	if (global.verbose) then
-		log("Evaluate min max on surface " .. surface .. " from position: " .. pos.x .. "x" .. pos.y)
-	end
+	l.debug("Evaluate min max on surface ", surface, "from position: ", pos.x, "x", pos.y)
+	
 	if pos.x < global.tracker[surface].minX then
 		global.tracker[surface].minX = pos.x
 	elseif pos.x > global.tracker[surface].maxX then
@@ -143,20 +134,17 @@ function tracker.evaluateMinMaxFromPosition(pos, surface)
 		global.tracker[surface].maxY = pos.y
 	end
 
-	if (global.verbose) then
-		log("global.tracker[" .. surface .. "].minX = " .. global.tracker[surface].minX)
-		log("global.tracker[" .. surface .. "].maxX = " .. global.tracker[surface].maxX)
-		log("global.tracker[" .. surface .. "].minY = " .. global.tracker[surface].minY)
-		log("global.tracker[" .. surface .. "].maxY = " .. global.tracker[surface].maxY)
-	end
+	l.debug("global.tracker[", surface, "].minX = ", global.tracker[surface].minX)
+	l.debug("global.tracker[", surface, "].maxX = ", global.tracker[surface].maxX)
+	l.debug("global.tracker[", surface, "].minY = ", global.tracker[surface].minY)
+	l.debug("global.tracker[", surface, "].maxY = ", global.tracker[surface].maxY)
 	
 	global.tracker[surface].minMaxChanged = true
 end
 
 function tracker.breaksCurrentLimits(pos, surface)
-	if (global.verbose) then
-		log("breakscurrentLimits on surface " .. surface .. ": pos: " .. pos.x .. "x" .. pos.y)
-	end
+	l.debug("breakscurrentLimits on surface ", surface, ": pos: ", pos.x, "x", pos.y)
+
 	return (pos.x < global.tracker[surface].minX or
 	pos.x > global.tracker[surface].maxX or
 	pos.y < global.tracker[surface].minY or

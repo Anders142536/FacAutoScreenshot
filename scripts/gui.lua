@@ -119,14 +119,28 @@ local function buildAutoSurface(index, auto_content)
         type = "label",
         name = "surface_label",
         caption = {"FAS-surface-label-caption"},
+        tooltip = {"FAS-surface-label-tooltip"},
         style = "fas_label"
     }
-    surface_flow.add{
-        type = "label",
-        name = "surface_value",
-        caption = {"FAS-surface-value-caption"},
-        tooltip = {"FAS-surface-value-tooltip"}
+    local list = surface_flow.add{
+        type = "flow",
+        name = "surface_list",
+        direction = "vertical",
     }
+    list.add{
+        type = "checkbox",
+        name = ""
+    }
+    for _, surface in pairs(game.surfaces) do
+        if not surface.name == "nauvis" then
+            surface_flow.add{
+                type = "label",
+                name = "surface_value",
+                caption = {"FAS-surface-value-caption"},
+                tooltip = {"FAS-surface-value-tooltip"}
+            }
+        end
+    end
 end
 
 local function buildAutoDoScreenshots(index, auto_content)
