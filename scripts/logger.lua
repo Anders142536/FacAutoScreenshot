@@ -13,7 +13,7 @@ local function concat(...)
         result[#result+1] = tostring(args[i])
     end
     --table concatenation is way faster than string concatenation
-    return table.concat(result, " ")
+    return table.concat(result)
 end
 
 function logger.debug(...)
