@@ -30,6 +30,16 @@ styles.fas_label = {
     parent = "label",
     width = 150
 }
+styles.fas_label_for_list = {
+    type = "label_style",
+    parent = "label",
+    width = 138
+}
+styles.fas_list = {
+    type = "frame_style",
+    parent = "bordered_frame",
+    horizontally_stretchable = "on"
+}
 styles.fas_slider = {
     type = "slider_style",
     parent = "notched_slider",

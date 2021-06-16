@@ -108,41 +108,7 @@ local function buildAutoStatus(index, auto_content)
     global.gui[index].progress_bar = progressbar
 end
 
-local function buildAutoSurface(index, auto_content)
-    local surface_flow = auto_content.add{
-        type = "flow",
-        name = "surface_flow",
-        direction = "horizontal",
-        style = "fas_flow"
-    }
-    surface_flow.add{
-        type = "label",
-        name = "surface_label",
-        caption = {"FAS-surface-label-caption"},
-        tooltip = {"FAS-surface-label-tooltip"},
-        style = "fas_label"
-    }
-    local list = surface_flow.add{
-        type = "flow",
-        name = "surface_list",
-        direction = "vertical",
-    }
-    list.add{
-        type = "checkbox",
-        name = ""
-    }
-    for _, surface in pairs(game.surfaces) do
-        if not surface.name == "nauvis" then
-            surface_flow.add{
-                type = "label",
-                name = "surface_value",
-                caption = {"FAS-surface-value-caption"},
-                tooltip = {"FAS-surface-value-tooltip"}
-            }
-        end
-    end
-end
-
+-- TODO REMOVE THIS, SURFACE CHECKLIST REPLACES THIS
 local function buildAutoDoScreenshots(index, auto_content)
     local do_screenshots_flow = auto_content.add{
         type = "flow",
@@ -163,6 +129,54 @@ local function buildAutoDoScreenshots(index, auto_content)
         name = "do_screenshots_checkbox",
         state = global.auto[index].doScreenshot
     }
+end
+
+local function addListitem(index, list, surfacename)
+    local list_item = list.add{
+        type = "flow",
+        name = "surface_listitem_" .. surfacename,
+        direction = "horizontal"
+    }
+    local temp = global.auto[index].doSurface[surfacename]
+    list_item.add{
+        type = "checkbox",
+        -- name = "surface_checkbox_" .. surfacename,
+        name = "surface_checkbox_nauvis",
+        state = global.auto[index].doSurface[surfacename] or false
+    }
+    list_item.add{
+        type = "label",
+        name = "surface_label_" .. surfacename,
+        caption = surfacename
+    }
+end
+
+local function buildAutoSurface(index, auto_content)
+    local surface_flow = auto_content.add{
+        type = "flow",
+        name = "surface_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+    surface_flow.add{
+        type = "label",
+        name = "surface_label",
+        caption = {"FAS-surface-label-caption"},
+        tooltip = {"FAS-surface-label-tooltip"},
+        style = "fas_label_for_list"
+    }
+    local list = surface_flow.add{
+        type = "frame",
+        name = "surface_list",
+        direction = "vertical",
+        style = "fas_list"
+    }
+    addListitem(index, list, "nauvis")
+    for _, surface in pairs(game.surfaces) do
+        if not surface.name == "nauvis" then
+            addListitem(index, list, surface.name)
+        end
+    end
 end
 
 local function buildAutoResolution(index, auto_screenshot_config)
@@ -292,8 +306,8 @@ local function buildAutoScreenshotSection(index, auto_frame)
     global.gui[index].auto_content = auto_content
 
     buildAutoStatus(index, auto_content)
-    buildAutoSurface(index, auto_content)
     buildAutoDoScreenshots(index, auto_content)
+    buildAutoSurface(index, auto_content)
 
     -- to make toggling visibilities easier they are added to a seperate child frame
     local auto_screenshot_config = auto_content.add{
