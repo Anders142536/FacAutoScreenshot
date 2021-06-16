@@ -54,7 +54,8 @@ local function initializePlayer(player)
 	-- surface specific, need to be indexed via surface index
 	global.auto[player.index] = {
 		zoom = {},
-		zoomLevel = {}
+		zoomLevel = {},
+		doSurface = {}
 	}
 	loadDefaultsForPlayer(player.index)
 	gui.initialize(player)
