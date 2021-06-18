@@ -15,7 +15,7 @@ local function hasEntities(chunk, surface)
 end
 
 function tracker.evaluateLimitsOfSurface(surface_index)
-	log("Evaluating whole surface: " .. surface_index)
+	l.info("Evaluating whole surface: " .. surface_index)
 	
 	local surface = game.surfaces[surface_index];
 	local tchunk = nil;
@@ -48,7 +48,7 @@ function tracker.evaluateLimitsOfSurface(surface_index)
 	
 	-- if no blocks have been placed yet
 	if tchunk == nil then
-		log("tchunk is nil")
+		l.info("tchunk is nil")
 		global.tracker[surface_index].limitX = 64
 		global.tracker[surface_index].limitY = 64
 		global.tracker[surface_index].minX = -64

@@ -6,7 +6,7 @@ local flowButtonName = "togglegui"
 local mainFrameName = "guiFrame"
 
 function gui.initialize(player)
-    log("initializing gui for player " .. player.index)
+    l.info("initializing gui for player " .. player.index)
     local buttonFlow = modGui.get_button_flow(player)
     
     -- destroying already existing buttons in case of changes
@@ -108,34 +108,12 @@ local function buildAutoStatus(index, auto_content)
     global.gui[index].progress_bar = progressbar
 end
 
--- TODO REMOVE THIS, SURFACE CHECKLIST REPLACES THIS
-local function buildAutoDoScreenshots(index, auto_content)
-    local do_screenshots_flow = auto_content.add{
-        type = "flow",
-        name = "do_flow",
-        direction = "horizontal",
-        style = "fas_flow"
-    }
-
-    do_screenshots_flow.add{
-        type = "label",
-        name = "do_screenshots_label",
-        caption = {"FAS-do-screenshots-caption"},
-        style = "fas_label"
-    }
-
-    global.gui[index].do_screenshots_checkbox = do_screenshots_flow.add{
-        type = "checkbox",
-        name = "do_screenshots_checkbox",
-        state = global.auto[index].doScreenshot
-    }
-end
-
 local function addListitem(index, list, surfacename)
     local list_item = list.add{
         type = "flow",
         name = "surface_listitem_" .. surfacename,
-        direction = "horizontal"
+        direction = "horizontal",
+        style = "fas_flow"
     }
     local temp = global.auto[index].doSurface[surfacename]
     list_item.add{
@@ -155,8 +133,7 @@ local function buildAutoSurface(index, auto_content)
     local surface_flow = auto_content.add{
         type = "flow",
         name = "surface_flow",
-        direction = "horizontal",
-        style = "fas_flow"
+        direction = "horizontal"
     }
     surface_flow.add{
         type = "label",
@@ -171,6 +148,8 @@ local function buildAutoSurface(index, auto_content)
         direction = "vertical",
         style = "fas_list"
     }
+
+    -- making sure nauvis is on top
     addListitem(index, list, "nauvis")
     for _, surface in pairs(game.surfaces) do
         if not surface.name == "nauvis" then
@@ -306,20 +285,11 @@ local function buildAutoScreenshotSection(index, auto_frame)
     global.gui[index].auto_content = auto_content
 
     buildAutoStatus(index, auto_content)
-    buildAutoDoScreenshots(index, auto_content)
     buildAutoSurface(index, auto_content)
-
-    -- to make toggling visibilities easier they are added to a seperate child frame
-    local auto_screenshot_config = auto_content.add{
-        type = "flow",
-        direction = "vertical",
-        visible = global.auto[index].doScreenshot
-    }
-    global.gui[index].auto_screenshot_config = auto_screenshot_config
-    buildAutoResolution(index, auto_screenshot_config)
-    buildAutoInterval(index, auto_screenshot_config)
-    buildAutoSingleTick(index, auto_screenshot_config)
-    buildAutoSplittingFactor(index, auto_screenshot_config)
+    buildAutoResolution(index, auto_content)
+    buildAutoInterval(index, auto_content)
+    buildAutoSingleTick(index, auto_content)
+    buildAutoSplittingFactor(index, auto_content)
 end
 
 
@@ -575,7 +545,7 @@ local function buildAreaScreenshotSection(index, area_frame)
 end
 
 local function createGuiFrame(player)
-    log("creating gui for player " .. player.index)
+    l.info("creating gui for player " .. player.index)
     
     -- [[ GENERAL ]] --
     global.gui[player.index] = {}
@@ -629,22 +599,22 @@ local function callHandler(event, suffix)
 end
 
 function gui.on_gui_event(event)
-    log("on gui event triggered with element name " .. event.element.name)
+    l.info("on gui event triggered with element name " .. event.element.name)
     callHandler(event, "")
 end
 
 function gui.on_gui_value_changed(event)
-    log("on_gui_value_changed triggered with element name " .. event.element.name)
+    l.info("on_gui_value_changed triggered with element name " .. event.element.name)
     callHandler(event, "_value_changed")
 end
 
 function gui.on_gui_text_changed(event)
-    log("on gui text changed triggered with element name " .. event.element.name)
+    l.info("on gui text changed triggered with element name " .. event.element.name)
     callHandler(event, "_text_changed")
 end
 
 function gui.on_gui_selection_state_changed(event)
-    log("on_gui_selection_state_changed event triggered with element name " .. event.element.name)
+    l.info("on_gui_selection_state_changed event triggered with element name " .. event.element.name)
     callHandler(event, "_selection")
 end
 
@@ -652,7 +622,7 @@ end
 
 --[[ HANDLER METHODS ]]--
 function gui.togglegui(event)
-    log("toggling gui")
+    l.info("toggling gui")
     local player = game.get_player(event.player_index)
     local guiFrame = player.gui.screen[mainFrameName]
     if not guiFrame then
@@ -696,8 +666,9 @@ function gui.area_content_collapse(event)
 
 end
 
+-- transform this to surface selection handling
 function gui.do_screenshots_checkbox(event)
-    log("do screenshots was triggered for player " .. event.player_index)
+    l.info("do screenshots was triggered for player " .. event.player_index)
     local doesScreenshots = event.element.state
     global.auto[event.player_index].doScreenshot = doesScreenshots
     global.gui[event.player_index].auto_screenshot_config.visible = doesScreenshots
@@ -707,7 +678,7 @@ function gui.do_screenshots_checkbox(event)
 end
 
 function gui.auto_resolution_value_selection(event)
-    log("resolution setting was changed for player " .. event.player_index)
+    l.info("resolution setting was changed for player " .. event.player_index)
     local resolution_index = event.element.selected_index
     if resolution_index == 1 then
         global.auto[event.player_index].resolution_index = 1
@@ -730,7 +701,7 @@ function gui.auto_resolution_value_selection(event)
 end
 
 function gui.interval_value_text_changed(event)
-    log("interval was changed for player " .. event.player_index)
+    l.info("interval was changed for player " .. event.player_index)
     local suggestion = tonumber(event.text)
     if suggestion == nil then return end
     if suggestion < 1 or suggestion > 60 then
@@ -745,7 +716,7 @@ function gui.interval_value_text_changed(event)
 end
 
 function gui.single_tick_value(event)
-    log(("single tick value was changed for player " .. event.player_index))
+    l.info(("single tick value was changed for player " .. event.player_index))
     local doesSingle = event.element.state
     global.auto[event.player_index].singleScreenshot = doesSingle
     global.gui[event.player_index].splitting_factor_flow.visible = not doesSingle
@@ -753,18 +724,18 @@ function gui.single_tick_value(event)
 end
 
 function gui.splitting_factor_slider_value_changed(event)
-    log("splitting factor was changed for player " .. event.player_index)
+    l.info("splitting factor was changed for player " .. event.player_index)
     local splittingFactor = math.pow(4, event.element.slider_value)
     global.auto[event.player_index].splittingFactor = splittingFactor
     global.gui[event.player_index].splitting_factor_value.text = tostring(splittingFactor)
 end
 
 function gui.select_area_button(event)
-    log("select area button was clicked")
+    l.info("select area button was clicked")
     global.snip[event.player_index].doesSelection = not global.snip[event.player_index].doesSelection
     
     if global.snip[event.player_index].doesSelection then
-        log("turned on")
+        l.info("turned on")
         --swap styles of button
         global.gui[event.player_index].select_area_button.style = "fas_clicked_tool_button"
         --change this as the player is not correctly fetched
@@ -772,7 +743,7 @@ function gui.select_area_button(event)
             name = "FAS-selection-tool"
           }
     else
-        log("turned off")
+        l.info("turned off")
         --swap styles of button
         global.gui[event.player_index].select_area_button.style = "tool_button"
         game.get_player(event.player_index).cursor_stack.clear()
@@ -847,14 +818,14 @@ function gui.delete_area_button(event)
 end
 
 function gui.start_area_screenshot_button(event)
-    log("start high res screenshot button was pressed")
+    l.info("start high res screenshot button was pressed")
     local index = event.player_index
 
     shooter.renderAreaScreenshot(index)
 end
 
 function gui.zoom_slider_value_changed(event)
-    if (global.verbose) then log("zoom slider was moved") end
+    l.info("zoom slider was moved")
     local level = event.element.slider_value
     global.gui[event.player_index].zoom_value.text = tostring(level)
     global.snip[event.player_index].zoomLevel = level
@@ -864,7 +835,7 @@ end
 
 local function calculateArea(index)
     if global.snip[index].areaLeftClick == nil and global.snip[index].areaRightClick == nil then
-        log("something went wrong when calculating selected area, aborting")
+        l.warn("something went wrong when calculating selected area, aborting")
         return
     end
 
@@ -939,8 +910,8 @@ local function calculateArea(index)
 end
 
 function gui.on_left_click(event)
-    log("left click!")
     if global.snip[event.player_index].doesSelection then
+        l.info("left click event fired while doing selection")
         global.snip[event.player_index].areaLeftClick = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
@@ -949,8 +920,8 @@ function gui.on_left_click(event)
 end
 
 function gui.on_right_click(event)
-    log("right click!")
     if global.snip[event.player_index].doesSelection then
+        l.info("right click event fired while doing selection")
         global.snip[event.player_index].areaRightClick = event.cursor_position
         calculateArea(event.player_index)
         refreshEstimates(event.player_index)
@@ -959,12 +930,12 @@ function gui.on_right_click(event)
 end
 
 function gui.on_player_cursor_stack_changed(event)
-    log("player " .. event.player_index .. " cursor stack changed")
+    l.info("player " .. event.player_index .. " cursor stack changed")
     local index = event.player_index
     if global.snip[index].doesSelection then
         local stack = game.get_player(index).cursor_stack
         if stack and (not stack.valid_for_read or stack.name ~= "FAS-selection-tool") then
-            log("reverting to not selecting area")
+            l.info("reverting to not selecting area")
             global.snip[index].doesSelection = false
             global.gui[index].select_area_button.style = "tool_button"
         end
@@ -987,12 +958,10 @@ function gui.setStatusValue(amount, total)
     global.auto.total = total
     global.auto.progressValue = amount / total
     for index, player in pairs(global.gui) do
-        if global.verbose then
-            log("player " .. index .. " found")
-            log("player.mainframe nil? " .. (player.mainFrame == nil and "true" or "false"))
-        end
+        l.debug("player " .. index .. " found")
+        l.debug("player.mainframe nil? " .. (player.mainFrame == nil and "true" or "false"))
         if player.mainFrame and player.mainFrame.valid and player.mainFrame.visible then
-            if global.verbose then log("setting status value for player " .. index .. " with amount " .. amount .. " / " .. total) end
+            l.debug("setting status value for player " .. index .. " with amount " .. amount .. " / " .. total)
             player.status_value.caption = amount .. " / " .. total
             if player.progress_bar.visible == false then
                 player.progress_bar.visible = true
@@ -1036,7 +1005,7 @@ function gui.refreshStatusCountdown()
     local countdown = calculateCountdown()
     for index, player in pairs(global.gui) do
         if player.mainFrame and player.mainFrame.valid and player.mainFrame.visible then
-            if global.verbose then log("setting status value for player " .. index .. " with countdown " .. countdown) end
+            l.debug("setting status value for player " .. index .. " with countdown " .. countdown)
             player.status_value.caption = countdown
         end
     end

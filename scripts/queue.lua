@@ -32,9 +32,7 @@ local function getDivisor(index, surface)
 	
 	divisor = divisor * (math.sqrt(global.auto[index].splittingFactor))
 
-	if (global.verbose) then
-		log("returned divisor " .. divisor .. " from input " .. zoomLevel)
-	end
+	l.debug("returned divisor " .. divisor .. " from input " .. zoomLevel)
 
 	return divisor
 end
@@ -78,16 +76,14 @@ local function registerPlayerFragmentedScreenshots(index)
 			title = "screenshot" .. game.tick
 		}
 
-		if (global.verbose) then
-			log("surface:    " .. fragment["surface"])
-			log("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)
-			log("numOfTiles: " .. fragment["numberOfTiles"])
-			log("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)
-			log("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)
-			log("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)
-			log("zoom:       " .. fragment["zoom"])
-			log("title:      " .. fragment["title"])
-		end
+		l.debug("surface:    " .. fragment["surface"])
+		l.debug("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)
+		l.debug("numOfTiles: " .. fragment["numberOfTiles"])
+		l.debug("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)
+		l.debug("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)
+		l.debug("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)
+		l.debug("zoom:       " .. fragment["zoom"])
+		l.debug("title:      " .. fragment["title"])
 
 		global.queue[index][surface.index] = fragment
 	end
@@ -100,7 +96,7 @@ local function getNextEntry(index)
 			return entry
 		end
 	end
-	if global.verbose then log("there was no entry for player " .. index) end
+	l.debug("there was no entry for player " .. index)
 	return nil
 end
 
@@ -109,9 +105,9 @@ local function hasEntriesForPlayer(index)
 end
 
 function q.registerPlayerToQueue(index)
-	log("registering player to screenshot list")
+	l.info("registering player to screenshot list")
 	if hasEntriesForPlayer(index) then
-		log("there was still a screenshot queued when trying to register a player to queue")
+		l.warn("there was still a screenshot queued when trying to register a player to queue")
 		game.print("FAS: The script is not yet done with the screenshots for player " .. game.get_player(index).name .. " but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which screenshots are done longer. Changing the resolution will not prevent this from happening.")
 		return
 	end
@@ -161,7 +157,7 @@ function q.getNextStep()
 end
 
 function q.hasAnyEntries()
-	if global.verbose then log("checking for queue entries") end
+	l.debug("checking for queue entries")
 	for _, player in pairs(game.connected_players) do
 		if getNextEntry(player.index) then
 			return true

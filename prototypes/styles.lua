@@ -33,7 +33,8 @@ styles.fas_label = {
 styles.fas_label_for_list = {
     type = "label_style",
     parent = "label",
-    width = 138
+    width = 138,
+    top_padding = 8
 }
 styles.fas_list = {
     type = "frame_style",

@@ -5,15 +5,10 @@ shooter = require("scripts.shooter")
 queue = require("scripts.queue")
 
 local function loadDefaultsForPlayer(index)
-	log("loading defaults for player " .. index)
+	l.info("loading defaults for player " .. index)
 
 	if not global.auto[index] then global.auto[index] = {} end
 	if not global.snip[index] then global.snip[index] = {} end
-
-	if global.auto[index].doScreenshot == nil then
-		l.debug("setting doScreenshot to false")
-		global.auto[index].doScreenshot = false
-	end
 
 	if global.auto[index].interval == nil then
 		l.debug("setting interval to 10 min")
@@ -41,12 +36,12 @@ local function loadDefaultsForPlayer(index)
 
 	-- confirmation logs reading back the set settings in chat.
 	if (global.auto[index].doScreenshot) then
-		log("Player " .. index .. " does screenshots with resolution " .. 
+		l.info("Player " .. index .. " does screenshots with resolution " .. 
 		global.auto[index].resX .. "x" .. global.auto[index].resY .. 
 		" every " .. (global.auto[index].interval / 3600) .. " minutes")
 		shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 	else
-		log("Player " .. index .. " does no screenshots")
+		l.info("Player " .. index .. " does no screenshots")
 	end
 end
 
@@ -64,7 +59,7 @@ end
 
 -- this method resets everything to a default state apart from already registered screenshots
 local function initialize()
-	log("initialize")
+	l.info("initialize")
 	l.refreshDoDebug()
 
 	global.auto = {}
@@ -78,7 +73,7 @@ local function initialize()
 	end
 
 	for _, player in pairs(game.connected_players) do
-		log("found player: " .. player.name)
+		l.info("found player: " .. player.name)
 		initializePlayer(player)
 	end
 
@@ -86,19 +81,19 @@ local function initialize()
 end
 
 local function on_player_joined_game(event)
-	log("player " .. event.player_index .. " joined")
+	l.info("player " .. event.player_index .. " joined")
 	initializePlayer(game.get_player(event.player_index))
 	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_player_left_game(event)
-	log("player " .. event.player_index .. " left")
+	l.info("player " .. event.player_index .. " left")
 	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_runtime_mod_setting_changed(event)
 	if (event.setting_type == "runtime-global") then
-		log("global settings changed")
+		l.info("global settings changed")
 		l.refreshDoDebug()
 	end
 end
@@ -123,7 +118,7 @@ local function on_tick()
 end
 
 local function on_nth_tick(event)
-	log("on nth tick")
+	l.info("on nth tick")
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
 	basetracker.checkForMinMaxChange()
 
