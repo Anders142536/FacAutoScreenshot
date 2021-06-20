@@ -118,10 +118,19 @@ function q.registerPlayerToQueue(index)
 	end
 end
 
+local function doesAutoScreenshot(index)
+	for _, surface in pairs(game.surfaces) do
+		if global.auto[index].doSurface[surface.name] then
+			return true
+		end
+	end
+	return false
+end
+
 function q.refreshNextScreenshotTimestamp()
 	local closest
 	for _, player in pairs(game.connected_players) do
-		if global.auto[player.index].doScreenshot then
+		if doesAutoScreenshot(player.index) then
 			local times = math.floor(game.tick / global.auto[player.index].interval)
 			local next = global.auto[player.index].interval * (times + 1)
 			if closest == nil or next < closest then

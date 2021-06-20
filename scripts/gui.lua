@@ -5,6 +5,12 @@ local gui = {}
 local flowButtonName = "togglegui"
 local mainFrameName = "guiFrame"
 
+local function initializeAllConnectedPlayers()
+    for _, player in pairs(game.connected_players) do
+        gui.initialize(player)
+    end
+end
+
 function gui.initialize(player)
     l.info("initializing gui for player " .. player.index)
     local buttonFlow = modGui.get_button_flow(player)
@@ -118,14 +124,9 @@ local function addListitem(index, list, surfacename)
     local temp = global.auto[index].doSurface[surfacename]
     list_item.add{
         type = "checkbox",
-        -- name = "surface_checkbox_" .. surfacename,
-        name = "surface_checkbox_nauvis",
+        name = "surface_checkbox_" .. surfacename,
+        caption = surfacename,
         state = global.auto[index].doSurface[surfacename] or false
-    }
-    list_item.add{
-        type = "label",
-        name = "surface_label_" .. surfacename,
-        caption = surfacename
     }
 end
 
@@ -152,7 +153,7 @@ local function buildAutoSurface(index, auto_content)
     -- making sure nauvis is on top
     addListitem(index, list, "nauvis")
     for _, surface in pairs(game.surfaces) do
-        if not surface.name == "nauvis" then
+        if surface.name ~= "nauvis" then
             addListitem(index, list, surface.name)
         end
     end
@@ -589,8 +590,13 @@ end
 
 --[[ EVENT CATCHERS ]]--
 local function callHandler(event, suffix)
-    -- handler methods have to be called the same as the element that shall trigger them
-    local handlerMethod = gui[event.element.name .. suffix]
+    local handlerMethod
+    if string.find(event.element.name, "surface_checkbox") then
+        handlerMethod = gui["surface_checkbox"]
+    else
+        -- handler methods have to be called the same as the element that shall trigger them
+        handlerMethod = gui[event.element.name .. suffix]
+    end
 
     -- if a handler method exists the gui press was for an element of this mod
     if handlerMethod then
@@ -618,6 +624,33 @@ function gui.on_gui_selection_state_changed(event)
     callHandler(event, "_selection")
 end
 
+function gui.on_pre_surface_deleted(event)
+    for _, playerData in pairs(global.auto) do
+        local name = game.get_surface(event.surface_index).name
+        if playerData.doSurface[name] ~= nil then
+            playerData.doSurface[name] = nil
+        end
+    end
+    initializeAllConnectedPlayers()
+end
+
+function gui.on_surface_created(event)
+    initializeAllConnectedPlayers()
+end
+
+function gui.on_surface_renamed(event)
+    for _, playerData in pairs(global.auto) do
+        if playerData.doSurface[event.old_name] ~= nil then
+            playerData.doSurface[event.new_name] = playerData.doSurface[event.old_name]
+            playerData.doSurface[event.old_name] = nil
+        end
+    end
+    initializeAllConnectedPlayers()
+end
+
+function gui.on_surface_imported(event)
+    initializeAllConnectedPlayers()
+end
 
 
 --[[ HANDLER METHODS ]]--
@@ -667,11 +700,9 @@ function gui.area_content_collapse(event)
 end
 
 -- transform this to surface selection handling
-function gui.do_screenshots_checkbox(event)
-    l.info("do screenshots was triggered for player " .. event.player_index)
-    local doesScreenshots = event.element.state
-    global.auto[event.player_index].doScreenshot = doesScreenshots
-    global.gui[event.player_index].auto_screenshot_config.visible = doesScreenshots
+function gui.surface_checkbox(event)
+    l.info("surface_checkbox was triggered for player " .. event.player_index)
+    global.auto[event.player_index].doSurface[event.element.caption] = event.element.state
     
     queue.refreshNextScreenshotTimestamp()
     gui.refreshStatusCountdown()
