@@ -31,8 +31,18 @@ If you are separating your screenshots over several ticks by disabling the **Sin
 
 For now the program is a pure command line program, as to my knowledge I am the only one using it. If required by users (like you?) I will gladly add some ui to make it easier to use.
 
+![img](https://cdn.discordapp.com/attachments/393475202341797908/856112938925948938/SaveLocationHeader.png)
 
-## Background theory for nerds
+You can find the screenshots in the factorio folder under `factorio/script-output/screenshots/(your save seed)/`
+
+There are subfolders the different kinds of screenshots you might have made.
+
+You can find your factorio folder here:
+*Windows:* `%APPDATA%/Roaming/Factorio` (If you don't know what that means please google "AppData Folder windows", there are good guides)
+*Linux:* `~/.factorio` (You have to activate hidden folders to see it)
+
+
+![img](https://cdn.discordapp.com/attachments/393475202341797908/856132163074392074/nerdsHeader.png)
 
 Factorios engine does not allow for asynchronous screenshotting, meaning the game engine is *either* calculating your game *or* doing a screenshots. Furthermore it is not possible to do screenshots for two players at the same time, so screenshots for different players need to be queued. This causes quite some isues for the simple task of screenshotting your whole base. Factorios engine runs at 60 *update ticks per second* or 60 UPS. This means everything that happens in 1/60th of a second has to be calculated before a new image can be rendered for your screen. When you are playing the game the engine only touches the very necessary entities in the map that are required to render the next state of the game to render an image in, so a huge amount of entities can be ignored during that calculation. Basically, all entities whose state is about to change (visual state, logical state, etc.) or that are displayed on your screen are touched. When doing a screenshot of your whole base, however, *everything* is "on your screen", so the game has to touch every single one of them. This takes time, a lot actually.
 
