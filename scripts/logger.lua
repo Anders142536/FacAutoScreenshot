@@ -18,15 +18,15 @@ end
 
 function logger.debug(...)
     if not doDebug then return end
-    log(concat("DBUG:", ...))
+    log(concat("DBUG: ", ...))
 end
 
 function logger.info(...)
-    log(concat("INFO:", ...))
+    log(concat("INFO: ", ...))
 end
 
 function logger.warn(...)
-    log(concat("WARN:", ...))
+    log(concat("WARN: ", ...))
 end
 
 function logger.refreshDoDebug()
