@@ -69,7 +69,7 @@ local function initialize()
 	global.queue = {}
 
 	for _, surface in pairs(game.surfaces) do
-		basetracker.initializeSurface(surface.index)
+		basetracker.initializeSurface()
 	end
 
 	for _, player in pairs(game.connected_players) do
@@ -100,7 +100,7 @@ end
 
 local function on_built_entity(event)
 	local pos = event.created_entity.position
-	local surface = event.created_entity.surface.index
+	local surface = event.created_entity.surface.name
 	l.debug("entity built on surface", surface, event "at pos:", pos.x, "x", pos.y)
 	if basetracker.breaksCurrentLimits(pos, surface) then
 		basetracker.evaluateMinMaxFromPosition(pos, surface)

@@ -39,9 +39,9 @@ end
 
 local function registerPlayerSingleScreenshots(index)
 	for _, surface in pairs(game.surfaces) do
-		global.queue[index][surface.index] = {
+		global.queue[index][surface.name] = {
 			isSingleScreenshot = true,
-			surface = surface.index,
+			surface = surface.name,
 			resX = global.auto[index].resX,
 			resY = global.auto[index].resY,
 			zoom = global.auto[index].zoom[index]
@@ -51,10 +51,10 @@ end
 
 local function registerPlayerFragmentedScreenshots(index)
 	for _, surface in pairs(game.surfaces) do
-		local numberOfTiles = getDivisor(index, surface.index)
+		local numberOfTiles = getDivisor(index, surface.name)
 		local resX = global.auto[index].resX
 		local resY = global.auto[index].resY
-		local zoom = global.auto[index].zoom[surface.index]
+		local zoom = global.auto[index].zoom[surface.name]
 
 		-- like calculating zoom, but reverse
 		-- cannot take limits from global, as we want the border of the screenshot, not the base
@@ -66,7 +66,7 @@ local function registerPlayerFragmentedScreenshots(index)
 		
 		local fragment = {
 			isFragmentedScreenshot = true,
-			surface = surface.index,
+			surface = surface.name,
 			res = {x = resX / numberOfTiles, y = resY / numberOfTiles},
 			numberOfTiles = numberOfTiles,
 			offset = {x=0, y=0},
@@ -85,13 +85,13 @@ local function registerPlayerFragmentedScreenshots(index)
 		l.debug("zoom:       " .. fragment["zoom"])
 		l.debug("title:      " .. fragment["title"])
 
-		global.queue[index][surface.index] = fragment
+		global.queue[index][surface.name] = fragment
 	end
 end
 
 local function getNextEntry(index)
 	for _, surface in pairs(game.surfaces) do
-		local entry = global.queue[index][surface.index]
+		local entry = global.queue[index][surface.name]
 		if entry then
 			return entry
 		end
