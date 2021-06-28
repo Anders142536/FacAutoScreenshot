@@ -5,30 +5,30 @@ shooter = require("scripts.shooter")
 queue = require("scripts.queue")
 
 local function loadDefaultsForPlayer(index)
-	l.info("loading defaults for player " .. index)
+	log(l.info("loading defaults for player " .. index))
 
 	if not global.auto[index] then global.auto[index] = {} end
 	if not global.snip[index] then global.snip[index] = {} end
 
 	if global.auto[index].interval == nil then
-		l.debug("setting interval to 10 min")
+		if l.doD then log(l.debug("setting interval to 10 min")) end
 		global.auto[index].interval = 10 * 60 * 60
 	end
 
 	if global.auto[index].resX == nil then
-		l.debug("setting resolution to 4k")
+		if l.doD then log(l.debug("setting resolution to 4k")) end
 		global.auto[index].resolution_index = 3
 		global.auto[index].resX = 3840
 		global.auto[index].resY = 2160
 	end
 
 	if global.auto[index].singleScreenshot == nil then
-		l.debug("setting singleScreenshot to false")
+		if l.doD then log(l.debug("setting singleScreenshot to false")) end
 		global.auto[index].singleScreenshot = false
 	end
 
 	if global.auto[index].splittingFactor == nil then
-		l.debug("setting splittingFactor to 1")
+		if l.doD then log(l.debug("setting splittingFactor to 1")) end
 		global.auto[index].splittingFactor = 1
 	end
 	
@@ -41,7 +41,7 @@ local function loadDefaultsForPlayer(index)
 		" every " .. (global.auto[index].interval / 3600) .. " minutes")
 		shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 	else
-		l.info("Player " .. index .. " does no screenshots")
+		log(l.info("Player " .. index .. " does no screenshots"))
 	end
 end
 
@@ -59,8 +59,7 @@ end
 
 -- this method resets everything to a default state apart from already registered screenshots
 local function initialize()
-	l.info("initialize")
-	l.refreshDoDebug()
+	log(l.info("initialize"))
 
 	global.auto = {}
 	global.snip = {}
@@ -69,11 +68,11 @@ local function initialize()
 	global.queue = {}
 
 	for _, surface in pairs(game.surfaces) do
-		basetracker.initializeSurface()
+		basetracker.initializeSurface(surface.name)
 	end
 
 	for _, player in pairs(game.connected_players) do
-		l.info("found player: " .. player.name)
+		log(l.info("found player: " .. player.name))
 		initializePlayer(player)
 	end
 
@@ -81,27 +80,26 @@ local function initialize()
 end
 
 local function on_player_joined_game(event)
-	l.info("player " .. event.player_index .. " joined")
+	log(l.info("player " .. event.player_index .. " joined"))
 	initializePlayer(game.get_player(event.player_index))
 	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_player_left_game(event)
-	l.info("player " .. event.player_index .. " left")
+	log(l.info("player " .. event.player_index .. " left"))
 	queue.refreshNextScreenshotTimestamp()
 end
 
 local function on_runtime_mod_setting_changed(event)
 	if (event.setting_type == "runtime-global") then
-		l.info("global settings changed")
-		l.refreshDoDebug()
+		log(l.info("global settings changed"))
 	end
 end
 
 local function on_built_entity(event)
 	local pos = event.created_entity.position
 	local surface = event.created_entity.surface.name
-	l.debug("entity built on surface", surface, event "at pos:", pos.x, "x", pos.y)
+	if l.doD then log(l.debug("entity built on surface", surface, "at pos:", pos.x, "x", pos.y)) end
 	if basetracker.breaksCurrentLimits(pos, surface) then
 		basetracker.evaluateMinMaxFromPosition(pos, surface)
 	end
@@ -118,19 +116,19 @@ local function on_tick()
 end
 
 local function on_nth_tick(event)
-	l.info("on nth tick")
+	log(l.info("on nth tick"))
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
 	basetracker.checkForMinMaxChange()
 
 	for _, player in pairs(game.connected_players) do
 
-		l.debug("player", player.name, "with index", player.index, "found")
-		l.debug("do screenshot:   ", global.auto[player.index].doScreenshot)
-		l.debug("interval:        ", global.auto[player.index].interval)
-		l.debug("singleScreenshot:", global.auto[player.index].singleScreenshot)
-		l.debug("tick:            ", game.tick)
+		if l.doD then log(l.debug("player", player.name, "with index", player.index, "found")) end
+		if l.doD then log(l.debug("do screenshot:   ", global.auto[player.index].doScreenshot)) end
+		if l.doD then log(l.debug("interval:        ", global.auto[player.index].interval)) end
+		if l.doD then log(l.debug("singleScreenshot:", global.auto[player.index].singleScreenshot)) end
+		if l.doD then log(l.debug("tick:            ", game.tick)) end
 
-		if global.auto[player.index].doScreenshot and (event.tick % global.auto[player.index].interval == 0) then
+		if queue.doesAutoScreenshot(player.index) and (event.tick % global.auto[player.index].interval == 0) then
 			queue.registerPlayerToQueue(player.index)
 		end
 	end
@@ -165,6 +163,15 @@ script.on_event("FAS-right-click", gui.on_right_click)
 script.on_event(defines.events.on_player_cursor_stack_changed, gui.on_player_cursor_stack_changed)
 -- script.on_event(defines.events.on_gui_text_changed, gui.on_gui_event)
 script.on_event(defines.events.on_pre_surface_deleted, gui.on_pre_surface_deleted)
-script.on_event(defines.events.on_surface_created, gui.on_surface_created)
-script.on_event(defines.events.on_surface_imported, gui.on_surface_imported)
-script.on_event(defines.events.on_surface_renamed, gui.on_surface_renamed)
+script.on_event(defines.events.on_surface_created, function(event)
+	gui.on_surface_created()
+	basetracker.initializeSurface(game.get_surface(event.surface_index).name)
+end)
+script.on_event(defines.events.on_surface_imported, function(event)
+	gui.on_surface_imported(event)
+	basetracker.initializeSurface(game.get_surface(event.surface_index).name)
+end)
+script.on_event(defines.events.on_surface_renamed, function(event)
+	gui.on_surface_renamed(event)
+	basetracker.on_surface_renamed(event)
+end)
