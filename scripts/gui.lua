@@ -625,6 +625,7 @@ function gui.on_gui_selection_state_changed(event)
 end
 
 function gui.on_pre_surface_deleted(event)
+    log(l.info("surface " .. game.get_surface(event.surface_index).name .. " deleted"))
     for _, playerData in pairs(global.auto) do
         local name = game.get_surface(event.surface_index).name
         if playerData.doSurface[name] ~= nil then
@@ -634,11 +635,15 @@ function gui.on_pre_surface_deleted(event)
     initializeAllConnectedPlayers()
 end
 
-function gui.on_surface_created()
+function gui.on_surface_created(event)
+    log(l.info("surface " .. game.get_surface(event.surface_index).name .. "created"))
     initializeAllConnectedPlayers()
+    basetracker.initializeSurface(game.get_surface(event.surface_index).name)
+    shooter.evaluateZoomForAllPlayersAndSurface(game.get_surface(event.surface_index).name)
 end
 
 function gui.on_surface_renamed(event)
+    log(l.info("surface " .. event.old_name .. " renamed to " .. event.new_name))
     for _, playerData in pairs(global.auto) do
         if playerData.doSurface[event.old_name] ~= nil then
             playerData.doSurface[event.new_name] = playerData.doSurface[event.old_name]
@@ -646,10 +651,16 @@ function gui.on_surface_renamed(event)
         end
     end
     initializeAllConnectedPlayers()
+    basetracker.initializeSurface(game.get_surface(event.surface_index).name)
+    shooter.evaluateZoomForAllPlayersAndSurface(game.get_surface(event.surface_index).name)
 end
 
 function gui.on_surface_imported(event)
+    log(l.info("surface " .. event.original_name .. " imported with name " .. game.get_surface(event.surface_index).name))
+
     initializeAllConnectedPlayers()
+    basetracker.initializeSurface(game.get_surface(event.surface_index).name)
+    shooter.evaluateZoomForAllPlayersAndSurface(game.get_surface(event.surface_index).name)
 end
 
 

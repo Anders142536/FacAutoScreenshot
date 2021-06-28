@@ -104,7 +104,7 @@ local function evaluateLimitsFromMinMax(surface)
 	if l.doD then log(l.debug("evaluate limits from min max")) end
 
 	if math.abs(global.tracker[surface].minX) > global.tracker[surface].maxX then
-		global.tracker[surface].limitX =  math.abs(global.trackerv.minX)
+		global.tracker[surface].limitX =  math.abs(global.tracker[surface].minX)
 	else
 		global.tracker[surface].limitX = global.tracker[surface].maxX
 	end

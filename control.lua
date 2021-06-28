@@ -164,7 +164,7 @@ script.on_event(defines.events.on_player_cursor_stack_changed, gui.on_player_cur
 -- script.on_event(defines.events.on_gui_text_changed, gui.on_gui_event)
 script.on_event(defines.events.on_pre_surface_deleted, gui.on_pre_surface_deleted)
 script.on_event(defines.events.on_surface_created, function(event)
-	gui.on_surface_created()
+	gui.on_surface_created(event)
 	basetracker.initializeSurface(game.get_surface(event.surface_index).name)
 end)
 script.on_event(defines.events.on_surface_imported, function(event)

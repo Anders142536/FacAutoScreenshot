@@ -45,12 +45,16 @@ function shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 	end
 end
 
+function shooter.evaluateZoomForAllPlayersAndSurface(surface)
+	for _, player in pairs(game.connected_players) do
+		evaluateZoomForPlayer(player.index, surface)
+	end
+end
+
 function shooter.evaluateZoomForAllPlayersAndAllSurfaces()
     log(l.info("ev zoom for all players"))
 	for _, player in pairs(game.connected_players) do
-		if global.auto[player.index].doScreenshot then
 			shooter.evaluateZoomForPlayerAndAllSurfaces(player.index)
-		end
 	end
 end
 
@@ -100,7 +104,7 @@ local function renderAutoScreenshotFragment(index, fragment)
 		by_player = index,
 		water_tick = 0,
 		daytime = 0,
-		path = buildPath("auto_split" .. fragment.surface .. "/", fragment.title .. "_x" .. fragment.offset.x .. "_y" .. fragment.offset.y)
+		path = buildPath("auto_split_" .. fragment.surface .. "/", fragment.title .. "_x" .. fragment.offset.x .. "_y" .. fragment.offset.y)
 	}
 
 	-- the first screenshot is the screenshot 0 0, therefore +1

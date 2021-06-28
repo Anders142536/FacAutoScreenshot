@@ -39,53 +39,57 @@ end
 
 local function registerPlayerSingleScreenshots(index)
 	for _, surface in pairs(game.surfaces) do
-		global.queue[index][surface.name] = {
-			isSingleScreenshot = true,
-			surface = surface.name,
-			resX = global.auto[index].resX,
-			resY = global.auto[index].resY,
-			zoom = global.auto[index].zoom[surface.name]
-		}
+		if global.auto[index].doSurface[surface.name] then
+			global.queue[index][surface.name] = {
+				isSingleScreenshot = true,
+				surface = surface.name,
+				resX = global.auto[index].resX,
+				resY = global.auto[index].resY,
+				zoom = global.auto[index].zoom[surface.name]
+			}
+		end
 	end
 end
 
 local function registerPlayerFragmentedScreenshots(index)
 	for _, surface in pairs(game.surfaces) do
-		local numberOfTiles = getDivisor(index, surface.name)
-		local resX = global.auto[index].resX
-		local resY = global.auto[index].resY
-		local zoom = global.auto[index].zoom[surface.name]
+		if global.auto[index].doSurface[surface.name] then
+			local numberOfTiles = getDivisor(index, surface.name)
+			local resX = global.auto[index].resX
+			local resY = global.auto[index].resY
+			local zoom = global.auto[index].zoom[surface.name]
 
-		-- like calculating zoom, but reverse
-		-- cannot take limits from global, as we want the border of the screenshot, not the base
-		local rightborder = resX / (zoom * 2 * 32)
-		local bottomborder = resY / (zoom * 2 * 32)
+			-- like calculating zoom, but reverse
+			-- cannot take limits from global, as we want the border of the screenshot, not the base
+			local rightborder = resX / (zoom * 2 * 32)
+			local bottomborder = resY / (zoom * 2 * 32)
 
-		local posXStepsize = rightborder * 2 / numberOfTiles
-		local posYStepsize = bottomborder * 2 / numberOfTiles
+			local posXStepsize = rightborder * 2 / numberOfTiles
+			local posYStepsize = bottomborder * 2 / numberOfTiles
 		
-		local fragment = {
-			isFragmentedScreenshot = true,
-			surface = surface.name,
-			res = {x = resX / numberOfTiles, y = resY / numberOfTiles},
-			numberOfTiles = numberOfTiles,
-			offset = {x=0, y=0},
-			startpos = {x = -rightborder + posXStepsize / 2, y = -bottomborder + posYStepsize / 2},
-			stepsize = {x = posXStepsize, y = posYStepsize},
-			zoom = zoom,
-			title = "screenshot" .. game.tick
-		}
+			local fragment = {
+				isFragmentedScreenshot = true,
+				surface = surface.name,
+				res = {x = resX / numberOfTiles, y = resY / numberOfTiles},
+				numberOfTiles = numberOfTiles,
+				offset = {x=0, y=0},
+				startpos = {x = -rightborder + posXStepsize / 2, y = -bottomborder + posYStepsize / 2},
+				stepsize = {x = posXStepsize, y = posYStepsize},
+				zoom = zoom,
+				title = "screenshot" .. game.tick
+			}
 
-		if l.doD then log(l.debug("surface:    " .. fragment["surface"])) end
-		if l.doD then log(l.debug("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)) end
-		if l.doD then log(l.debug("numOfTiles: " .. fragment["numberOfTiles"])) end
-		if l.doD then log(l.debug("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)) end
-		if l.doD then log(l.debug("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)) end
-		if l.doD then log(l.debug("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)) end
-		if l.doD then log(l.debug("zoom:       " .. fragment["zoom"])) end
-		if l.doD then log(l.debug("title:      " .. fragment["title"])) end
+			if l.doD then log(l.debug("surface:    " .. fragment["surface"])) end
+			if l.doD then log(l.debug("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)) end
+			if l.doD then log(l.debug("numOfTiles: " .. fragment["numberOfTiles"])) end
+			if l.doD then log(l.debug("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)) end
+			if l.doD then log(l.debug("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)) end
+			if l.doD then log(l.debug("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)) end
+			if l.doD then log(l.debug("zoom:       " .. fragment["zoom"])) end
+			if l.doD then log(l.debug("title:      " .. fragment["title"])) end
 
-		global.queue[index][surface.name] = fragment
+			global.queue[index][surface.name] = fragment
+		end
 	end
 end
 
@@ -96,7 +100,7 @@ local function getNextEntry(index)
 			return entry
 		end
 	end
-	if l.doD then log(l.debug("there was no entry for player " .. index)) end
+	-- if l.doD then log(l.debug("there was no entry for player " .. index)) end
 	return nil
 end
 
