@@ -2,13 +2,13 @@ local shooter = {}
 
 --[[ Zoom Evalutation ]]--
 local function evaluateZoomForPlayer(index, surface)
-		l.debug("ev zoom for player " .. index)
-		l.debug("resX: " .. global.auto[index].resX)
-		l.debug("resY: " .. global.auto[index].resY)
-		l.debug("global.tracker[" .. surface .."].limitX: " .. global.tracker[surface].limitX)
-		l.debug("global.tracker[" .. surface .. "].limitY: " .. global.tracker[surface].limitY)
-		l.debug("old zoom: " .. (global.auto[index].zoom[surface] or "nil"))
-		l.debug("zoomLevel: " .. (global.auto[index].zoomLevel[surface] or "nil"))
+		if l.doD then log(l.debug("ev zoom for player " .. index)) end
+		if l.doD then log(l.debug("resX: " .. global.auto[index].resX)) end
+		if l.doD then log(l.debug("resY: " .. global.auto[index].resY)) end
+		if l.doD then log(l.debug("global.tracker[" .. surface .."].limitX: " .. global.tracker[surface].limitX)) end
+		if l.doD then log(l.debug("global.tracker[" .. surface .. "].limitY: " .. global.tracker[surface].limitY)) end
+		if l.doD then log(l.debug("old zoom: " .. (global.auto[index].zoom[surface] or "nil"))) end
+		if l.doD then log(l.debug("zoomLevel: " .. (global.auto[index].zoomLevel[surface] or "nil"))) end
 
 	if not global.auto[index].zoom[surface] then global.auto[index].zoom[surface] = 1 end
 	if not global.auto[index].zoomLevel[surface] then global.auto[index].zoomLevel[surface] = 1 end
@@ -28,12 +28,12 @@ local function evaluateZoomForPlayer(index, surface)
 	while newZoom < global.auto[index].zoom[surface] and global.auto[index].zoomLevel[surface] < 32 do
 		global.auto[index].zoomLevel[surface] = global.auto[index].zoomLevel[surface] + 1
 		global.auto[index].zoom[surface] = 1 / global.auto[index].zoomLevel[surface]
-		l.info("Adjusting zoom for player " .. index .. " on surface " .. surface .. " to " .. global.auto[index].zoom[surface] .. " and zoomlevel to " .. global.auto[index].zoomLevel[surface])
+		log(l.info("Adjusting zoom for player " .. index .. " on surface " .. surface .. " to " .. global.auto[index].zoom[surface] .. " and zoomlevel to " .. global.auto[index].zoomLevel[surface]))
 	end
 	if oldZoom > global.auto[index].zoom[surface] then
-		l.info("Adjusted zoom for player " .. index .. " from " .. oldZoom .. " to " .. global.auto[index].zoom[surface])
+		log(l.info("Adjusted zoom for player " .. index .. " from " .. oldZoom .. " to " .. global.auto[index].zoom[surface]))
 		if (global.auto[index].zoom[surface] == 32) then
-			l.warn("Player " .. index .. " reached maximum zoomlevel")
+			log(l.warn("Player " .. index .. " reached maximum zoomlevel"))
 			game.print("FAS: Player " .. index .. " reached maximum zoom level of 32. No further zooming out possible. Entities exceeding the screenshot limits will not be shown on the screenshots!")
 		end
 	end
@@ -46,7 +46,7 @@ function shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 end
 
 function shooter.evaluateZoomForAllPlayersAndAllSurfaces()
-    l.info("ev zoom for all players")
+    log(l.info("ev zoom for all players"))
 	for _, player in pairs(game.connected_players) do
 		if global.auto[player.index].doScreenshot then
 			shooter.evaluateZoomForPlayerAndAllSurfaces(player.index)
@@ -63,11 +63,11 @@ end
 
 
 local function renderAutoSingleScreenshot(index, specs)
-	l.debug("rendering auto screenshot as single screenshot")
-	l.debug("index:   " .. index)
-	l.debug("surface: " .. specs.surface)
-	l.debug("res:     " .. specs.resX .. "x " .. specs.resY .. "y")
-	l.debug("zoom:    " .. specs.zoom)
+	if l.doD then log(l.debug("rendering auto screenshot as single screenshot")) end
+	if l.doD then log(l.debug("index:   " .. index)) end
+	if l.doD then log(l.debug("surface: " .. specs.surface)) end
+	if l.doD then log(l.debug("res:     " .. specs.resX .. "x " .. specs.resY .. "y")) end
+	if l.doD then log(l.debug("zoom:    " .. specs.zoom)) end
 	game.take_screenshot{
 		resolution = {specs.resX, specs.resY},
 		position = {0, 0},
@@ -85,12 +85,12 @@ local function renderAutoScreenshotFragment(index, fragment)
 	local posX = fragment.startpos.x + fragment.stepsize.x * fragment.offset.x
 	local posY = fragment.startpos.y + fragment.stepsize.y * fragment.offset.y
 
-	l.debug("rendering next auto screenshot fragment")
-	l.debug("index:   " .. index)
-	l.debug("surface: " .. fragment.surface)
-	l.debug("res:     " .. fragment.res.x .. "x " .. fragment.res.y .. "y")
-	l.debug("zoom:    " .. fragment.zoom)
-	l.debug("pos:     " .. posX .. "x " .. posY .. "y")
+	if l.doD then log(l.debug("rendering next auto screenshot fragment")) end
+	if l.doD then log(l.debug("index:   " .. index)) end
+	if l.doD then log(l.debug("surface: " .. fragment.surface)) end
+	if l.doD then log(l.debug("res:     " .. fragment.res.x .. "x " .. fragment.res.y .. "y")) end
+	if l.doD then log(l.debug("zoom:    " .. fragment.zoom)) end
+	if l.doD then log(l.debug("pos:     " .. posX .. "x " .. posY .. "y")) end
 
 	game.take_screenshot{
 		resolution = fragment.res,
@@ -132,13 +132,13 @@ function shooter.renderNextQueueStep()
 end
 
 function shooter.renderAreaScreenshot(index)
-	l.info("shooter.renderAreaScreenshot was triggered")
-	l.debug("index:       " .. index)
-	l.debug("area.top:    " .. global.snip[index].area.top)
-	l.debug("area.bottom: " .. global.snip[index].area.bottom)
-	l.debug("area.left:   " .. global.snip[index].area.left)
-	l.debug("area.right:  " .. global.snip[index].area.right)
-	l.debug("zoomlevel:   " .. global.snip[index].zoomLevel)
+	log(l.info("shooter.renderAreaScreenshot was triggered"))
+	if l.doD then log(l.debug("index:       " .. index)) end
+	if l.doD then log(l.debug("area.top:    " .. global.snip[index].area.top)) end
+	if l.doD then log(l.debug("area.bottom: " .. global.snip[index].area.bottom)) end
+	if l.doD then log(l.debug("area.left:   " .. global.snip[index].area.left)) end
+	if l.doD then log(l.debug("area.right:  " .. global.snip[index].area.right)) end
+	if l.doD then log(l.debug("zoomlevel:   " .. global.snip[index].zoomLevel)) end
 
 	local width = global.snip[index].area.right - global.snip[index].area.left
 	local heigth = global.snip[index].area.bottom - global.snip[index].area.top

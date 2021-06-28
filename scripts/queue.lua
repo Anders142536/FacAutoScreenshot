@@ -32,7 +32,7 @@ local function getDivisor(index, surface)
 	
 	divisor = divisor * (math.sqrt(global.auto[index].splittingFactor))
 
-	l.debug("returned divisor " .. divisor .. " from input " .. zoomLevel)
+	if l.doD then log(l.debug("returned divisor " .. divisor .. " from input " .. zoomLevel)) end
 
 	return divisor
 end
@@ -44,7 +44,7 @@ local function registerPlayerSingleScreenshots(index)
 			surface = surface.name,
 			resX = global.auto[index].resX,
 			resY = global.auto[index].resY,
-			zoom = global.auto[index].zoom[index]
+			zoom = global.auto[index].zoom[surface.name]
 		}
 	end
 end
@@ -76,14 +76,14 @@ local function registerPlayerFragmentedScreenshots(index)
 			title = "screenshot" .. game.tick
 		}
 
-		l.debug("surface:    " .. fragment["surface"])
-		l.debug("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)
-		l.debug("numOfTiles: " .. fragment["numberOfTiles"])
-		l.debug("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)
-		l.debug("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)
-		l.debug("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)
-		l.debug("zoom:       " .. fragment["zoom"])
-		l.debug("title:      " .. fragment["title"])
+		if l.doD then log(l.debug("surface:    " .. fragment["surface"])) end
+		if l.doD then log(l.debug("res:        " .. fragment["res"].x .. "x" .. fragment["res"].y)) end
+		if l.doD then log(l.debug("numOfTiles: " .. fragment["numberOfTiles"])) end
+		if l.doD then log(l.debug("offset:     " .. fragment["offset"].x .. " " .. fragment["offset"].y)) end
+		if l.doD then log(l.debug("startpos:   " .. fragment["startpos"].x .. " " .. fragment["startpos"].y)) end
+		if l.doD then log(l.debug("stepsize:   " .. fragment["stepsize"].x .. " " .. fragment["stepsize"].y)) end
+		if l.doD then log(l.debug("zoom:       " .. fragment["zoom"])) end
+		if l.doD then log(l.debug("title:      " .. fragment["title"])) end
 
 		global.queue[index][surface.name] = fragment
 	end
@@ -96,7 +96,7 @@ local function getNextEntry(index)
 			return entry
 		end
 	end
-	l.debug("there was no entry for player " .. index)
+	if l.doD then log(l.debug("there was no entry for player " .. index)) end
 	return nil
 end
 
@@ -105,9 +105,9 @@ local function hasEntriesForPlayer(index)
 end
 
 function q.registerPlayerToQueue(index)
-	l.info("registering player to screenshot list")
+	log(l.info("registering player to screenshot list"))
 	if hasEntriesForPlayer(index) then
-		l.warn("there was still a screenshot queued when trying to register a player to queue")
+		log(l.warn("there was still a screenshot queued when trying to register a player to queue"))
 		game.print("FAS: The script is not yet done with the screenshots for player " .. game.get_player(index).name .. " but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which screenshots are done longer. Changing the resolution will not prevent this from happening.")
 		return
 	end
@@ -118,7 +118,7 @@ function q.registerPlayerToQueue(index)
 	end
 end
 
-local function doesAutoScreenshot(index)
+function q.doesAutoScreenshot(index)
 	for _, surface in pairs(game.surfaces) do
 		if global.auto[index].doSurface[surface.name] then
 			return true
@@ -130,7 +130,7 @@ end
 function q.refreshNextScreenshotTimestamp()
 	local closest
 	for _, player in pairs(game.connected_players) do
-		if doesAutoScreenshot(player.index) then
+		if q.doesAutoScreenshot(player.index) then
 			local times = math.floor(game.tick / global.auto[player.index].interval)
 			local next = global.auto[player.index].interval * (times + 1)
 			if closest == nil or next < closest then
@@ -166,7 +166,6 @@ function q.getNextStep()
 end
 
 function q.hasAnyEntries()
-	l.debug("checking for queue entries")
 	for _, player in pairs(game.connected_players) do
 		if getNextEntry(player.index) then
 			return true

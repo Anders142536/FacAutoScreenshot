@@ -1,7 +1,5 @@
 local logger = {}
 
-local doDebug
-
 local function concat(...)
     local result = {}
     -- table.pack removes the nil values whilst keeping every value at its index,
@@ -17,22 +15,19 @@ local function concat(...)
 end
 
 function logger.debug(...)
-    if not doDebug then return end
-    log(concat("DBUG: ", ...))
+    return concat("DBUG: ", ...)
 end
 
 function logger.info(...)
-    log(concat("INFO: ", ...))
+    return concat("INFO: ", ...)
 end
 
 function logger.warn(...)
-    log(concat("WARN: ", ...))
+    return concat("WARN: ", ...)
 end
 
-function logger.refreshDoDebug()
-    doDebug = settings.global["FAS-enable-debug"].value
+function logger.doD()
+    return global.verbose == true
 end
-
-logger.refreshDoDebug()
 
 return logger
