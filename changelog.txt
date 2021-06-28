@@ -10,6 +10,10 @@ Version: 2.1.0
     - Great refactor due to the changes, increased stability and maintainability
     - added proper logging
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.14
+  Optimizations:
+    - Updated thumbnail to fit the design of the information page
+---------------------------------------------------------------------------------------------------
 Version: 2.0.13
   Features:
     - Added 16K screenshot option to auto screenshots as requested by Silv3RKill3R
