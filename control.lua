@@ -10,38 +10,29 @@ local function loadDefaultsForPlayer(index)
 	if not global.auto[index] then global.auto[index] = {} end
 	if not global.snip[index] then global.snip[index] = {} end
 
-	if global.auto[index].interval == nil then
-		if l.doD then log(l.debug("setting interval to 10 min")) end
-		global.auto[index].interval = 10 * 60 * 60
-	end
+	if global.auto[index].interval == nil then global.auto[index].interval = 10 * 60 * 60 end
+	log(l.info("interval is " .. (global.auto[index].interval / 60 / 60)) .. " min")
 
 	if global.auto[index].resX == nil then
-		if l.doD then log(l.debug("setting resolution to 4k")) end
 		global.auto[index].resolution_index = 3
 		global.auto[index].resX = 3840
 		global.auto[index].resY = 2160
 	end
+	log(l.info("resolution is " .. global.auto[index].resX .. "x" .. global.auto[index].resY))
 
-	if global.auto[index].singleScreenshot == nil then
-		if l.doD then log(l.debug("setting singleScreenshot to false")) end
-		global.auto[index].singleScreenshot = false
-	end
+	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = false end
+	log(l.info("singleScreenshot is " .. global.auto[index].singleScreenshot))
 
-	if global.auto[index].splittingFactor == nil then
-		if l.doD then log(l.debug("setting splittingFactor to 1")) end
-		global.auto[index].splittingFactor = 1
-	end
-	
+	if global.auto[index].splittingFactor == nil then global.auto[index].splittingFactor = 1 end
+	log(l.info("splittingFactor is " .. global.auto[index].splittingFactor))
+
 	if not global.snip[index].zoomLevel then global.snip[index].zoomLevel = 1 end
+	log(l.info("snip zoomlevel is " .. global.snip[index].zoomLevel))
 
-	-- confirmation logs reading back the set settings in chat.
-	if (global.auto[index].doScreenshot) then
-		l.info("Player " .. index .. " does screenshots with resolution " .. 
-		global.auto[index].resX .. "x" .. global.auto[index].resY .. 
-		" every " .. (global.auto[index].interval / 3600) .. " minutes")
-		shooter.evaluateZoomForPlayerAndAllSurfaces(index)
-	else
-		log(l.info("Player " .. index .. " does no screenshots"))
+	if not global.auto[index].doSurface then global.auto[index].doSurface = {} end
+	for _, surface in pairs(game.surfaces) do
+		log(l.info("does surface " .. surface.name .. ": " ..
+		(global.auto[index].doSurface[surface.name] or "false")))
 	end
 end
 
@@ -49,8 +40,7 @@ local function initializePlayer(player)
 	-- surface specific, need to be indexed via surface index
 	global.auto[player.index] = {
 		zoom = {},
-		zoomLevel = {},
-		doSurface = {}
+		zoomLevel = {}
 	}
 	loadDefaultsForPlayer(player.index)
 	gui.initialize(player)
