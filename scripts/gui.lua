@@ -369,6 +369,7 @@ local function buildAreaArea(index, area_content)
         type = "textfield",
         name = "width_value",
         numeric = "true",
+        text = (global.snip[index].area.width or ""),
         enabled = "false",
         style = "fas_numeric_output"
     }
@@ -384,6 +385,7 @@ local function buildAreaArea(index, area_content)
         type = "textfield",
         name = "height_value",
         numeric = "true",
+        text = (global.snip[index].area.height or ""),
         enabled = "false",
         style = "fas_numeric_output"
     }
@@ -399,6 +401,7 @@ local function buildAreaArea(index, area_content)
         type = "textfield",
         name = "x_value",
         numeric = "true",
+        text = (global.snip[index].area.left or ""),
         enabled = "false",
         style = "fas_numeric_output"
     }
@@ -415,6 +418,7 @@ local function buildAreaArea(index, area_content)
         type = "textfield",
         name = "y_value",
         numeric = "true",
+        text = (global.snip[index].area.top or ""),
         enabled = "false",
         style = "fas_numeric_output"
     }
@@ -939,6 +943,8 @@ local function calculateArea(index)
     global.snip[index].area.left = left
     global.snip[index].area.right = right
     global.snip[index].area.bottom = bottom
+    global.snip[index].area.width = width
+    global.snip[index].area.height = height
  
     global.gui[index].x_value.text = tostring(left)
     global.gui[index].y_value.text = tostring(top)

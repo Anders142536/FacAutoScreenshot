@@ -7,8 +7,26 @@ queue = require("scripts.queue")
 local function loadDefaultsForPlayer(index)
 	log(l.info("loading defaults for player " .. index))
 
-	if not global.auto[index] then global.auto[index] = {} end
-	if not global.snip[index] then global.snip[index] = {} end
+	if not global.auto[index] then 
+		l.info("global.auto was nil")
+		global.auto[index] = {}
+	end
+	if not global.auto[index].zoom then
+		l.info("global.auto.zoom was nil")
+		global.auto[index].zoom = {}
+	end
+	if not global.auto[index].zoomLevel then
+		l.info("global.auto.zoomlevel was nil")
+		global.auto[index].zoomLevel = {}
+	end
+	if not global.snip[index] then
+		l.info("global.snip was nil")
+		global.snip[index] = {}
+	end
+	if not global.snip[index].area then
+		l.info("global.snip.area was nil")
+		global.snip[index].area = {}
+	end
 
 	if global.auto[index].interval == nil then global.auto[index].interval = 10 * 60 * 60 end
 	log(l.info("interval is " .. (global.auto[index].interval / 60 / 60)) .. " min")
@@ -21,7 +39,7 @@ local function loadDefaultsForPlayer(index)
 	log(l.info("resolution is " .. global.auto[index].resX .. "x" .. global.auto[index].resY))
 
 	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = false end
-	log(l.info("singleScreenshot is " .. global.auto[index].singleScreenshot))
+	log(l.info("singleScreenshot is " .. (global.auto[index].singleScreenshot and "on" or "off")))
 
 	if global.auto[index].splittingFactor == nil then global.auto[index].splittingFactor = 1 end
 	log(l.info("splittingFactor is " .. global.auto[index].splittingFactor))
@@ -32,16 +50,13 @@ local function loadDefaultsForPlayer(index)
 	if not global.auto[index].doSurface then global.auto[index].doSurface = {} end
 	for _, surface in pairs(game.surfaces) do
 		log(l.info("does surface " .. surface.name .. ": " ..
-		(global.auto[index].doSurface[surface.name] or "false")))
+		(global.auto[index].doSurface[surface.name] and "true" or "false")))
 	end
+
+	shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 end
 
 local function initializePlayer(player)
-	-- surface specific, need to be indexed via surface index
-	global.auto[player.index] = {
-		zoom = {},
-		zoomLevel = {}
-	}
 	loadDefaultsForPlayer(player.index)
 	gui.initialize(player)
 	queue.initialize(player.index)

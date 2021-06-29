@@ -1,7 +1,12 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.1
+  Bugfixes:
+    - Fixed issue of selection rectangle not being deletable in certain cases
+    - Fixed various initialization issues that would cause player controls to fall back to default values and... crashes
+    - Fixed issue that player controls would reset when opening a save saved in singleplayer in multiplayer
   Optimizations:
     - Countdown is now only refreshed when it is not equal to the new value, so everytime it is '-'
+    - Improved logging
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.0
   Features:
