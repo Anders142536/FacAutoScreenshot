@@ -138,11 +138,7 @@ end
 
 --[[ EVENT REGISTRATION ]]--
 script.on_init(initialize)
-script.on_configuration_changed(function(data)
-	--check what is in data and see if we can skip a lot of things
-	--we only need to reinitialize if the mod version changed
-	initialize()
-end)
+
 
 -- every minute
 script.on_nth_tick(3600, on_nth_tick)
