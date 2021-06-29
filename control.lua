@@ -122,7 +122,7 @@ local function on_nth_tick(event)
 
 	for _, player in pairs(game.connected_players) do
 
-		if l.doD then log(l.debug("player", player.name, "with index", player.index, "found")) end
+		if l.doD then log(l.debug("player ", player.name, " with index ", player.index, " found")) end
 		if l.doD then log(l.debug("do screenshot:   ", global.auto[player.index].doScreenshot)) end
 		if l.doD then log(l.debug("interval:        ", global.auto[player.index].interval)) end
 		if l.doD then log(l.debug("singleScreenshot:", global.auto[player.index].singleScreenshot)) end
