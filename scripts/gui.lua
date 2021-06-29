@@ -1050,8 +1050,10 @@ function gui.refreshStatusCountdown()
     local countdown = calculateCountdown()
     for index, player in pairs(global.gui) do
         if player.mainFrame and player.mainFrame.valid and player.mainFrame.visible then
-            if l.doD then log(l.debug("setting status value for player " .. index .. " with countdown " .. countdown)) end
-            player.status_value.caption = countdown
+            if (player.status_value.caption ~= countdown) then
+                if l.doD then log(l.debug("setting status value for player " .. index .. " with countdown " .. countdown)) end
+                player.status_value.caption = countdown
+            end
         end
     end
 end
