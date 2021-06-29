@@ -677,6 +677,12 @@ function gui.togglegui(event)
         end
         guiFrame.visible = not guiFrame.visible
     end
+
+    if not guiFrame or guiFrame.visible then
+        log(l.info("gui is now visible"))
+    else
+        log(l.info("gui is now hidden"))
+    end
 end
 
 function gui.gui_close(event)
