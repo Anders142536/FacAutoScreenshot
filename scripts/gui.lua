@@ -1050,6 +1050,7 @@ function gui.refreshStatusCountdown()
     local countdown = calculateCountdown()
     for index, player in pairs(global.gui) do
         if player.mainFrame and player.mainFrame.valid and player.mainFrame.visible then
+            -- when the status is '-' this would always refresh without the if here
             if (player.status_value.caption ~= countdown) then
                 if l.doD then log(l.debug("setting status value for player " .. index .. " with countdown " .. countdown)) end
                 player.status_value.caption = countdown
