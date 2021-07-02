@@ -474,7 +474,7 @@ local function buildAreaResolution(index, area_content)
     global.gui[index].resolution_value = resolution_flow.add{
         type = "label",
         name = "resolution_value",
-        caption = {"FAS-no-area-selected"}
+        caption = global.snip[index].resolution or {"FAS-no-area-selected"}
     }
 end
 
@@ -494,7 +494,7 @@ local function buildAreaFilesize(index, area_content)
     global.gui[index].estimated_filesize_value = estimated_filesize_flow.add{
         type = "label",
         name = "estimated_filesize_value",
-        caption = "-"
+        caption = global.snip[index].filesize or "-"
     }
 end
 
@@ -515,7 +515,7 @@ local function buildAreaStartButton(index, area_content)
         name = "start_area_screenshot_button",
         caption = {"FAS-start-area-screenshot-button-caption"},
         mouse_button_filter = {"left"},
-        enabled = "false"
+        enabled = global.snip[index].enableScreenshotButton or false
     }
 end
 
@@ -675,6 +675,7 @@ function gui.togglegui(event)
     local guiFrame = player.gui.screen[mainFrameName]
     if not guiFrame then
         createGuiFrame(player)
+        
     else
         if not guiFrame.visible and not global.auto.amount then
                 gui.refreshStatusCountdown()
@@ -809,18 +810,23 @@ local function refreshStartHighResScreenshotButton(index)
     -- {1, 16384}
     local zoom = 1 / global.snip[index].zoomLevel
     if not global.snip[index].area then
+        global.snip[index].enableScreenshotButton = false
         global.gui[index].start_area_screenshot_button.enabled = false
     else
         local resX = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
         local resY = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
         
-        global.gui[index].start_area_screenshot_button.enabled = resX < 16385 and resY < 16385
+        local enable = resX < 16385 and resY < 16385
+        global.snip[index].enableScreenshotButton = enable
+        global.gui[index].start_area_screenshot_button.enabled = enable
     end
 end
 
 local function refreshEstimates(index)
     if not global.snip[index].area then
         -- happens if the zoom slider is moved before an area was selected so far
+        global.snip[index].resolution = nil
+        global.snip[index].filesize = nil
         global.gui[index].resolution_value.caption = {"FAS-no-area-selected"}
         global.gui[index].estimated_filesize_value.caption = "-"
         return
@@ -843,7 +849,10 @@ local function refreshEstimates(index)
         size = size .. " B"
     end
     
-    global.gui[index].resolution_value.caption = width .. "x" .. height
+    local resolution = width .. "x" .. height
+    global.snip[index].resolution = resolution
+    global.snip[index].filesize = size
+    global.gui[index].resolution_value.caption = resolution
     global.gui[index].estimated_filesize_value.caption = size
 end
 

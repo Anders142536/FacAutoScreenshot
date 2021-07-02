@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.2
+  Bugfixes:
+    - Fixed issue of area estimates being empty when loading save in multiplayer, even though there is an area selected
+    - Fixed issue with "Start Area Screenshot" button always being disabled when loading save in multiplayer, regardless of wether or not a screenshot would be valid at that time
+  Optimizations:
+    - The default for the "Single tick screenshot" checkbox is now the "checked" state.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.1
   Bugfixes:
     - Fixed issue of selection rectangle not being deletable in certain cases

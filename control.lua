@@ -38,7 +38,7 @@ local function loadDefaultsForPlayer(index)
 	end
 	log(l.info("resolution is " .. global.auto[index].resX .. "x" .. global.auto[index].resY))
 
-	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = false end
+	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = true end
 	log(l.info("singleScreenshot is " .. (global.auto[index].singleScreenshot and "on" or "off")))
 
 	if global.auto[index].splittingFactor == nil then global.auto[index].splittingFactor = 1 end
