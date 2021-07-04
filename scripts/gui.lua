@@ -754,6 +754,9 @@ function gui.auto_resolution_value_selection(event)
         global.auto[event.player_index].resX = 1280
         global.auto[event.player_index].resY = 720
     end
+    global.auto[event.player_index].zoom = {}
+    global.auto[event.player_index].zoomLevel = {}
+    shooter.evaluateZoomForPlayerAndAllSurfaces(event.player_index)
 end
 
 function gui.interval_value_text_changed(event)
