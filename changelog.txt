@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.3
+  Bugfixes:
+    - Fixed issue with screenshots sometimes not showing all of the base
+    - Fixed issue with changing resolution not being handled properly. The Zoom level is independent of the chosen resolution, so when changing from 8K to 16K the zoom must be adjusted, otherwise the higher resolution just causes the extra pixels to show extra area around the base. Now a proper recalculation is triggered.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.2
   Bugfixes:
     - Fixed issue of area estimates being empty when loading save in multiplayer, even though there is an area selected
@@ -180,4 +185,4 @@ Version: 1.0.0
     - Settings are now properly read
     - Adjust zoom level based on base size and new buildings being placed
   Bugfixes:
-    - General BugBugfixes
+    - General Bugfixes
