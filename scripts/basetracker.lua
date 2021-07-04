@@ -73,7 +73,7 @@ function tracker.evaluateLimitsOfSurface(surface_index)
 		if l.doD then log(l.debug("global.tracker[", surface_index, "].minY: ", global.tracker[surface_index].minY)) end
 		if l.doD then log(l.debug("global.tracker[", surface_index, "].maxY: ", global.tracker[surface_index].maxY)) end
 
-		local top = math.abs(tchunk.area.left_top.x)
+		local top = math.abs(tchunk.area.left_top.y)
 		local right = math.abs(rchunk.area.right_bottom.x)
 		local bottom = math.abs(bchunk.area.right_bottom.y)
 		local left =  math.abs(lchunk.area.left_top.x)
