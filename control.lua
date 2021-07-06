@@ -19,6 +19,30 @@ local function loadDefaultsForPlayer(index)
 		l.info("global.auto.zoomlevel was nil")
 		global.auto[index].zoomLevel = {}
 	end
+	
+	if global.auto[index].interval == nil then global.auto[index].interval = 10 * 60 * 60 end
+	log(l.info("interval is " .. (global.auto[index].interval / 60 / 60)) .. " min")
+	
+	if global.auto[index].resX == nil then
+		global.auto[index].resolution_index = 3
+		global.auto[index].resX = 3840
+		global.auto[index].resY = 2160
+	end
+
+	log(l.info("resolution is " .. global.auto[index].resX .. "x" .. global.auto[index].resY))
+
+	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = true end
+	log(l.info("singleScreenshot is " .. (global.auto[index].singleScreenshot and "on" or "off")))
+	
+	if global.auto[index].splittingFactor == nil then global.auto[index].splittingFactor = 1 end
+	log(l.info("splittingFactor is " .. global.auto[index].splittingFactor))
+	
+	if not global.auto[index].doSurface then global.auto[index].doSurface = {} end
+	for _, surface in pairs(game.surfaces) do
+		log(l.info("does surface " .. surface.name .. ": " ..
+		(global.auto[index].doSurface[surface.name] and "true" or "false")))
+	end
+
 	if not global.snip[index] then
 		l.info("global.snip was nil")
 		global.snip[index] = {}
@@ -28,30 +52,21 @@ local function loadDefaultsForPlayer(index)
 		global.snip[index].area = {}
 	end
 
-	if global.auto[index].interval == nil then global.auto[index].interval = 10 * 60 * 60 end
-	log(l.info("interval is " .. (global.auto[index].interval / 60 / 60)) .. " min")
+	if global.snip[index].showAltMode == nil then global.snip[index].showAltMode = false end
+	log(l.info("snip show alt mode is " .. (global.snip[index].showAltMode and "true" or "false")))
 
-	if global.auto[index].resX == nil then
-		global.auto[index].resolution_index = 3
-		global.auto[index].resX = 3840
-		global.auto[index].resY = 2160
-	end
-	log(l.info("resolution is " .. global.auto[index].resX .. "x" .. global.auto[index].resY))
+	if global.snip[index].showUI == nil then global.snip[index].showUI = false end
+	log(l.info("snip show ui is " .. (global.snip[index].showUI and "true" or "false")))
 
-	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = true end
-	log(l.info("singleScreenshot is " .. (global.auto[index].singleScreenshot and "on" or "off")))
+	if global.snip[index].showCursorBuildingPreview == nil then global.snip[index].showCursorBuildingPreview = false end
+	log(l.info("snip show cursor building preview is " .. (global.snip[index].showCursorBuildingPreview and "true" or "false")))
 
-	if global.auto[index].splittingFactor == nil then global.auto[index].splittingFactor = 1 end
-	log(l.info("splittingFactor is " .. global.auto[index].splittingFactor))
+	if global.snip[index].useAntiAlias == nil then global.snip[index].useAntiAlias = false end
+	log(l.info("snip use anti alias is " .. (global.snip[index].useAntiAlias and "true" or "false")))
 
 	if not global.snip[index].zoomLevel then global.snip[index].zoomLevel = 1 end
 	log(l.info("snip zoomlevel is " .. global.snip[index].zoomLevel))
 
-	if not global.auto[index].doSurface then global.auto[index].doSurface = {} end
-	for _, surface in pairs(game.surfaces) do
-		log(l.info("does surface " .. surface.name .. ": " ..
-		(global.auto[index].doSurface[surface.name] and "true" or "false")))
-	end
 
 	shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 end

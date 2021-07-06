@@ -425,6 +425,100 @@ local function buildAreaArea(index, area_content)
     global.gui[index].y_value = y_value
 end
 
+local function buildAreaShowAltMode(index, area_content)
+    local alt_mode_flow = area_content.add{
+        type = "flow",
+        name = "alt_mode_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+
+    alt_mode_flow.add{
+        type = "label",
+        name = "alt_mode_label",
+        caption = {"FAS-alt-mode-caption"},
+        tooltip = {"FAS-alt-mode-tooltip"},
+        style = "fas_label"
+    }
+
+    global.gui[index].alt_mode_value = alt_mode_flow.add{
+        type = "checkbox",
+        name = "alt_mode_value",
+        state = global.snip[index].showAltMode
+    }
+end
+
+local function buildAreaShowUi(index, area_content)
+    local show_ui_flow = area_content.add{
+        type = "flow",
+        name = "show_ui_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+
+    show_ui_flow.add{
+        type = "label",
+        name = "show_ui_label",
+        caption = {"FAS-show-ui-caption"},
+        tooltip = {"FAS-show-ui-tooltip"},
+        style = "fas_label"
+    }
+
+    global.gui[index].show_ui_value = show_ui_flow.add{
+        type = "checkbox",
+        name = "show_ui_value",
+        state = global.snip[index].showUI
+    }
+end
+
+local function buildAreaShowCursorBuildingPreview(index, area_content)
+    local show_cursor_building_preview_flow = area_content.add{
+        type = "flow",
+        name = "show_cursor_building_preview_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+
+    show_cursor_building_preview_flow.add{
+        type = "label",
+        name = "show_cursor_building_preview_label",
+        caption = {"FAS-show-cursor-building-preview-caption"},
+        tooltip = {"FAS-show-cursor-building-preview-tooltip"},
+        style = "fas_label"
+    }
+
+    global.gui[index].show_cursor_building_preview_value = show_cursor_building_preview_flow.add{
+        type = "checkbox",
+        name = "show_cursor_building_preview_value",
+        state = global.snip[index].showUI
+    }
+end
+
+local function buildAreaUseAntiAlias(index, area_content)
+    local use_anti_alias_flow = area_content.add{
+        type = "flow",
+        name = "use_anti_alias_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+
+    use_anti_alias_flow.add{
+        type = "label",
+        name = "use_anti_alias_label",
+        caption = {"FAS-use-anti-alias-caption"},
+        tooltip = {"FAS-use-anti-alias-tooltip"},
+        style = "fas_label"
+    }
+
+    global.gui[index].use_anti_alias_value = use_anti_alias_flow.add{
+        type = "checkbox",
+        name = "use_anti_alias_value",
+        state = global.snip[index].showUI
+    }
+end
+
+
+
 local function buildAreaZoom(index, area_content)
     local zoom_flow = area_content.add{
         type = "flow",
@@ -533,6 +627,10 @@ local function buildAreaScreenshotSection(index, area_frame)
 
 
     buildAreaArea(index, area_content)
+    buildAreaShowUi(index, area_content)
+    buildAreaShowAltMode(index, area_content)
+    buildAreaShowCursorBuildingPreview(index, area_content)
+    buildAreaUseAntiAlias(index, area_content)
     buildAreaZoom(index, area_content)
     buildAreaResolution(index, area_content)
     buildAreaFilesize(index, area_content)
