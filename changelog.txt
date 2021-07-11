@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.4
+  Features:
+    - Added further options to the area screenshots (show alt-mode, show-ui, show-building-preview, use-anti-alias)
+    - There is now feedback when doing an area screenshot hinting the location of the done screenshot.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.3
   Bugfixes:
     - Fixed issue with screenshots sometimes not showing all of the base
