@@ -137,12 +137,18 @@ end
 
 function shooter.renderAreaScreenshot(index)
 	log(l.info("shooter.renderAreaScreenshot was triggered"))
-	if l.doD then log(l.debug("index:       " .. index)) end
-	if l.doD then log(l.debug("area.top:    " .. global.snip[index].area.top)) end
-	if l.doD then log(l.debug("area.bottom: " .. global.snip[index].area.bottom)) end
-	if l.doD then log(l.debug("area.left:   " .. global.snip[index].area.left)) end
-	if l.doD then log(l.debug("area.right:  " .. global.snip[index].area.right)) end
-	if l.doD then log(l.debug("zoomlevel:   " .. global.snip[index].zoomLevel)) end
+	if l.doD then
+		log(l.debug("index:       " .. index))
+		log(l.debug("area.top:    " .. global.snip[index].area.top))
+		log(l.debug("area.bottom: " .. global.snip[index].area.bottom))
+		log(l.debug("area.left:   " .. global.snip[index].area.left))
+		log(l.debug("area.right:  " .. global.snip[index].area.right))
+		log(l.debug("zoomlevel:   " .. global.snip[index].zoomLevel))
+		log(l.debug("show alt m.: " .. (global.snip[index].showAltMode and "true" or "false")))
+		log(l.debug("show ui:     " .. (global.snip[index].showUI and "true" or "false")))
+		log(l.debug("show cur b.: " .. (global.snip[index].showCursorBuildingPreview and "true" or "false")))
+		log(l.debug("use antial.: " .. (global.snip[index].useAntiAlias and "true" or "false")))
+	end
 
 	local width = global.snip[index].area.right - global.snip[index].area.left
 	local heigth = global.snip[index].area.bottom - global.snip[index].area.top
@@ -153,13 +159,19 @@ function shooter.renderAreaScreenshot(index)
 	local posX = global.snip[index].area.left + width / 2
 	local posY = global.snip[index].area.top + heigth / 2
 
+	local path = buildPath("area/", "screenshot" .. game.tick .. "_" .. resX .. "x" .. resY)
 	game.take_screenshot{
 		resolution = {resX, resY},
 		position = {posX, posY},
 		zoom = zoom,
 		by_player = index,
-		path = buildPath("area/", "screenshot" .. game.tick .. "_" .. resX .. "x" .. resY)
+		path = path,
+		show_gui = global.snip[index].showUI,
+		show_entity_info = global.snip[index].showAltMode,
+		show_cursor_building_preview = global.snip[index].showCursorBuildingPreview,
+		anti_allias = global.snip[index].useAntiAlias
 	}
+	game.get_player(index).print({"FAS-did-screenshot", path})
 end
 
 return shooter
