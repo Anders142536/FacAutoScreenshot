@@ -490,7 +490,7 @@ local function buildAreaShowCursorBuildingPreview(index, area_content)
     global.gui[index].show_cursor_building_preview_value = show_cursor_building_preview_flow.add{
         type = "checkbox",
         name = "show_cursor_building_preview_value",
-        state = global.snip[index].showUI
+        state = global.snip[index].showCursorBuildingPreview
     }
 end
 
@@ -513,7 +513,7 @@ local function buildAreaUseAntiAlias(index, area_content)
     global.gui[index].use_anti_alias_value = use_anti_alias_flow.add{
         type = "checkbox",
         name = "use_anti_alias_value",
-        state = global.snip[index].showUI
+        state = global.snip[index].useAntiAlias
     }
 end
 
