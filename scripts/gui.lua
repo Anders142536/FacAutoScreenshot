@@ -627,8 +627,8 @@ local function buildAreaScreenshotSection(index, area_frame)
 
 
     buildAreaArea(index, area_content)
-    buildAreaShowUi(index, area_content)
     buildAreaShowAltMode(index, area_content)
+    buildAreaShowUi(index, area_content)
     buildAreaShowCursorBuildingPreview(index, area_content)
     buildAreaUseAntiAlias(index, area_content)
     buildAreaZoom(index, area_content)
@@ -987,6 +987,30 @@ function gui.start_area_screenshot_button(event)
     local index = event.player_index
 
     shooter.renderAreaScreenshot(index)
+end
+
+function gui.show_ui_value(event)
+    log(l.info("show ui tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].showUI = event.element.state
+    if l.doD then log(l.debug("snip show ui is " .. (global.snip[event.player_index].showUI and "true" or "false"))) end
+end
+
+function gui.alt_mode_value(event)
+    log(l.info("show alt mode tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].showAltMode = event.element.state
+    if l.doD then log(l.debug("snip show alt mode is " .. (global.snip[event.player_index].showAltMode and "true" or "false"))) end
+end
+
+function gui.show_cursor_building_preview_value(event)
+    log(l.info("show cursor building preview tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].showCursorBuildingPreview = event.element.state
+    if l.doD then log(l.debug("snip show cursor building preview is " .. (global.snip[event.player_index].showCursorBuildingPreview and "true" or "false"))) end
+end
+
+function gui.use_anti_alias_value(event)
+    log(l.info("use anti alias tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].useAntiAlias = event.element.state
+    if l.doD then log(l.debug("snip ue anti alias is " .. (global.snip[event.player_index].useAntiAlias and "true" or "false"))) end
 end
 
 function gui.zoom_slider_value_changed(event)
