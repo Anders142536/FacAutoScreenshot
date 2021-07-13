@@ -231,7 +231,7 @@ local function buildAutoSingleTick(index, auto_screenshot_config)
     global.gui[index].single_tick_value = single_tick_flow.add{
         type = "checkbox",
         name = "single_tick_value",
-        state = global.auto[index].singleScreenshot
+        state = global.auto[index].singleScreenshot or false
     }
 end
 
@@ -444,7 +444,7 @@ local function buildAreaShowAltMode(index, area_content)
     global.gui[index].alt_mode_value = alt_mode_flow.add{
         type = "checkbox",
         name = "alt_mode_value",
-        state = global.snip[index].showAltMode
+        state = global.snip[index].showAltMode or false
     }
 end
 
@@ -467,7 +467,7 @@ local function buildAreaShowUi(index, area_content)
     global.gui[index].show_ui_value = show_ui_flow.add{
         type = "checkbox",
         name = "show_ui_value",
-        state = global.snip[index].showUI
+        state = global.snip[index].showUI or false
     }
 end
 
@@ -490,7 +490,7 @@ local function buildAreaShowCursorBuildingPreview(index, area_content)
     global.gui[index].show_cursor_building_preview_value = show_cursor_building_preview_flow.add{
         type = "checkbox",
         name = "show_cursor_building_preview_value",
-        state = global.snip[index].showCursorBuildingPreview
+        state = global.snip[index].showCursorBuildingPreview or false
     }
 end
 
@@ -513,7 +513,7 @@ local function buildAreaUseAntiAlias(index, area_content)
     global.gui[index].use_anti_alias_value = use_anti_alias_flow.add{
         type = "checkbox",
         name = "use_anti_alias_value",
-        state = global.snip[index].useAntiAlias
+        state = global.snip[index].useAntiAlias or false
     }
 end
 
