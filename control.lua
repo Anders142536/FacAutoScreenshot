@@ -7,7 +7,7 @@ queue = require("scripts.queue")
 local function loadDefaultsForPlayer(index)
 	log(l.info("loading defaults for player " .. index))
 
-	if not global.auto[index] then 
+	if not global.auto[index] then
 		l.info("global.auto was nil")
 		global.auto[index] = {}
 	end
@@ -77,15 +77,15 @@ local function initializePlayer(player)
 	queue.initialize(player.index)
 end
 
--- this method resets everything to a default state apart from already registered screenshots
+-- this method resets everything to a default state apart from already registered screenshots or user settings
 local function initialize()
 	log(l.info("initialize"))
 
-	global.auto = {}
-	global.snip = {}
+	if not global.auto then global.auto = {} end
+	if not global.snip then global.snip = {} end
 	global.tracker = {}
 	global.gui = {}
-	global.queue = {}
+	if not global.queue then global.queue = {} end
 
 	for _, surface in pairs(game.surfaces) do
 		basetracker.initializeSurface(surface.name)
