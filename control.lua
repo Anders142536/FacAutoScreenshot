@@ -158,7 +158,11 @@ end
 
 --[[ EVENT REGISTRATION ]]--
 script.on_init(initialize)
-
+script.on_configuration_changed(function(event)
+	if event.mod_changes.FacAutoScreenshot then
+		initialize()
+	end
+end)
 
 -- every minute
 script.on_nth_tick(3600, on_nth_tick)
