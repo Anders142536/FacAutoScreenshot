@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.5
+  Bugfixes:
+    - Potential fix for crash on opening the ui the first time
+    - Fixed issue where player settings are lost in some cases
+    - Fixed issue of new gui elements not being shown in gui (not properly reset issue)
+---------------------------------------------------------------------------------------------------
 Version: 2.1.4
   Features:
     - Added further options to the area screenshots (show alt-mode, show-ui, show-building-preview, use-anti-alias)
