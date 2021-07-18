@@ -910,7 +910,7 @@ end
 local function refreshStartHighResScreenshotButton(index)
     -- {1, 16384}
     local zoom = 1 / global.snip[index].zoomLevel
-    if not global.snip[index].area then
+    if not global.snip[index].area.width then
         global.snip[index].enableScreenshotButton = false
         global.gui[index].start_area_screenshot_button.enabled = false
     else
@@ -924,7 +924,7 @@ local function refreshStartHighResScreenshotButton(index)
 end
 
 local function refreshEstimates(index)
-    if not global.snip[index].area then
+    if not global.snip[index].area.width then
         -- happens if the zoom slider is moved before an area was selected so far
         global.snip[index].resolution = nil
         global.snip[index].filesize = nil
@@ -959,8 +959,8 @@ end
 
 function gui.delete_area_button(event)
     local index = event.player_index
-    if global.snip[index].area then
-        global.snip[index].area = nil
+    if global.snip[index].area.width then
+        global.snip[index].area = {}
     end
     if global.snip[index].areaLeftClick then
         global.snip[index].areaLeftClick = nil
