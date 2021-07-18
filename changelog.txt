@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.6
+  Bugfixes:
+    - Fixed crash that after deleting an area, adding or deleting a surface and then trying to open the ui. That was nasty to track down!
+---------------------------------------------------------------------------------------------------
 Version: 2.1.5
   Bugfixes:
     - Potential fix for crash on opening the ui the first time
