@@ -1,21 +1,10 @@
-# FacAutoScreenshot Notes weeeeee
+# FacAutoScreenshot Notes weeeee
 
-testing.notes
+## Styles
+* [graphical sets and style swapping](graphSets.md)
+* [changing the cursor](changingCursor.md)
+* [sprite being in background](backgroundimage.md)
 
-2.0.9 - 183
-
-Styles:
-* graphical sets and style swapping:
-	graphSets.notes
-* changing the cursor:
-	changingCursor.notes
-* sprite being in background:
-	backgroundimage.notes
-
-TODO:
-// Trello: https://trello.com/b/QSYl46mG/facautoscreenshot
-
-Maybes:
-[ ] draw rectangle between last set position and current mouse cursor position, see drag.notes
-[ ] make area selection react to drag.notes
-[ ] draw half transparent image over mod gui to make it fancy
+## TODO
+[Trello >](https://trello.com/b/QSYl46mG/facautoscreenshot)
+- [ ] [Crash in 2.1.5](issues/2.1.5-crash.md)
