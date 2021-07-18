@@ -1,0 +1,179 @@
+2.774 Loading mod settings FacAutoScreenshot 2.1.5 (settings.lua)
+FacAutoScreenshot = "2.1.5",
+6.612 Loading mod FacAutoScreenshot 2.1.5 (data.lua)
+33.223 Checksum of FacAutoScreenshot: 2314893124
+/control.lua: 2265860079
+/scripts/gui.lua:710: INFO: on gui event triggered with element name spaceship
+/scripts/gui.lua:710: INFO: on gui event triggered with element name planet
+/scripts/gui.lua:710: INFO: on gui event triggered with element name planet
+/scripts/gui.lua:710: INFO: on gui event triggered with element name moon
+/scripts/gui.lua:710: INFO: on gui event triggered with element name zone_1149
+/scripts/gui.lua:710: INFO: on gui event triggered with element name zonelist_button_view_zone
+/scripts/gui.lua:710: INFO: on gui event triggered with element name zone_scan_surface_button
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111906000
+/control.lua: 2265860079
+/scripts/gui.lua:710: INFO: on gui event triggered with element name spaceship
+/scripts/gui.lua:710: INFO: on gui event triggered with element name moon
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111906000
+/scripts/gui.lua:710: INFO: on gui event triggered with element name zone_1149
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111909600
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111913200
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:205x-98
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 205x-98
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:207x-98
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 207x-98
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:710: INFO: on gui event triggered with element name start-integrity-check
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:176x-112
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 176x-112
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111916800
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:189x-114
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 189x-114
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:192x-114
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 192x-114
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111920400
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:189.5x-111.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 189.5x-111.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:191.5x-112.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 191.5x-112.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:189.5x-112.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 189.5x-112.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:189.5x-112.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 189.5x-112.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:189.5x-112.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 189.5x-112.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:191.5x-112.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 191.5x-112.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:188.5x-112.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 188.5x-112.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:190.5x-113.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 190.5x-113.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:188.5x-115.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 188.5x-115.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:192.5x-115.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 192.5x-115.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:193.5x-114.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 193.5x-114.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:187.5x-114.5
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 187.5x-114.5
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111924000
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111927600
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:205x-194
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 205x-194
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:122: DBUG: entity built on surfaceNauvis Orbitat pos:207x-194
+/scripts/basetracker.lua:153: DBUG: breakscurrentLimits on surface Nauvis Orbit: pos: 207x-194
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/scripts/gui.lua:1124: INFO: player 1 cursor stack changed
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111931200
+/control.lua:115: INFO: global settings changed
+/control.lua:139: INFO: on nth tick
+/control.lua:145: DBUG: player InappropriatePenguin with index 1 found
+/control.lua:146: DBUG: do screenshot:   false
+/control.lua:147: DBUG: interval:        36000
+/control.lua:148: DBUG: singleScreenshot:true
+/control.lua:149: DBUG: tick:            111934800
+/scripts/gui.lua:710: INFO: on gui event triggered with element name togglegui
+/scripts/gui.lua:771: INFO: toggling gui
+/scripts/gui.lua:651: INFO: creating gui for player 1
+Error while running event FacAutoScreenshot::on_gui_click (ID 1)
+__FacAutoScreenshot__/scripts/gui.lua:372: attempt to index field 'area' (a nil value)
+	__FacAutoScreenshot__/scripts/gui.lua:372: in function 'buildAreaArea'
+	__FacAutoScreenshot__/scripts/gui.lua:629: in function 'buildAreaScreenshotSection'
+	__FacAutoScreenshot__/scripts/gui.lua:680: in function 'createGuiFrame'
+	__FacAutoScreenshot__/scripts/gui.lua:775: in function 'handlerMethod'
+	__FacAutoScreenshot__/scripts/gui.lua:705: in function 'callHandler'
+	__FacAutoScreenshot__/scripts/gui.lua/scripts/gui.lua:709>
