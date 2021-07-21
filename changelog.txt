@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.1.7
+  Bugfixes:
+    - Fixed status field being empty for the first second of opening the ui the first time
+  Optimizations:
+    - Pretty big refactor of gui code. Gui creation is now a seperate file.
+---------------------------------------------------------------------------------------------------
 Version: 2.1.6
   Bugfixes:
     - Fixed crash that after deleting an area, adding or deleting a surface and then trying to open the ui. That was nasty to track down!
