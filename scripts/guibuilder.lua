@@ -397,6 +397,34 @@ local function buildAreaArea(index, area_content)
     global.gui[index].y_value = y_value
 end
 
+local function buildAreaDayTime(index, area_content)
+    local daytime_flow = area_content.add{
+        type = "flow",
+        name = "daytime_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+
+    daytime_flow.add{
+        type = "label",
+        name = "daytime_label",
+        caption = {"FAS-daytime-caption"},
+        tooltip = {"FAS-daytime-tooltip"},
+        style = "fas_label"
+    }
+
+    global.gui[index].daytime_switch = daytime_flow.add{
+        type = "switch",
+        name = "daytime_switch",
+        switch_state = global.snip[index].daytime or "none",
+        allow_none_state = true,
+        left_label_caption = {"FAS-day-caption"},
+        left_label_tooltip = {"FAS-day-tooltip"},
+        right_label_caption = {"FAS-night-caption"},
+        right_label_tooltip = {"FAS-night-tooltip"}
+    }
+end
+
 local function buildAreaShowAltMode(index, area_content)
     local alt_mode_flow = area_content.add{
         type = "flow",
@@ -597,6 +625,7 @@ local function buildAreaScreenshotSection(index, area_frame)
 
 
     buildAreaArea(index, area_content)
+    buildAreaDayTime(index, area_content)
     buildAreaShowAltMode(index, area_content)
     buildAreaShowUi(index, area_content)
     buildAreaShowCursorBuildingPreview(index, area_content)
