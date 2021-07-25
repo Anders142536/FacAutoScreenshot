@@ -140,6 +140,7 @@ local function on_nth_tick(event)
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
 	basetracker.checkForMinMaxChange()
 
+	local newRegistrations = false
 	for _, player in pairs(game.connected_players) do
 
 		if l.doD then log(l.debug("player ", player.name, " with index ", player.index, " found")) end
@@ -150,9 +151,11 @@ local function on_nth_tick(event)
 
 		if queue.doesAutoScreenshot(player.index) and (event.tick % global.auto[player.index].interval == 0) then
 			queue.registerPlayerToQueue(player.index)
+			newRegistrations = true
 		end
 	end
 
+	if newRegistrations then queue.refreshNextScreenshotTimestamp() end
 end
 
 
