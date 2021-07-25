@@ -416,7 +416,7 @@ local function buildAreaDayTime(index, area_content)
     global.gui[index].daytime_switch = daytime_flow.add{
         type = "switch",
         name = "daytime_switch",
-        switch_state = global.snip[index].daytime or "none",
+        switch_state = global.snip[index].daytime_state or "none",
         allow_none_state = true,
         left_label_caption = {"FAS-day-caption"},
         left_label_tooltip = {"FAS-day-tooltip"},

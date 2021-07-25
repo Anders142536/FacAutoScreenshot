@@ -336,6 +336,11 @@ function gui.start_area_screenshot_button(event)
     shooter.renderAreaScreenshot(index)
 end
 
+function gui.daytime_switch(event)
+    log(l.info("daytime switch was switched for player " .. event.player_index .. " to state " .. event.element.switch_state))
+    global.snip[event.player_index].daytime_state = event.element.switch_state
+end
+
 function gui.show_ui_value(event)
     log(l.info("show ui tickbox was clicked for player " .. event.player_index))
     global.snip[event.player_index].showUI = event.element.state

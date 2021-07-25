@@ -144,6 +144,7 @@ function shooter.renderAreaScreenshot(index)
 		log(l.debug("area.left:   " .. global.snip[index].area.left))
 		log(l.debug("area.right:  " .. global.snip[index].area.right))
 		log(l.debug("zoomlevel:   " .. global.snip[index].zoomLevel))
+		log(l.debug("daytime:     " .. (global.snip[index].daytime_state or "none")))
 		log(l.debug("show alt m.: " .. (global.snip[index].showAltMode and "true" or "false")))
 		log(l.debug("show ui:     " .. (global.snip[index].showUI and "true" or "false")))
 		log(l.debug("show cur b.: " .. (global.snip[index].showCursorBuildingPreview and "true" or "false")))
@@ -159,6 +160,16 @@ function shooter.renderAreaScreenshot(index)
 	local posX = global.snip[index].area.left + width / 2
 	local posY = global.snip[index].area.top + heigth / 2
 
+	local dstate = global.snip[index].daytime_state
+	if dstate == nil or dstate == "none" then
+		dstate = game.get_player(index).surface.daytime
+	elseif dstate == "left" then
+		dstate = 0
+	else
+		dstate = 0.5
+	end
+	if l.doD then log(l.debug("dstate ended up being " .. dstate)) end
+
 	local path = buildPath("area/", "screenshot" .. game.tick .. "_" .. resX .. "x" .. resY)
 	game.take_screenshot{
 		resolution = {resX, resY},
@@ -169,7 +180,8 @@ function shooter.renderAreaScreenshot(index)
 		show_gui = global.snip[index].showUI,
 		show_entity_info = global.snip[index].showAltMode,
 		show_cursor_building_preview = global.snip[index].showCursorBuildingPreview,
-		anti_allias = global.snip[index].useAntiAlias
+		anti_allias = global.snip[index].useAntiAlias,
+		daytime = dstate
 	}
 	game.get_player(index).print({"FAS-did-screenshot", path})
 end
