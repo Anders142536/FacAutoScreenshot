@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.2.1
+  Bugfixes:
+    - Fixed issue with countdown never being more than 59 seconds after the first auto screenshot was done
+---------------------------------------------------------------------------------------------------
 Version: 2.2.0
   Features:
     - Added daytime picker, with default being "current time", as requested by Wiwiweb
