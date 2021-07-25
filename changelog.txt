@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.2.0
+  Features:
+    - Added daytime picker, with default being "current time", as requested by Wiwiweb
+---------------------------------------------------------------------------------------------------
 Version: 2.1.7
   Bugfixes:
     - Fixed status field being empty for the first second of opening the ui the first time
