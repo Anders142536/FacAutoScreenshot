@@ -320,13 +320,17 @@ function gui.delete_area_button(event)
         global.snip[index].rec = nil
     end
 
-    global.gui[index].x_value.text = ""
-    global.gui[index].y_value.text = ""
-    global.gui[index].width_value.text = ""
-    global.gui[index].height_value.text = ""
-
-    refreshEstimates(index)
-    refreshStartHighResScreenshotButton(event.player_index)
+    -- happens if the ui was not opened before using the delete shortcut
+    -- TODO: refactor this with proper event file to get rid of redundant ifs
+    if global.gui[index] ~= nil then
+        global.gui[index].x_value.text = ""
+        global.gui[index].y_value.text = ""
+        global.gui[index].width_value.text = ""
+        global.gui[index].height_value.text = ""
+        
+        refreshEstimates(index)
+        refreshStartHighResScreenshotButton(event.player_index)
+    end
 end
 
 function gui.start_area_screenshot_button(event)
@@ -478,6 +482,7 @@ end
 
 function gui.on_delete_area(event)
     log(l.info("delete area shortcut was triggered"))
+    gui.delete_area_button(event)
 end
 
 function gui.on_player_cursor_stack_changed(event)
