@@ -13,6 +13,16 @@ data:extend{
         key_sequence = "mouse-button-2"
     },
     {
+        type = "custom-input",
+        name = "FAS-selection-toggle-shortcut",
+        key_sequence = "SHIFT + ALT + S"
+    },
+    {
+        type = "custom-input",
+        name = "FAS-delete-area-shortcut",
+        key_sequence = "SHIFT + ALT + D"
+    },
+    {
         type = "selection-tool",
         name = "FAS-selection-tool",
         icon = "__FacAutoScreenshot__/graphics/FAS-24px.png",

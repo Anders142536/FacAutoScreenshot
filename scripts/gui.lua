@@ -472,6 +472,14 @@ function gui.on_right_click(event)
     end
 end
 
+function gui.on_selection_toggle(event)
+    log(l.info("selection toggle shortcut was triggered"))
+end
+
+function gui.on_delete_area(event)
+    log(l.info("delete area shortcut was triggered"))
+end
+
 function gui.on_player_cursor_stack_changed(event)
     log(l.info("player " .. event.player_index .. " cursor stack changed"))
     local index = event.player_index
