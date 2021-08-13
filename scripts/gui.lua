@@ -503,6 +503,9 @@ end
 
 function gui.on_selection_toggle(event)
     log(l.info("selection toggle shortcut was triggered by player " .. event.player_index))
+    if global.snip[event.player_index].doesSelection and global.snip[event.player_index].area.width then
+        shooter.renderAreaScreenshot(event.player_index)
+    end
     gui.select_area_button(event)
 end
 
