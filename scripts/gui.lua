@@ -114,6 +114,59 @@ end
 
 
 --[[ HANDLER METHODS ]]--
+local function refreshStartHighResScreenshotButton(index)
+    -- {1, 16384}
+    local zoom = 1 / global.snip[index].zoomLevel
+    if not global.snip[index].area.width then
+        global.snip[index].enableScreenshotButton = false
+        global.gui[index].start_area_screenshot_button.enabled = false
+    else
+        local resX = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
+        local resY = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
+        
+        local enable = resX < 16385 and resY < 16385
+        global.snip[index].enableScreenshotButton = enable
+        global.gui[index].start_area_screenshot_button.enabled = enable
+    end
+end
+
+local function refreshEstimates(index)
+    if not global.snip[index].area.width then
+        -- happens if the zoom slider is moved before an area was selected so far
+        global.snip[index].resolution = nil
+        global.snip[index].filesize = nil
+        global.gui[index].resolution_value.caption = {"FAS-no-area-selected"}
+        global.gui[index].estimated_filesize_value.caption = "-"
+        return
+    end
+
+    local zoom = 1 / global.snip[index].zoomLevel
+    local width = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
+    local height = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
+    
+    local bytesPerPixel = 3
+    local size = bytesPerPixel * width * height
+
+    if size > 999999999 then
+        size = (math.floor(size / 100000000) / 10) .. " GiB"
+    elseif size > 999999 then
+        size = (math.floor(size / 100000) / 10) .. " MiB"
+    elseif size > 999 then
+        size = (math.floor(size / 100) / 10) .. " KiB"
+    else
+        size = size .. " B"
+    end
+    
+    local resolution = width .. "x" .. height
+    global.snip[index].resolution = resolution
+    global.snip[index].filesize = size
+
+    global.gui[index].resolution_value.caption = resolution
+    global.gui[index].estimated_filesize_value.caption = size
+end
+
+
+
 function gui.togglegui(event)
     log(l.info("toggling gui"))
     local player = game.get_player(event.player_index)
@@ -123,13 +176,18 @@ function gui.togglegui(event)
         
     else
         if not guiFrame.visible and not global.auto.amount then
-                gui.refreshStatusCountdown()
+            gui.refreshStatusCountdown()
         end
         guiFrame.visible = not guiFrame.visible
     end
-
+    
+    
     if not guiFrame or guiFrame.visible then
         log(l.info("gui is now visible"))
+        if global.snip[event.player_index].area.width then
+            refreshEstimates(event.player_index)
+            refreshStartHighResScreenshotButton(event.player_index)
+        end
     else
         log(l.info("gui is now hidden"))
     end
@@ -240,71 +298,28 @@ function gui.select_area_button(event)
     
     if global.snip[event.player_index].doesSelection then
         log(l.info("turned on"))
-        --swap styles of button
-        global.gui[event.player_index].select_area_button.style = "fas_clicked_tool_button"
+        -- happens if the shortcut was clicked before the ui was created
+        if global.gui[event.player_index] then
+            --swap styles of button
+            global.gui[event.player_index].select_area_button.style = "fas_clicked_tool_button"
+        end
         --change this as the player is not correctly fetched
         game.get_player(event.player_index).cursor_stack.set_stack{
             name = "FAS-selection-tool"
           }
     else
         log(l.info("turned off"))
-        --swap styles of button
-        global.gui[event.player_index].select_area_button.style = "tool_button"
+        -- happens if the shortcut was clicked before the ui was created
+        if global.gui[event.player_index] then
+            --swap styles of button
+            global.gui[event.player_index].select_area_button.style = "tool_button"
+        end
         game.get_player(event.player_index).cursor_stack.clear()
     end
 end
 
-local function refreshStartHighResScreenshotButton(index)
-    -- {1, 16384}
-    local zoom = 1 / global.snip[index].zoomLevel
-    if not global.snip[index].area.width then
-        global.snip[index].enableScreenshotButton = false
-        global.gui[index].start_area_screenshot_button.enabled = false
-    else
-        local resX = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
-        local resY = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
-        
-        local enable = resX < 16385 and resY < 16385
-        global.snip[index].enableScreenshotButton = enable
-        global.gui[index].start_area_screenshot_button.enabled = enable
-    end
-end
-
-local function refreshEstimates(index)
-    if not global.snip[index].area.width then
-        -- happens if the zoom slider is moved before an area was selected so far
-        global.snip[index].resolution = nil
-        global.snip[index].filesize = nil
-        global.gui[index].resolution_value.caption = {"FAS-no-area-selected"}
-        global.gui[index].estimated_filesize_value.caption = "-"
-        return
-    end
-
-    local zoom = 1 / global.snip[index].zoomLevel
-    local width = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
-    local height = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
-    
-    local bytesPerPixel = 3
-    local size = bytesPerPixel * width * height
-
-    if size > 999999999 then
-        size = (math.floor(size / 100000000) / 10) .. " GiB"
-    elseif size > 999999 then
-        size = (math.floor(size / 100000) / 10) .. " MiB"
-    elseif size > 999 then
-        size = (math.floor(size / 100) / 10) .. " KiB"
-    else
-        size = size .. " B"
-    end
-    
-    local resolution = width .. "x" .. height
-    global.snip[index].resolution = resolution
-    global.snip[index].filesize = size
-    global.gui[index].resolution_value.caption = resolution
-    global.gui[index].estimated_filesize_value.caption = size
-end
-
 function gui.delete_area_button(event)
+    log(l.info("delete area button was clicked by player " .. event.player_index))
     local index = event.player_index
     if global.snip[index].area.width then
         global.snip[index].area = {}
@@ -322,7 +337,7 @@ function gui.delete_area_button(event)
 
     -- happens if the ui was not opened before using the delete shortcut
     -- TODO: refactor this with proper event file to get rid of redundant ifs
-    if global.gui[index] ~= nil then
+    if global.gui[index] then
         global.gui[index].x_value.text = ""
         global.gui[index].y_value.text = ""
         global.gui[index].width_value.text = ""
@@ -334,7 +349,7 @@ function gui.delete_area_button(event)
 end
 
 function gui.start_area_screenshot_button(event)
-    log(l.info("start high res screenshot button was pressed"))
+    log(l.info("start high res screenshot button was pressed by player " .. event.player_index))
     local index = event.player_index
 
     shooter.renderAreaScreenshot(index)
@@ -436,10 +451,13 @@ local function calculateArea(index)
     global.snip[index].area.width = width
     global.snip[index].area.height = height
  
-    global.gui[index].x_value.text = tostring(left)
-    global.gui[index].y_value.text = tostring(top)
-    global.gui[index].width_value.text = tostring(width)
-    global.gui[index].height_value.text = tostring(height)
+    -- happens if the shortcuts were pressed before the ui was opened
+    if global.gui[index] then
+        global.gui[index].x_value.text = tostring(left)
+        global.gui[index].y_value.text = tostring(top)
+        global.gui[index].width_value.text = tostring(width)
+        global.gui[index].height_value.text = tostring(height)
+    end
     
     if global.snip[index].rec then
         rendering.destroy(global.snip[index].rec)
@@ -458,30 +476,38 @@ end
 
 function gui.on_left_click(event)
     if global.snip[event.player_index].doesSelection then
-        log(l.info("left click event fired while doing selection"))
+        log(l.info("left click event fired while doing selection by player " .. event.player_index))
         global.snip[event.player_index].areaLeftClick = event.cursor_position
         calculateArea(event.player_index)
-        refreshEstimates(event.player_index)
-        refreshStartHighResScreenshotButton(event.player_index)
+        
+        if global.gui[event.player_index] then
+            refreshEstimates(event.player_index)
+            refreshStartHighResScreenshotButton(event.player_index)
+        end
     end
 end
 
 function gui.on_right_click(event)
     if global.snip[event.player_index].doesSelection then
-        log(l.info("right click event fired while doing selection"))
+        log(l.info("right click event fired while doing selection by player " .. event.player_index))
         global.snip[event.player_index].areaRightClick = event.cursor_position
         calculateArea(event.player_index)
-        refreshEstimates(event.player_index)
-        refreshStartHighResScreenshotButton(event.player_index)
+
+        
+        if global.gui[event.player_index] then
+            refreshEstimates(event.player_index)
+            refreshStartHighResScreenshotButton(event.player_index)
+        end
     end
 end
 
 function gui.on_selection_toggle(event)
-    log(l.info("selection toggle shortcut was triggered"))
+    log(l.info("selection toggle shortcut was triggered by player " .. event.player_index))
+    gui.select_area_button(event)
 end
 
 function gui.on_delete_area(event)
-    log(l.info("delete area shortcut was triggered"))
+    log(l.info("delete area shortcut was triggered by player " .. event.player_index))
     gui.delete_area_button(event)
 end
 
