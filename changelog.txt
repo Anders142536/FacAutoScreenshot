@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.2.2
+  Features:
+    - Now with shortcuts! See the information page for instructions. Feature request by Wiwiweb.
+  Optimizations:
+    - Slight beginnings of code refactoring. I have to peel the logic from the ui code to allow for things like calculating estimates without having a gui built at all. Currently its... pragmatic design, as there was no need to overengineer it. >.> Even though one could argue this whole mod is overengineering <.<
+---------------------------------------------------------------------------------------------------
 Version: 2.2.1
   Bugfixes:
     - Fixed issue with countdown never being more than 59 seconds after the first auto screenshot was done
