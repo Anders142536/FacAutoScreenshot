@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.2.3
+  Bugfixes:
+    - Fixed a crash when changing the mod version from below 2.1 to 2.2.2
+---------------------------------------------------------------------------------------------------
 Version: 2.2.2
   Features:
     - Now with shortcuts! See the information page for instructions. Feature request by Wiwiweb.
