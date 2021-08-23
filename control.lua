@@ -160,9 +160,13 @@ end
 
 
 --[[ EVENT REGISTRATION ]]--
-script.on_init(initialize)
+script.on_init(function(event)
+	l.info("on init triggered")
+	initialize()
+end)
 script.on_configuration_changed(function(event)
 	if event.mod_changes.FacAutoScreenshot then
+		l.info("configuration of FAS changed")
 		initialize()
 	end
 end)
