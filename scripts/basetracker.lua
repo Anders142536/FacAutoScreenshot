@@ -22,7 +22,7 @@ local function hasEntities(chunk, surface)
 end
 
 function tracker.evaluateLimitsOfSurface(surface_index)
-	log(l.info("Evaluating whole surface: " .. surface_index))
+	log(l.info("Evaluating surface: " .. surface_index))
 	
 	local surface = game.surfaces[surface_index];
 	local tchunk = nil;
