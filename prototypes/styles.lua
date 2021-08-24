@@ -58,6 +58,14 @@ styles.fas_slim_numeric_output = {
     parent = "fas_numeric_output",
     width = 40
 }
+styles.fas_wide_text_input = {
+    type = "textbox_style",
+    width = 110
+}
+styles.fas_slim_drop_down = {
+    type = "dropdown_style",
+    width = 70
+}
 styles.fas_section = {
     type = "frame_style",
     parent = "subpanel_frame",

@@ -67,6 +67,9 @@ local function loadDefaultsForPlayer(index)
 	if not global.snip[index].zoomLevel then global.snip[index].zoomLevel = 1 end
 	log(l.info("snip zoomlevel is " .. global.snip[index].zoomLevel))
 
+	if not global.snip[index].output_format_index then global.snip[index].output_format_index = 1 end
+	log(l.info("snip output format index is " .. global.snip[index].output_format_index))
+
 
 	shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 end

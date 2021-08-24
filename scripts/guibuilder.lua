@@ -590,6 +590,34 @@ local function buildAreaFilesize(index, area_content)
     }
 end
 
+local function buildAreaOutput(index, area_content)
+    local area_output_flow = area_content.add{
+        type = "flow",
+        name = "area_output_flow",
+        direction = "horizontal",
+        style = "fas_flow"
+    }
+    area_output_flow.add{
+        type = "label",
+        name = "area_output_label",
+        caption = {"FAS-area-output-label"},
+        style = "fas_label"
+    }
+    global.gui[index].area_output_name = area_output_flow.add{
+        type = "textfield",
+        name = "area_output_name",
+        text = global.snip[index].outputName or "screenshot",
+        style = "fas_wide_text_input"
+    }
+    global.gui[index].area_output_format = area_output_flow.add{
+        type = "drop-down",
+        name = "area_output_format",
+        selected_index = global.snip[index].output_format_index,
+        items = {".png", ".jpg"},
+        style = "fas_slim_drop_down"
+    }
+end
+
 local function buildAreaStartButton(index, area_content)
     local agree_flow = area_content.add{
         type = "flow",
@@ -633,6 +661,7 @@ local function buildAreaScreenshotSection(index, area_frame)
     buildAreaZoom(index, area_content)
     buildAreaResolution(index, area_content)
     buildAreaFilesize(index, area_content)
+    buildAreaOutput(index, area_content)
 
     buildAreaStartButton(index, area_content)
 end
