@@ -633,15 +633,6 @@ local function buildAreaScreenshotSection(index, area_frame)
     buildAreaZoom(index, area_content)
     buildAreaResolution(index, area_content)
     buildAreaFilesize(index, area_content)
-    
-    -- warning
-    local warning = area_content.add{
-        type = "label",
-        name = "warning_label",
-        caption = {"FAS-warning"}
-    }
-    warning.style.width = 334
-    warning.style.single_line = false
 
     buildAreaStartButton(index, area_content)
 end
