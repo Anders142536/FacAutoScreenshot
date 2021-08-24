@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.3.0
+  Features:
+    - 
+  Optimizations:
+    - Removed multiplayer warning in area screenshots panel
+---------------------------------------------------------------------------------------------------
 Version: 2.2.3
   Bugfixes:
     - Fixed a crash when changing the mod version from below 2.1 to 2.2.2
