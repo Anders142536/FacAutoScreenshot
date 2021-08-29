@@ -144,17 +144,21 @@ local function refreshEstimates(index)
     local width = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
     local height = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
     
-    local bytesPerPixel = 3
-    local size = bytesPerPixel * width * height
+    local size = "-"
+    -- 1 means png, only other option is 2, meaning jpg
+    if global.snip[index].output_format_index == 1 then
+        local bytesPerPixel = 3
+        size = bytesPerPixel * width * height
 
-    if size > 999999999 then
-        size = (math.floor(size / 100000000) / 10) .. " GiB"
-    elseif size > 999999 then
-        size = (math.floor(size / 100000) / 10) .. " MiB"
-    elseif size > 999 then
-        size = (math.floor(size / 100) / 10) .. " KiB"
-    else
-        size = size .. " B"
+        if size > 999999999 then
+            size = (math.floor(size / 100000000) / 10) .. " GiB"
+        elseif size > 999999 then
+            size = (math.floor(size / 100000) / 10) .. " MiB"
+        elseif size > 999 then
+            size = (math.floor(size / 100) / 10) .. " KiB"
+        else
+            size = size .. " B"
+        end
     end
     
     local resolution = width .. "x" .. height
@@ -409,6 +413,7 @@ function gui.area_output_format_selection(event)
     log(l.info("area output format changed"))
     global.snip[event.player_index].output_format_index = event.element.selected_index
     global.gui[event.player_index].area_jpg_quality_flow.visible = event.element.selected_index == 2
+    refreshEstimates(event.player_index)
 end
 
 local function calculateArea(index)
