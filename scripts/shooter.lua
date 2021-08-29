@@ -61,8 +61,8 @@ end
 
 
 --[[ Screenshotting ]]--
-local function buildPath(folder, title)
-	return "./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. folder .. title .. ".png"
+local function buildPath(folder, title, format)
+	return "./screenshots/" .. game.default_map_gen_settings.seed .. "/" .. folder .. title .. format
 end
 
 
@@ -80,7 +80,7 @@ local function renderAutoSingleScreenshot(index, specs)
 		daytime = 0,
 		water_tick = 0,
 		by_player = index,
-		path = buildPath("auto_singleTick_" .. specs.surface ..  "/", "screenshot" .. game.tick)
+		path = buildPath("auto_singleTick_" .. specs.surface ..  "/", "screenshot" .. game.tick, ".png")
 	}
 	queue.remove(index, specs.surface)
 end
@@ -104,7 +104,7 @@ local function renderAutoScreenshotFragment(index, fragment)
 		by_player = index,
 		water_tick = 0,
 		daytime = 0,
-		path = buildPath("auto_split_" .. fragment.surface .. "/", fragment.title .. "_x" .. fragment.offset.x .. "_y" .. fragment.offset.y)
+		path = buildPath("auto_split_" .. fragment.surface .. "/", fragment.title .. "_x" .. fragment.offset.x .. "_y" .. fragment.offset.y, ".png")
 	}
 
 	-- the first screenshot is the screenshot 0 0, therefore +1
@@ -149,6 +149,9 @@ function shooter.renderAreaScreenshot(index)
 		log(l.debug("show ui:     " .. (global.snip[index].showUI and "true" or "false")))
 		log(l.debug("show cur b.: " .. (global.snip[index].showCursorBuildingPreview and "true" or "false")))
 		log(l.debug("use antial.: " .. (global.snip[index].useAntiAlias and "true" or "false")))
+		log(l.debug("output name: " .. (global.snip[index].outputName or "screenshot")))
+		log(l.debug("format:      " .. global.snip[index].output_format_index))
+		log(l.debug("jpg quality: " .. global.snip[index].jpg_quality))
 	end
 
 	local width = global.snip[index].area.right - global.snip[index].area.left
@@ -170,7 +173,11 @@ function shooter.renderAreaScreenshot(index)
 	end
 	if l.doD then log(l.debug("dstate ended up being " .. dstate)) end
 
-	local path = buildPath("area/", "screenshot" .. game.tick .. "_" .. resX .. "x" .. resY)
+	local name = global.snip[index].outputName
+	if not name then name = "screenshot" end
+	local format = "." .. (global.snip[index].output_format_index == 1 and "png" or "jpg")
+	local path = buildPath("area/", name .. "_" .. game.tick .. "_" .. resX .. "x" .. resY, format)
+
 	game.take_screenshot{
 		resolution = {resX, resY},
 		position = {posX, posY},
@@ -181,7 +188,8 @@ function shooter.renderAreaScreenshot(index)
 		show_entity_info = global.snip[index].showAltMode,
 		show_cursor_building_preview = global.snip[index].showCursorBuildingPreview,
 		anti_allias = global.snip[index].useAntiAlias,
-		daytime = dstate
+		daytime = dstate,
+		quality = global.snip[index].jpg_quality
 	}
 	game.get_player(index).print({"FAS-did-screenshot", path})
 end
