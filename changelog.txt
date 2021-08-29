@@ -1,7 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.0
   Features:
-    - 
+    - Area screenshots can now be custom named.
+    - Area screenshots now support JPG output format.
+    - JPG output format now supports a quality setting.
   Optimizations:
     - Removed multiplayer warning in area screenshots panel
 ---------------------------------------------------------------------------------------------------
