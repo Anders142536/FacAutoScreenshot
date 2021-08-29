@@ -393,6 +393,24 @@ function gui.zoom_slider_value_changed(event)
     refreshStartHighResScreenshotButton(event.player_index)
 end
 
+function gui.area_jpg_quality_slider_value_changed(event)
+    log(l.info("quality slider was moved"))
+    local level = event.element.slider_value
+    global.gui[event.player_index].area_jpg_quality_value.text = tostring(level)
+    global.snip[event.player_index].jpg_quality = level
+end
+
+function gui.area_output_name_text_changed(event)
+    log(l.info("area output name changed"))
+    global.snip[event.player_index].outputName = event.element.text
+end
+
+function gui.area_output_format_selection(event)
+    log(l.info("area output format changed"))
+    global.snip[event.player_index].output_format_index = event.element.selected_index
+    global.gui[event.player_index].area_jpg_quality_flow.visible = event.element.selected_index == 2
+end
+
 local function calculateArea(index)
     if global.snip[index].areaLeftClick == nil and global.snip[index].areaRightClick == nil then
         log(l.warn("something went wrong when calculating selected area, aborting"))

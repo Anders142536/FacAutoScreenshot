@@ -603,19 +603,56 @@ local function buildAreaOutput(index, area_content)
         caption = {"FAS-area-output-label"},
         style = "fas_label"
     }
-    global.gui[index].area_output_name = area_output_flow.add{
+    area_output_flow.add{
         type = "textfield",
         name = "area_output_name",
         text = global.snip[index].outputName or "screenshot",
         style = "fas_wide_text_input"
     }
-    global.gui[index].area_output_format = area_output_flow.add{
+    area_output_flow.add{
         type = "drop-down",
         name = "area_output_format",
         selected_index = global.snip[index].output_format_index,
         items = {".png", ".jpg"},
         style = "fas_slim_drop_down"
     }
+end
+
+local function buildAreaJpgQuality(index, area_content)
+    local area_jpg_quality_flow = area_content.add{
+        type = "flow",
+        name = "area_jpg_quality_flow",
+        direction = "horizontal",
+        style = "fas_flow",
+        visible = global.snip[index].output_format_index == 2
+    }
+    global.gui[index].area_jpg_quality_flow = area_jpg_quality_flow
+    area_jpg_quality_flow.add{
+        type = "label",
+        name = "area_jpg_quality_label",
+        caption = {"FAS-area-jpg-quality-label"},
+        tooltip = {"FAS-area-jpg-quality-tooltip"},
+        style = "fas_label"
+    }
+
+    area_jpg_quality_flow.add{
+        type = "slider",
+        name = "area_jpg_quality_slider",
+        minimum_value = "10",
+        maximum_value = "100",
+        value_step = "10",
+        value = global.snip[index].jpg_quality,
+        style = "fas_slider"
+    }
+
+    global.gui[index].area_jpg_quality_value = area_jpg_quality_flow.add{
+        type = "textfield",
+        name = "area_jpg_quality_value",
+        text = global.snip[index].jpg_quality,
+        enabled = false,
+        style = "fas_slim_numeric_output"
+    }
+
 end
 
 local function buildAreaStartButton(index, area_content)
@@ -662,6 +699,7 @@ local function buildAreaScreenshotSection(index, area_frame)
     buildAreaResolution(index, area_content)
     buildAreaFilesize(index, area_content)
     buildAreaOutput(index, area_content)
+    buildAreaJpgQuality(index, area_content)
 
     buildAreaStartButton(index, area_content)
 end

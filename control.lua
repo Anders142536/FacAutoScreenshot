@@ -70,6 +70,9 @@ local function loadDefaultsForPlayer(index)
 	if not global.snip[index].output_format_index then global.snip[index].output_format_index = 1 end
 	log(l.info("snip output format index is " .. global.snip[index].output_format_index))
 
+	if not global.snip[index].jpg_quality then global.snip[index].jpg_quality = 100 end
+	log(l.info("jpg quality is " .. global.snip[index].jpg_quality))
+
 
 	shooter.evaluateZoomForPlayerAndAllSurfaces(index)
 end
