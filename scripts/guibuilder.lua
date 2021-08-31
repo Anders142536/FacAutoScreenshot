@@ -125,6 +125,7 @@ local function buildAutoSurface(index, auto_content)
         type = "scroll-pane",
         name = "surface_list",
         direction = "vertical",
+        horizontal_scroll_policy = "never",
         style = "fas_scroll_pane"
     }
 
