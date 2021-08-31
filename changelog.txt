@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.3.1
+  Bugfixes:
+    - The list of surfaces will now only display a maximum of 8 surfaces. After that a scrollbar will appear.
+---------------------------------------------------------------------------------------------------
 Version: 2.3.0
   Features:
     - Area screenshots can now be custom named.
