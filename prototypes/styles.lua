@@ -39,7 +39,19 @@ styles.fas_label_for_list = {
 styles.fas_list = {
     type = "frame_style",
     parent = "bordered_frame",
-    horizontally_stretchable = "on"
+    horizontally_stretchable = "on",
+    bottom_padding = 4
+}
+styles.fas_scroll_pane = {
+    type = "scroll_pane_style",
+    parent = "naked_scroll_pane",
+    maximal_height = 188, --8*20 list item height + 7*4 vertical spacing
+    horizontally_stretchable = "on",
+    maximum_vertical_squash_size = 0,
+    vertical_flow_style = {
+       type = "vertical_flow_style",
+       maximum_vertical_squash_size = 0
+    }
 }
 styles.fas_slider = {
     type = "slider_style",

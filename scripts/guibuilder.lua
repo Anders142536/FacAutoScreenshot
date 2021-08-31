@@ -115,11 +115,17 @@ local function buildAutoSurface(index, auto_content)
         tooltip = {"FAS-surface-label-tooltip"},
         style = "fas_label_for_list"
     }
-    local list = surface_flow.add{
+    local list_frame = surface_flow.add{
         type = "frame",
+        name = "surface_list_frame",
+        style = "fas_list"
+    }
+
+    local list = list_frame.add{
+        type = "scroll-pane",
         name = "surface_list",
         direction = "vertical",
-        style = "fas_list"
+        style = "fas_scroll_pane"
     }
 
     -- making sure nauvis is on top
