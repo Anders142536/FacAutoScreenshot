@@ -7,7 +7,7 @@
   "factorio_version": "1.1",
   "package": {
     "ignore": [
-      ".notes", "graphics/wip/**", "mocks/**", "thumbnail_old.png", "thumbnail_old2.png", ".git", "modportal/**"
+      ".notes", "graphics/wip/**", "graphics/old/**", "mocks/**", ".git", "modportal/**"
     ]
   }
 }
