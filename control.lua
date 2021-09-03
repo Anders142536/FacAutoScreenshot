@@ -79,8 +79,8 @@ end
 
 local function initializePlayer(player)
 	loadDefaultsForPlayer(player.index)
-	gui.initialize(player)
 	queue.initialize(player.index)
+	gui.initialize(player)
 end
 
 -- this method resets everything to a default state apart from already registered screenshots or user settings
@@ -91,6 +91,7 @@ local function initialize()
 	if not global.snip then global.snip = {} end
 	global.tracker = {}
 	global.gui = {}
+	global.flowButton = {}
 	if not global.queue then global.queue = {} end
 
 	for _, surface in pairs(game.surfaces) do

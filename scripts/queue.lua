@@ -94,6 +94,10 @@ local function registerPlayerFragmentedScreenshots(index)
 end
 
 local function getNextEntry(index)
+	-- apparently this can happen if there was a player connected on save
+	-- but is no longer connected on load, whilst the configuration changed
+	if not global.queue[index] then return nil end
+
 	for _, surface in pairs(game.surfaces) do
 		local entry = global.queue[index][surface.name]
 		if entry then
@@ -110,16 +114,24 @@ end
 
 function q.registerPlayerToQueue(index)
 	log(l.info("registering player to screenshot list"))
-	if hasEntriesForPlayer(index) then
-		log(l.warn("there was still a screenshot queued when trying to register a player to queue"))
-		game.print("FAS: The script is not yet done with the screenshots for player " .. game.get_player(index).name .. " but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which screenshots are done longer. Changing the resolution will not prevent this from happening.")
-		return
+	if not q.hasAnyEntries() then
+		for _, player in pairs(game.connected_players) do
+			global.flowButton[player.index].sprite = "FAS-recording-icon"
+		end
+	else
+		if hasEntriesForPlayer(index) then
+			log(l.warn("there was still a screenshot queued when trying to register a player to queue"))
+			game.print("FAS: The script is not yet done with the screenshots for player " .. game.get_player(index).name .. " but tried to register new ones. This screenshot interval will be skipped. Please lower the \"increased splitting\" setting if it is set or make the intervals in which screenshots are done longer. Changing the resolution will not prevent this from happening.")
+			return
+		end
 	end
+
 	if global.auto[index].singleScreenshot then
 		registerPlayerSingleScreenshots(index)
 	else
 		registerPlayerFragmentedScreenshots(index)
 	end
+
 end
 
 function q.doesAutoScreenshot(index)
@@ -152,6 +164,11 @@ end
 
 function q.remove(index, surface)
 	global.queue[index][surface] = nil
+	if not q.hasAnyEntries() then
+		for _, player in pairs(game.connected_players) do
+			global.flowButton[player.index].sprite = "FAS-icon"
+		end
+	end
 end
 
 

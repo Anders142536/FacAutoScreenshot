@@ -19,10 +19,10 @@ function gui.initialize(player)
         flowButton.destroy()
     end
     -- adding the button
-    buttonFlow.add{
+    global.flowButton[player.index] = buttonFlow.add{
         type = "sprite-button",
         name = guiBuilder.flowButtonName,
-        sprite = "FAS-icon",
+        sprite = queue.hasAnyEntries() and "FAS-recording-icon" or "FAS-icon",
         visibility = true;
     }
     

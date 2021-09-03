@@ -19,5 +19,12 @@ data:extend{
         filename = "__FacAutoScreenshot__/graphics/FAS-32px.png",
         size = 32,
         flags = {"gui-icon"}
+    },
+    {
+        type = "sprite",
+        name = "FAS-recording-icon",
+        filename = "__FacAutoScreenshot__/graphics/FAS-32px-red.png",
+        size = 32,
+        flags = {"gui-icon"}
     }
 }
