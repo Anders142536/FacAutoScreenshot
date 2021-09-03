@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.4.0
+  Features:
+    - The button for opening the ui now changes to a red skull when auto screenshots are done. This helps identifying wether or not a sudden lag is caused by screenshots. The icon is a WIP icon, as I plan to change the icon anyways very soon.
+---------------------------------------------------------------------------------------------------
 Version: 2.3.2
   Optimizations:
     - The extra space below the surface list items is now gone at the cost of no horizontal scrolling.
