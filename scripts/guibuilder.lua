@@ -273,7 +273,7 @@ local function buildAutoScreenshotSection(index, auto_frame)
 end
 
 
---[[ AREA ]]--
+--#region -~[[ AREA ]]~-
 local function buildAreaHeader(index, area_header)
     global.gui[index].area_content_collapse = area_header.add{
         type = "sprite-button",
@@ -710,7 +710,7 @@ local function buildAreaScreenshotSection(index, area_frame)
 
     buildAreaStartButton(index, area_content)
 end
-
+--#endregion
 
 
 local function buildContentFrame(index, content_frame)

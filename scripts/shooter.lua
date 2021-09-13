@@ -1,3 +1,5 @@
+local l = require("logger")
+
 local shooter = {}
 
 --[[ Zoom Evalutation ]]--

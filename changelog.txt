@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.4.2
+  Bugfixes:
+    - Fixed debug mode being ignored and always off
+  Optimizations:
+    - 
+---------------------------------------------------------------------------------------------------
 Version: 2.4.1
   Optimizations:
     - Changed logo, now its fancy :D

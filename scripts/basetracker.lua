@@ -1,3 +1,5 @@
+local l = require("logger")
+
 local tracker = {}
 
 function tracker.initializeSurface(surface)
