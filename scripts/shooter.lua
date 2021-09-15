@@ -68,7 +68,7 @@ local function buildPath(folder, title, format)
 end
 
 
-local function renderAutoSingleScreenshot(index, specs)
+function shooter.renderAutoSingleScreenshot(index, specs)
 	if l.doD then log(l.debug("rendering auto screenshot as single screenshot")) end
 	if l.doD then log(l.debug("index:   " .. index)) end
 	if l.doD then log(l.debug("surface: " .. specs.surface)) end
@@ -84,10 +84,9 @@ local function renderAutoSingleScreenshot(index, specs)
 		by_player = index,
 		path = buildPath("auto_singleTick_" .. specs.surface ..  "/", "screenshot" .. game.tick, ".png")
 	}
-	queue.remove(index, specs.surface)
 end
 
-local function renderAutoScreenshotFragment(index, fragment)
+function shooter.renderAutoScreenshotFragment(index, fragment)
 	local posX = fragment.startpos.x + fragment.stepsize.x * fragment.offset.x
 	local posY = fragment.startpos.y + fragment.stepsize.y * fragment.offset.y
 
@@ -110,32 +109,10 @@ local function renderAutoScreenshotFragment(index, fragment)
 	}
 
 	-- the first screenshot is the screenshot 0 0, therefore +1
-	local amount = fragment.offset.y * fragment.numberOfTiles + fragment.offset.x + 1
-	local total = fragment.numberOfTiles * fragment.numberOfTiles
-	gui.setStatusValue(amount, total)
-
-	fragment.offset.x = fragment.offset.x + 1
-	if (fragment.offset.x >= fragment.numberOfTiles) then
-		fragment.offset.x = 0
-		fragment.offset.y = fragment.offset.y + 1
-		if (fragment.offset.y >= fragment.numberOfTiles) then
-			--all screenshots have been done, return to countdown
-			-- table.remove(global.queue.nextScreenshot, 1)
-			-- queue.refreshNextScreenshotTimestamp()
-			queue.remove(index, fragment.surface)
-		end
-	end
+	global.auto.amount = fragment.offset.y * fragment.numberOfTiles + fragment.offset.x + 1
+	global.auto.total = fragment.numberOfTiles * fragment.numberOfTiles
 end
 
-function shooter.renderNextQueueStep()
-	for _, job in pairs(queue.getNextStep()) do
-		if job.specs.isSingleScreenshot then
-			renderAutoSingleScreenshot(job.index, job.specs)
-		elseif job.specs.isFragmentedScreenshot then
-			renderAutoScreenshotFragment(job.index, job.specs)
-		end
-	end
-end
 
 function shooter.renderAreaScreenshot(index)
 	log(l.info("shooter.renderAreaScreenshot was triggered"))

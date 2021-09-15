@@ -1,3 +1,7 @@
+local l = require("logger")
+
+local gui -- will be filled on first ui created
+
 local guibuilder = {}
 
 --[[
@@ -731,8 +735,10 @@ end
 
 -- creates a new gui frame for the given player. if a frame
 -- already exists, it is destroyed
-function guibuilder.createGuiFrame(player)
+function guibuilder.createGuiFrame(player, guiInstance)
     log(l.info("creating gui for player " .. player.index))
+
+    if not gui then gui = guiInstance end
 
     global.gui[player.index] = {}
     local guiFrame = player.gui.screen.add{

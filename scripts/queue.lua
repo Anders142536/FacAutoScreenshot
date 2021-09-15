@@ -1,4 +1,5 @@
 local l = require("logger")
+local shooter = require("shooter")
 
 local q = {}
 
@@ -195,6 +196,32 @@ function q.hasAnyEntries()
 		end
 	end
 	return false
+end
+
+function q.executeNextStep()
+	local didFragment = false
+	for _, job in pairs(q.getNextStep()) do
+		if job.specs.isSingleScreenshot then
+			shooter.renderAutoSingleScreenshot(job.index, job.specs)
+
+			q.remove(job.index, job.specs.surface)
+		elseif job.specs.isFragmentedScreenshot then
+			didFragment = true
+			shooter.renderAutoScreenshotFragment(job.index, job.specs)
+			job.specs.offset.x = job.specs.offset.x + 1
+			if (job.specs.offset.x >= job.specs.numberOfTiles) then
+				job.specs.offset.x = 0
+				job.specs.offset.y = job.specs.offset.y + 1
+				if (job.specs.offset.y >= job.specs.numberOfTiles) then
+					--all screenshots have been done, return to countdown
+					-- table.remove(global.queue.nextScreenshot, 1)
+					-- queue.refreshNextScreenshotTimestamp()
+					q.remove(job.index, job.specs.surface)
+				end
+			end
+		end
+	end
+	return didFragment
 end
 
 return q

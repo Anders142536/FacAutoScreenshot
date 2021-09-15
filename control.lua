@@ -155,7 +155,12 @@ end
 
 local function on_tick()
 	if queue.hasAnyEntries() then
-		shooter.renderNextQueueStep()
+		-- shooter.renderNextQueueStep(queue.getNextStep())
+		if queue.executeNextStep() then
+			gui.setStatusValue()
+		else
+			gui.refreshStatusCountdown()
+		end
 	else
 		if game.tick % 60  == 0 then
 			gui.refreshStatusCountdown()
@@ -199,10 +204,45 @@ end
 
 
 
---#region  gui event handlers
+-- #region  gui event handlers
 local handlers = {}
+
+--  #region click handlers
+function handlers.togglegui_click(event)
+	gui.togglegui(event.player_index)
+end
+
 function handlers.gui_close_click(event)
     gui.togglegui(event)
+end
+
+function handlers.auto_content_collapse_click(event)
+	log(l.info("auto_content_collapse was clicked by player " .. event.player_index))
+	gui.toggle_auto_content_area(event.player_index)
+end
+
+function handlers.surface_checkbox_click(event)
+    log(l.info("surface_checkbox was triggered for player " .. event.player_index))
+    global.auto[event.player_index].doSurface[event.element.caption] = event.element.state
+    
+    if global.auto[event.player_index].zoomLevel[event.element.caption] == nil then
+        if l.doD then log(l.debug("Zoomlevel was nil when changing surface selection")) end
+        shooter.evaluateZoomForPlayerAndAllSurfaces(event.player_index)
+    end
+    queue.refreshNextScreenshotTimestamp()
+    gui.refreshStatusCountdown()
+end
+
+function handlers.single_tick_value_click(event)
+    log(l.info(("single tick value was changed for player " .. event.player_index)))
+    local doesSingle = event.element.state
+    global.auto[event.player_index].singleScreenshot = doesSingle
+    global.gui[event.player_index].splitting_factor_flow.visible = not doesSingle
+end
+
+function handlers.area_content_collapse_click(event)
+	log(l.info("area_content_collapse was clicked by player " .. event.player_index))
+	gui.toggle_area_content_area(event.player_index)
 end
 
 function handlers.on_selection_toggle_button_click(event)
@@ -230,17 +270,130 @@ function handlers.on_delete_area_button_click(event)
 	gui.refreshStartHighResScreenshotButton(event.player_index)
 end
 
-function handlers.area_content_collapse_click(event)
-	log(l.info("area_content_collapse was clicked by player " .. event.player_index))
-	gui.toggle_area_content_area(event.player_index)
+function handlers.daytime_switch_click(event)
+    log(l.info("daytime switch was switched for player " .. event.player_index .. " to state " .. event.element.switch_state))
+    global.snip[event.player_index].daytime_state = event.element.switch_state
 end
 
-function handlers.auto_content_collapse_click(event)
-	log(l.info("auto_content_collapse was clicked by player " .. event.player_index))
-	gui.toggle_auto_content_area(event.player_index)
+function handlers.show_ui_value_click(event)
+    log(l.info("show ui tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].showUI = event.element.state
+    if l.doD then log(l.debug("snip show ui is " .. (global.snip[event.player_index].showUI and "true" or "false"))) end
 end
 
---#endregion gui event handlers
+function handlers.alt_mode_value_click(event)
+    log(l.info("show alt mode tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].showAltMode = event.element.state
+    if l.doD then log(l.debug("snip show alt mode is " .. (global.snip[event.player_index].showAltMode and "true" or "false"))) end
+end
+
+function handlers.show_cursor_building_preview_value_click(event)
+    log(l.info("show cursor building preview tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].showCursorBuildingPreview = event.element.state
+    if l.doD then log(l.debug("snip show cursor building preview is " .. (global.snip[event.player_index].showCursorBuildingPreview and "true" or "false"))) end
+end
+
+function handlers.use_anti_alias_value_click(event)
+    log(l.info("use anti alias tickbox was clicked for player " .. event.player_index))
+    global.snip[event.player_index].useAntiAlias = event.element.state
+    if l.doD then log(l.debug("snip ue anti alias is " .. (global.snip[event.player_index].useAntiAlias and "true" or "false"))) end
+end
+
+function handlers.start_area_screenshot_button_click(event)
+    log(l.info("start high res screenshot button was pressed by player " .. event.player_index))
+    shooter.renderAreaScreenshot(event.player_index)
+end
+
+
+--  #endregion click handlers
+
+--  #region value changed handlers
+function handlers.splitting_factor_slider_value_changed(event)
+    log(l.info("splitting factor was changed for player " .. event.player_index))
+    local splittingFactor = math.pow(4, event.element.slider_value)
+    global.auto[event.player_index].splittingFactor = splittingFactor
+    global.gui[event.player_index].splitting_factor_value.text = tostring(splittingFactor)
+end
+
+function handlers.zoom_slider_value_changed(event)
+    log(l.info("zoom slider was moved"))
+    local level = event.element.slider_value
+    global.gui[event.player_index].zoom_value.text = tostring(level)
+    global.snip[event.player_index].zoomLevel = level
+    gui.refreshEstimates(event.player_index)
+    gui.refreshStartHighResScreenshotButton(event.player_index)
+end
+
+function handlers.area_jpg_quality_slider_value_changed(event)
+    log(l.info("quality slider was moved"))
+    local level = event.element.slider_value
+    global.gui[event.player_index].area_jpg_quality_value.text = tostring(level)
+    global.snip[event.player_index].jpg_quality = level
+end
+
+--#endregion value changed handlers
+
+--  #region text changed handlers
+function handlers.interval_value_text_changed(event)
+    log(l.info("interval was changed for player " .. event.player_index))
+    local suggestion = tonumber(event.text)
+    if suggestion == nil then return end
+    if suggestion < 1 or suggestion > 60 then
+        event.element.text = tostring(global.auto[event.player_index].interval / 3600)
+        return
+    end
+
+    global.auto[event.player_index].interval = suggestion * 60 * 60
+
+    queue.refreshNextScreenshotTimestamp()
+    gui.refreshStatusCountdown()
+end
+
+function handlers.area_output_name_text_changed(event)
+    log(l.info("area output name changed"))
+    global.snip[event.player_index].outputName = event.element.text
+end
+
+
+--#endregion text changed handlers
+
+--  #region selection handlers
+function handlers.auto_resolution_value_selection(event)
+    log(l.info("resolution setting was changed for player " .. event.player_index))
+    local resolution_index = event.element.selected_index
+    if resolution_index == 1 then
+        global.auto[event.player_index].resolution_index = 1
+        global.auto[event.player_index].resX = 7680;
+        global.auto[event.player_index].resY = 4320;
+    elseif resolution_index == 2 then
+        global.auto[event.player_index].resolution_index = 2
+        global.auto[event.player_index].resX = 3840
+        global.auto[event.player_index].resY = 2160
+    elseif resolution_index == 3 then
+        global.auto[event.player_index].resolution_index = 3
+        global.auto[event.player_index].resX = 1920
+        global.auto[event.player_index].resY = 1080
+    elseif resolution_index == 4 then
+        global.auto[event.player_index].resolution_index = 4
+        global.auto[event.player_index].resX = 1280
+        global.auto[event.player_index].resY = 720
+    end
+    global.auto[event.player_index].zoom = {}
+    global.auto[event.player_index].zoomLevel = {}
+    shooter.evaluateZoomForPlayerAndAllSurfaces(event.player_index)
+end
+
+function handlers.area_output_format_selection(event)
+    log(l.info("area output format changed"))
+    global.snip[event.player_index].output_format_index = event.element.selected_index
+    global.gui[event.player_index].area_jpg_quality_flow.visible = event.element.selected_index == 2
+    gui.refreshEstimates(event.player_index)
+end
+
+
+--  #endregion selection handlers
+
+-- #endregion gui event handlers
 
 
 -- #region gui event handler picker
@@ -248,7 +401,7 @@ local function callHandler(event, suffix)
     local handlerMethod
 
 	if string.find(event.element.name, "surface_checkbox") then
-        handlerMethod = handlers["surface_checkbox"]
+        handlerMethod = handlers["surface_checkbox_click"]
     else
         -- handler methods have to be called the same as the element that shall trigger them
         handlerMethod = handlers[event.element.name .. suffix]
@@ -281,7 +434,7 @@ local function on_gui_selection_state_changed(event)
     log(l.info("on_gui_selection_state_changed event triggered with element name " .. event.element.name))
     callHandler(event, "_selection")
 end
---#endregion
+-- #endregion gui event handler picker
 
 
 -- #region shortcuts handlers
@@ -313,12 +466,12 @@ local function on_selection_toggle(event)
 end
 
 local function on_delete_area(event)
-    on_delete_area_button_click(event)
+    handlers.on_delete_area_button_click(event)
 end
 -- #endregion
 
 
---#region surfaces
+-- #region surfaces
 local function on_pre_surface_deleted(event)
     log(l.info("surface " .. game.get_surface(event.surface_index).name .. " deleted"))
 

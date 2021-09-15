@@ -48,12 +48,12 @@ function gui.unhighlightSelectAreaButton(player)
     end
 end
 
-function gui.togglegui(event)
+function gui.togglegui(index)
     log(l.info("toggling gui"))
-    local player = game.get_player(event.player_index)
+    local player = game.get_player(index)
     local guiFrame = player.gui.screen[guiBuilder.mainFrameName]
     if not guiFrame then
-        guiBuilder.createGuiFrame(player)
+        guiBuilder.createGuiFrame(player, gui)
         
     else
         if not guiFrame.visible and not global.auto.amount then
@@ -65,9 +65,9 @@ function gui.togglegui(event)
     
     if not guiFrame or guiFrame.visible then
         log(l.info("gui is now visible"))
-        if global.snip[event.player_index].area.width then
-            gui.refreshEstimates(event.player_index)
-            gui.refreshStartHighResScreenshotButton(event.player_index)
+        if global.snip[index].area.width then
+            gui.refreshEstimates(index)
+            gui.refreshStartHighResScreenshotButton(index)
         end
     else
         log(l.info("gui is now hidden"))
@@ -258,157 +258,6 @@ function gui.toggle_area_content_area(index)
 end
 
 
-
-
-
-
-
-
-
-
-
---[[ HANDLER METHODS ]]--
-
-
-
--- transform this to surface selection handling
-function gui.surface_checkbox(event)
-    log(l.info("surface_checkbox was triggered for player " .. event.player_index))
-    global.auto[event.player_index].doSurface[event.element.caption] = event.element.state
-    
-    if global.auto[event.player_index].zoomLevel[event.element.caption] == nil then
-        if l.doD then log(l.debug("Zoomlevel was nil when changing surface selection")) end
-        shooter.evaluateZoomForPlayerAndAllSurfaces(event.player_index)
-    end
-    queue.refreshNextScreenshotTimestamp()
-    gui.refreshStatusCountdown()
-end
-
-function gui.auto_resolution_value_selection(event)
-    log(l.info("resolution setting was changed for player " .. event.player_index))
-    local resolution_index = event.element.selected_index
-    if resolution_index == 1 then
-        global.auto[event.player_index].resolution_index = 1
-        global.auto[event.player_index].resX = 7680;
-        global.auto[event.player_index].resY = 4320;
-    elseif resolution_index == 2 then
-        global.auto[event.player_index].resolution_index = 2
-        global.auto[event.player_index].resX = 3840
-        global.auto[event.player_index].resY = 2160
-    elseif resolution_index == 3 then
-        global.auto[event.player_index].resolution_index = 3
-        global.auto[event.player_index].resX = 1920
-        global.auto[event.player_index].resY = 1080
-    elseif resolution_index == 4 then
-        global.auto[event.player_index].resolution_index = 4
-        global.auto[event.player_index].resX = 1280
-        global.auto[event.player_index].resY = 720
-    end
-    global.auto[event.player_index].zoom = {}
-    global.auto[event.player_index].zoomLevel = {}
-    shooter.evaluateZoomForPlayerAndAllSurfaces(event.player_index)
-end
-
-function gui.interval_value_text_changed(event)
-    log(l.info("interval was changed for player " .. event.player_index))
-    local suggestion = tonumber(event.text)
-    if suggestion == nil then return end
-    if suggestion < 1 or suggestion > 60 then
-        event.element.text = tostring(global.auto[event.player_index].interval / 3600)
-        return
-    end
-
-    global.auto[event.player_index].interval = suggestion * 60 * 60
-
-    queue.refreshNextScreenshotTimestamp()
-    gui.refreshStatusCountdown()
-end
-
-function gui.single_tick_value(event)
-    log(l.info(("single tick value was changed for player " .. event.player_index)))
-    local doesSingle = event.element.state
-    global.auto[event.player_index].singleScreenshot = doesSingle
-    global.gui[event.player_index].splitting_factor_flow.visible = not doesSingle
-    
-end
-
-function gui.splitting_factor_slider_value_changed(event)
-    log(l.info("splitting factor was changed for player " .. event.player_index))
-    local splittingFactor = math.pow(4, event.element.slider_value)
-    global.auto[event.player_index].splittingFactor = splittingFactor
-    global.gui[event.player_index].splitting_factor_value.text = tostring(splittingFactor)
-end
-
-
-function gui.start_area_screenshot_button(event)
-    log(l.info("start high res screenshot button was pressed by player " .. event.player_index))
-    local index = event.player_index
-
-    shooter.renderAreaScreenshot(index)
-end
-
-function gui.daytime_switch(event)
-    log(l.info("daytime switch was switched for player " .. event.player_index .. " to state " .. event.element.switch_state))
-    global.snip[event.player_index].daytime_state = event.element.switch_state
-end
-
-function gui.show_ui_value(event)
-    log(l.info("show ui tickbox was clicked for player " .. event.player_index))
-    global.snip[event.player_index].showUI = event.element.state
-    if l.doD then log(l.debug("snip show ui is " .. (global.snip[event.player_index].showUI and "true" or "false"))) end
-end
-
-function gui.alt_mode_value(event)
-    log(l.info("show alt mode tickbox was clicked for player " .. event.player_index))
-    global.snip[event.player_index].showAltMode = event.element.state
-    if l.doD then log(l.debug("snip show alt mode is " .. (global.snip[event.player_index].showAltMode and "true" or "false"))) end
-end
-
-function gui.show_cursor_building_preview_value(event)
-    log(l.info("show cursor building preview tickbox was clicked for player " .. event.player_index))
-    global.snip[event.player_index].showCursorBuildingPreview = event.element.state
-    if l.doD then log(l.debug("snip show cursor building preview is " .. (global.snip[event.player_index].showCursorBuildingPreview and "true" or "false"))) end
-end
-
-function gui.use_anti_alias_value(event)
-    log(l.info("use anti alias tickbox was clicked for player " .. event.player_index))
-    global.snip[event.player_index].useAntiAlias = event.element.state
-    if l.doD then log(l.debug("snip ue anti alias is " .. (global.snip[event.player_index].useAntiAlias and "true" or "false"))) end
-end
-
-function gui.zoom_slider_value_changed(event)
-    log(l.info("zoom slider was moved"))
-    local level = event.element.slider_value
-    global.gui[event.player_index].zoom_value.text = tostring(level)
-    global.snip[event.player_index].zoomLevel = level
-    refreshEstimates(event.player_index)
-    refreshStartHighResScreenshotButton(event.player_index)
-end
-
-function gui.area_jpg_quality_slider_value_changed(event)
-    log(l.info("quality slider was moved"))
-    local level = event.element.slider_value
-    global.gui[event.player_index].area_jpg_quality_value.text = tostring(level)
-    global.snip[event.player_index].jpg_quality = level
-end
-
-function gui.area_output_name_text_changed(event)
-    log(l.info("area output name changed"))
-    global.snip[event.player_index].outputName = event.element.text
-end
-
-function gui.area_output_format_selection(event)
-    log(l.info("area output format changed"))
-    global.snip[event.player_index].output_format_index = event.element.selected_index
-    global.gui[event.player_index].area_jpg_quality_flow.visible = event.element.selected_index == 2
-    refreshEstimates(event.player_index)
-end
-
-
---[[ END HANDLER METHODS ]]--
-
-
-
 function gui.getStatusValue()
     if global.auto.amount then
         return global.auto.amount .. " / " .. global.auto.total
@@ -417,16 +266,14 @@ function gui.getStatusValue()
     end
 end
 
-function gui.setStatusValue(amount, total)
-    global.auto.amount = amount
-    global.auto.total = total
-    global.auto.progressValue = amount / total
+function gui.setStatusValue()
+    global.auto.progressValue = global.auto.amount / global.auto.total
     for index, player in pairs(global.gui) do
         if l.doD then log(l.debug("player " .. index .. " found")) end
         if l.doD then log(l.debug("player.mainframe nil? " .. (player.mainFrame == nil and "true" or "false"))) end
         if player.mainFrame and player.mainFrame.valid and player.mainFrame.visible then
-            if l.doD then log(l.debug("setting status value for player " .. index .. " with amount " .. amount .. " / " .. total)) end
-            player.status_value.caption = amount .. " / " .. total
+            if l.doD then log(l.debug("setting status value for player " .. index .. " with amount " .. global.auto.amount .. " / " .. global.auto.total)) end
+            player.status_value.caption = global.auto.amount .. " / " .. global.auto.total
             if player.progress_bar.visible == false then
                 player.progress_bar.visible = true
             end
