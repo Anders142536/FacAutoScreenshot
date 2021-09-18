@@ -119,17 +119,19 @@ local function evaluateLimitsFromMinMax(surface)
 end
 
 function tracker.checkForMinMaxChange()
+	local didSomethingChange = false
 	for _, surface in pairs(game.surfaces) do
 		if global.tracker[surface.name].minMaxChanged then
 			evaluateLimitsFromMinMax(surface.name)
-			shooter.evaluateZoomForAllPlayersAndAllSurfaces()
 			global.tracker[surface.name].minMaxChanged = false
+			didSomethingChange = true
 		end
 	end
+	return didSomethingChange
 end
 
 function tracker.evaluateMinMaxFromPosition(pos, surface)
-	if l.doD then log(l.debug("Evaluate min max on surface ", surface, "from position: ", pos.x, "x", pos.y)) end
+	if l.doD then log(l.debug("Evaluate min max on surface ", surface, " from position: ", pos.x, "x", pos.y)) end
 	
 	if pos.x < global.tracker[surface].minX then
 		global.tracker[surface].minX = pos.x

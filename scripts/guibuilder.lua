@@ -42,7 +42,7 @@ local function buildHeader(guiFrame)
 end
 
 
---[[ AUTO ]]--
+--#region -~[ AUTO ]~-
 local function buildAutoHeader(index, auto_header)
     global.gui[index].auto_content_collapse = auto_header.add{
         type = "sprite-button",
@@ -275,7 +275,7 @@ local function buildAutoScreenshotSection(index, auto_frame)
     buildAutoSingleTick(index, auto_content)
     buildAutoSplittingFactor(index, auto_content)
 end
-
+--#endregion AUTO
 
 --#region -~[[ AREA ]]~-
 local function buildAreaHeader(index, area_header)

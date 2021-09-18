@@ -133,7 +133,9 @@ end
 local function on_nth_tick(event)
 	log(l.info("on nth tick"))
 	-- if something was built in the last minute that should cause a recalc of all zoom levels
-	basetracker.checkForMinMaxChange()
+	if basetracker.checkForMinMaxChange() then
+		shooter.evaluateZoomForAllPlayersAndAllSurfaces()
+    end
 
 	local newRegistrations = false
 	for _, player in pairs(game.connected_players) do
@@ -213,7 +215,7 @@ function handlers.togglegui_click(event)
 end
 
 function handlers.gui_close_click(event)
-    gui.togglegui(event)
+    gui.togglegui(event.player_index)
 end
 
 function handlers.auto_content_collapse_click(event)
@@ -245,7 +247,7 @@ function handlers.area_content_collapse_click(event)
 	gui.toggle_area_content_area(event.player_index)
 end
 
-function handlers.on_selection_toggle_button_click(event)
+function handlers.select_area_button_click(event)
 	log(l.info("select area button was clicked by player " .. event.player_index))
 	local index = event.player_index
 	global.snip[index].doesSelection = not global.snip[index].doesSelection
@@ -256,15 +258,15 @@ function handlers.on_selection_toggle_button_click(event)
 	else
 		gui.clearPlayerCursorStack(index)
 		gui.unhighlightSelectAreaButton(index)
-		if global.snip[index].area.width then
-			shooter.renderAreaScreenshot(index)
-		end
 	end
 end
 
-function handlers.on_delete_area_button_click(event)
+function handlers.delete_area_button_click(event)
 	log(l.info("delete area button was clicked by player " .. event.player_index))
 	snip.resetArea(event.player_index)
+    snip.calculateEstimates(event.player_index)
+    snip.checkIfScreenshotPossible(event.player_index)
+    
 	gui.resetAreaValues(event.player_index)
 	gui.refreshEstimates(event.player_index)
 	gui.refreshStartHighResScreenshotButton(event.player_index)
@@ -439,18 +441,23 @@ end
 
 -- #region shortcuts handlers
 local function handleAreaChange(index)
-    gui.calculateArea(index)
+    snip.calculateArea(index)
+    snip.calculateEstimates(index)
+    snip.checkIfScreenshotPossible(index)
         
     if global.gui[index] then
+        gui.refreshAreaValues(index)
         gui.refreshEstimates(index)
         gui.refreshStartHighResScreenshotButton(index)
     end
 end
 
 local function on_left_click(event)
-    log(l.info("left click event fired while doing selection by player " .. event.player_index))
-    global.snip[event.player_index].areaLeftClick = event.cursor_position
-	handleAreaChange(event.player_index)
+    if global.snip[event.player_index].doesSelection then
+        log(l.info("left click event fired while doing selection by player " .. event.player_index))
+        global.snip[event.player_index].areaLeftClick = event.cursor_position
+	    handleAreaChange(event.player_index)
+    end
 end
 
 local function on_right_click(event)
@@ -463,10 +470,15 @@ end
 
 local function on_selection_toggle(event)
 	log(l.info("selection toggle shortcut was triggered by player " .. event.player_index))
+    handlers.select_area_button_click(event)
+
+	if not global.snip[event.player_index].doesSelection and global.snip[event.player_index].area.width then
+        shooter.renderAreaScreenshot(event.player_index)
+	end
 end
 
 local function on_delete_area(event)
-    handlers.on_delete_area_button_click(event)
+    handlers.delete_area_button_click(event)
 end
 -- #endregion
 
