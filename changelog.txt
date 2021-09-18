@@ -2,8 +2,12 @@
 Version: 2.4.2
   Bugfixes:
     - Fixed debug mode being ignored and always off
+    - Fixed issue of areas being only a line if the exact border between two tiles was clicked
+    - Fixed countdown showing 0min 59s in an edge case, although it should show 59s
   Optimizations:
-    - 
+    - huge refactor of almost everything in preparation for big gui update
+    - improved performance for queuing system for screenshots
+    - adjusted png file size estimates, as they seem to have been way too high so far
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.1
   Optimizations:
