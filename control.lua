@@ -322,6 +322,7 @@ function handlers.zoom_slider_value_changed(event)
     local level = event.element.slider_value
     global.gui[event.player_index].zoom_value.text = tostring(level)
     global.snip[event.player_index].zoomLevel = level
+    snip.calculateEstimates(event.player_index)
     gui.refreshEstimates(event.player_index)
     gui.refreshStartHighResScreenshotButton(event.player_index)
 end
