@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.4.3
+  Bugfixes:
+    - Fixed area resolution and filesize estimates not changing when changing the zoom slider
+---------------------------------------------------------------------------------------------------
 Version: 2.4.2
   Bugfixes:
     - Fixed debug mode being ignored and always off
