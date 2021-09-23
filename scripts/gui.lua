@@ -34,16 +34,20 @@ function gui.initialize(player, queueHasEntries)
     end
 end
 
+local function guiIsValid(player)
+    return global.gui[player] and global.gui[player].mainFrame.valid
+end
+
 function gui.highlightSelectAreaButton(player)
     -- happens if the shortcut was clicked before the ui was created
-    if global.gui[player] then
+    if guiIsValid(player) then
         global.gui[player].select_area_button.style = "fas_clicked_tool_button"
     end
 end
 
 function gui.unhighlightSelectAreaButton(player)
     -- happens if the shortcut was clicked before the ui was created
-    if global.gui[player] then
+    if guiIsValid(player) then
         global.gui[player].select_area_button.style = "tool_button"
     end
 end
@@ -77,14 +81,14 @@ end
 
 function gui.refreshStartHighResScreenshotButton(index)
     -- {1, 16384}
-    if global.gui[index] then
+    if guiIsValid(index) then
         global.gui[index].start_area_screenshot_button.enabled =
             global.snip[index].enableScreenshotButton
     end
 end
 
 function gui.refreshEstimates(index)
-    if not global.gui[index] then return end
+    if not guiIsValid(index) then return end
 
     if not global.snip[index].resolution then
         -- happens if the zoom slider is moved before an area was selected so far
@@ -99,7 +103,7 @@ end
 
 function gui.resetAreaValues(index)
     -- is nil if the ui was not opened before using the delete shortcut
-    if global.gui[index] then
+    if guiIsValid(index) then
         global.gui[index].x_value.text = ""
         global.gui[index].y_value.text = ""
         global.gui[index].width_value.text = ""
@@ -109,7 +113,7 @@ end
 
 function gui.refreshAreaValues(index)
     -- happens if the shortcuts were pressed before the ui was opened
-    if global.gui[index] then
+    if guiIsValid(index) then
         global.gui[index].x_value.text = tostring(global.snip[index].area.left)
         global.gui[index].y_value.text = tostring(global.snip[index].area.top)
         global.gui[index].width_value.text = tostring(global.snip[index].area.width)
