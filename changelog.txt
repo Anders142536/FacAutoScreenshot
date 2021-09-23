@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.4.4
+  Bugfixes:
+    - Fixed crash on deleting a surface whilst fragmented screenshots were in the process
+    - Fixed memory leak when deleting surfaces
+    - Fixed UI-toggle button icon being stuck with the red version when the currently screenshotted surface was deleted until a new set of screenshots were made
+---------------------------------------------------------------------------------------------------
 Version: 2.4.3
   Bugfixes:
     - Fixed area resolution and filesize estimates not changing when changing the zoom slider
