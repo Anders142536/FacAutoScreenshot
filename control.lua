@@ -489,10 +489,15 @@ local function on_pre_surface_deleted(event)
     log(l.info("surface " .. game.get_surface(event.surface_index).name .. " deleted"))
 
     -- delete entries of deleted surface
-    for _, playerData in pairs(global.auto) do
+    for _, player in pairs(game.players) do
         local name = game.get_surface(event.surface_index).name
-        if playerData.doSurface[name] ~= nil then
-            playerData.doSurface[name] = nil
+        if global.auto[player.index].doSurface[name] ~= nil then
+            global.auto[player.index].doSurface[name] = nil
+        end
+
+        -- if the surface was in queue for a screenshot
+        if global.queue[player.index] and global.queue[player.index][name] then
+            queue.remove(player.index, name)
         end
     end
 
