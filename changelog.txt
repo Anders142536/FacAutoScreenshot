@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.4.6
+  Bugfixes:
+    - Fixed some logging issues
+
+---------------------------------------------------------------------------------------------------
 Version: 2.4.5
   Bugfixes:
     - Fixed rare crash on using shortcuts as client, probably when the server restarts without opening the ui in certain constellations

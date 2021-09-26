@@ -112,13 +112,13 @@ end
 
 --#region -~[[ EVENT HANDLERS ]]~-
 local function on_init(event)
-	l.info("on init triggered")
+	log(l.info("on init triggered"))
 	initialize()
 end
 
 local function on_configuration_changed(event)
 	if event.mod_changes.FacAutoScreenshot then
-		l.info("configuration of FAS changed")
+		log(l.info("configuration of FAS changed"))
 		initialize()
 	end
 end
