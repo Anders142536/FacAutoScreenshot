@@ -362,24 +362,31 @@ end
 
 --  #region selection handlers
 function handlers.auto_resolution_value_selection(event)
-    log(l.info("resolution setting was changed for player " .. event.player_index))
+    log(l.info("resolution setting was changed for player " .. event.player_index .. " with index " .. event.element.selected_index
+))
     local resolution_index = event.element.selected_index
     if resolution_index == 1 then
         global.auto[event.player_index].resolution_index = 1
-        global.auto[event.player_index].resX = 7680;
-        global.auto[event.player_index].resY = 4320;
+        global.auto[event.player_index].resX = 15360;
+        global.auto[event.player_index].resY = 8640;
     elseif resolution_index == 2 then
         global.auto[event.player_index].resolution_index = 2
-        global.auto[event.player_index].resX = 3840
-        global.auto[event.player_index].resY = 2160
+        global.auto[event.player_index].resX = 7680;
+        global.auto[event.player_index].resY = 4320;
     elseif resolution_index == 3 then
         global.auto[event.player_index].resolution_index = 3
-        global.auto[event.player_index].resX = 1920
-        global.auto[event.player_index].resY = 1080
+        global.auto[event.player_index].resX = 3840
+        global.auto[event.player_index].resY = 2160
     elseif resolution_index == 4 then
         global.auto[event.player_index].resolution_index = 4
+        global.auto[event.player_index].resX = 1920
+        global.auto[event.player_index].resY = 1080
+    elseif resolution_index == 5 then
+        global.auto[event.player_index].resolution_index = 5
         global.auto[event.player_index].resX = 1280
         global.auto[event.player_index].resY = 720
+    else
+        log(l.warn("could not match resolution index " .. resolution_index))
     end
     global.auto[event.player_index].zoom = {}
     global.auto[event.player_index].zoomLevel = {}

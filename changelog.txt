@@ -2,7 +2,7 @@
 Version: 2.4.6
   Bugfixes:
     - Fixed some logging issues
-
+    - Fixed issue of wrong resolution being used for auto screenshot
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.5
   Bugfixes:
