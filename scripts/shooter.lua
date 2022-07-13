@@ -131,6 +131,7 @@ function shooter.renderAreaScreenshot(index)
 		log(l.debug("output name: " .. (global.snip[index].outputName or "screenshot")))
 		log(l.debug("format:      " .. global.snip[index].output_format_index))
 		log(l.debug("jpg quality: " .. global.snip[index].jpg_quality))
+		log(l.debug("surface_name:" .. global.snip[index].surface_name))
 	end
 
 	local width = global.snip[index].area.right - global.snip[index].area.left
@@ -142,9 +143,16 @@ function shooter.renderAreaScreenshot(index)
 	local posX = global.snip[index].area.left + width / 2
 	local posY = global.snip[index].area.top + heigth / 2
 
+	local surface
+	if global.snip[index].surface_name then
+		surface = game.surfaces[global.snip[index].surface_name]
+	else
+		surface = game.get_player(index).surface
+	end
+
 	local dstate = global.snip[index].daytime_state
 	if dstate == nil or dstate == "none" then
-		dstate = game.get_player(index).surface.daytime
+		dstate = surface.daytime
 	elseif dstate == "left" then
 		dstate = 0
 	else
@@ -160,6 +168,7 @@ function shooter.renderAreaScreenshot(index)
 	game.take_screenshot{
 		resolution = {resX, resY},
 		position = {posX, posY},
+		surface = surface,
 		zoom = zoom,
 		by_player = index,
 		path = path,

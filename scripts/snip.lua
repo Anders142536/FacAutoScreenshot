@@ -22,6 +22,9 @@ function snip.resetArea(index)
     if global.snip[index].filesize then
         global.snip[index].filesize = nil
     end
+    if global.snip[index].surface then
+        global.snip[index].surface = nil
+    end
 end
 
 function snip.calculateArea(index)
@@ -91,7 +94,10 @@ function snip.calculateArea(index)
     global.snip[index].area.bottom = bottom
     global.snip[index].area.width = width
     global.snip[index].area.height = height
-    
+
+    local surface_name = game.get_player(index).surface.name
+    global.snip[index].surface_name = surface_name
+
     if global.snip[index].rec then
         rendering.destroy(global.snip[index].rec)
     end
@@ -102,7 +108,7 @@ function snip.calculateArea(index)
         left_top = {left, top},
         right_bottom = {right, bottom},
         players = {index},
-        surface = "nauvis"
+        surface = surface_name
     }
     
 end
