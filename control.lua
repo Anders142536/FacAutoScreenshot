@@ -464,6 +464,10 @@ local function on_left_click(event)
     if global.snip[event.player_index].doesSelection then
         log(l.info("left click event fired while doing selection by player " .. event.player_index))
         global.snip[event.player_index].areaLeftClick = event.cursor_position
+        if game.get_player(event.player_index).surface.name ~= global.snip[event.player_index].surface_name then
+            -- Surface has changed, new area
+            global.snip[event.player_index].areaRightClick = nil
+        end
 	    handleAreaChange(event.player_index)
     end
 end
@@ -472,6 +476,10 @@ local function on_right_click(event)
     if global.snip[event.player_index].doesSelection then
         log(l.info("right click event fired while doing selection by player " .. event.player_index))
         global.snip[event.player_index].areaRightClick = event.cursor_position
+        if game.get_player(event.player_index).surface.name ~= global.snip[event.player_index].surface_name then
+            -- Surface has changed, new area
+            global.snip[event.player_index].areaLeftClick = nil
+        end
 		handleAreaChange(event.player_index)
     end
 end
