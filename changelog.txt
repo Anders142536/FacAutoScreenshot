@@ -2,6 +2,8 @@
 Version: 2.4.7
   Features:
     - Area screenshot improvements with multiple surfaces. The selection rectangle now draws on the right surface, and the screenshot will be taken on the surface with the selection, instead of the surface you are looking at.
+  Bugfixes:
+    - Added missing locale entries
 ---------------------------------------------------------------------------------------------------
 Version: 2.4.6
   Bugfixes:
