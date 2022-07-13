@@ -514,6 +514,11 @@ local function on_pre_surface_deleted(event)
         if global.queue[player.index] and global.queue[player.index][name] then
             queue.remove(player.index, name)
         end
+
+        -- if there was an area selection on the surface
+        if global.snip[player.index].surface_name == name then
+            snip.resetArea(player.index)
+        end
     end
 
     gui.initializeAllConnectedPlayers(queue.hasAnyEntries())
@@ -542,6 +547,13 @@ local function on_surface_renamed(event)
             playerData.doSurface[event.old_name] = nil
         end
     end
+
+    for _, player in pairs(game.players) do
+        if global.snip[player.index].surface_name == event.old_name then
+            global.snip[player.index].surface_name = event.new_name
+        end
+    end
+
     gui.initializeAllConnectedPlayers(queue.hasAnyEntries())
     shooter.evaluateZoomForAllPlayersAndSurface(game.get_surface(event.surface_index).name)
 	basetracker.on_surface_renamed(event)

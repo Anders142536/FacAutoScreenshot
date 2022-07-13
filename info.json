@@ -1,6 +1,6 @@
 {
   "name": "FacAutoScreenshot",
-  "version": "2.4.6",
+  "version": "2.4.7",
   "title": "Screenshot Toolkit",
   "author": "Anders142536",
   "description": "* Screenshots a selected area, similar to programs like the Windows Snipping Tool, Greenshot or Flameshot.\n* Automatically does screenshots of the whole base in set minute intervals, designed for timelapses.\n\nWritten to be performance friendly. Aims to be your do-it-all toolkit for screenshots.",

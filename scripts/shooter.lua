@@ -143,12 +143,7 @@ function shooter.renderAreaScreenshot(index)
 	local posX = global.snip[index].area.left + width / 2
 	local posY = global.snip[index].area.top + heigth / 2
 
-	local surface
-	if global.snip[index].surface_name then
-		surface = game.surfaces[global.snip[index].surface_name]
-	else
-		surface = game.get_player(index).surface
-	end
+	local surface = game.surfaces[global.snip[index].surface_name]
 
 	local dstate = global.snip[index].daytime_state
 	if dstate == nil or dstate == "none" then

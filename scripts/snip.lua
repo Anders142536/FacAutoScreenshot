@@ -22,8 +22,8 @@ function snip.resetArea(index)
     if global.snip[index].filesize then
         global.snip[index].filesize = nil
     end
-    if global.snip[index].surface then
-        global.snip[index].surface = nil
+    if global.snip[index].surface_name then
+        global.snip[index].surface_name = nil
     end
 end
 
