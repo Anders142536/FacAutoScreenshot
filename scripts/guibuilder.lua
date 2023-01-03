@@ -544,10 +544,9 @@ local function buildAreaZoom(index, area_content)
     global.gui[index].zoom_slider = zoom_flow.add{
         type = "slider",
         name = "zoom_slider",
-        maximum_value = "5",
-        minimum_value = "0.25",
-        value = global.snip[index].zoomLevel,
-        value_step = "0.25",
+        minimum_value = "-3",
+        maximum_value = "3",
+        value = math.log(global.snip[index].zoomLevel)/math.log(2),
         style = "fas_slider"
     }
     global.gui[index].zoom_value = zoom_flow.add{

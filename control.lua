@@ -319,7 +319,7 @@ end
 
 function handlers.zoom_slider_value_changed(event)
     log(l.info("zoom slider was moved"))
-    local level = event.element.slider_value
+    local level = math.pow(2, event.element.slider_value)
     global.gui[event.player_index].zoom_value.text = tostring(level)
     global.snip[event.player_index].zoomLevel = level
     snip.calculateEstimates(event.player_index)
