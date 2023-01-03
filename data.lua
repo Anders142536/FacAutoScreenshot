@@ -23,6 +23,11 @@ data:extend{
         key_sequence = "SHIFT + ALT + D"
     },
     {
+        type = "custom-input",
+        name = "FAS-toggle-GUI",
+        key_sequence = ""
+    },
+    {
         type = "selection-tool",
         name = "FAS-selection-tool",
         icon = "__FacAutoScreenshot__/graphics/FAS-24px.png",
