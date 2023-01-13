@@ -20,10 +20,10 @@ local function loadDefaultsForPlayer(index)
 		l.info("global.auto.zoomlevel was nil")
 		global.auto[index].zoomLevel = {}
 	end
-	
+
 	if global.auto[index].interval == nil then global.auto[index].interval = 10 * 60 * 60 end
 	log(l.info("interval is " .. (global.auto[index].interval / 60 / 60)) .. " min")
-	
+
 	if global.auto[index].resX == nil then
 		global.auto[index].resolution_index = 3
 		global.auto[index].resX = 3840
@@ -34,10 +34,10 @@ local function loadDefaultsForPlayer(index)
 
 	if global.auto[index].singleScreenshot == nil then global.auto[index].singleScreenshot = true end
 	log(l.info("singleScreenshot is " .. (global.auto[index].singleScreenshot and "on" or "off")))
-	
+
 	if global.auto[index].splittingFactor == nil then global.auto[index].splittingFactor = 1 end
 	log(l.info("splittingFactor is " .. global.auto[index].splittingFactor))
-	
+
 	if not global.auto[index].doSurface then global.auto[index].doSurface = {} end
 	for _, surface in pairs(game.surfaces) do
 		log(l.info("does surface " .. surface.name .. ": " ..
@@ -226,7 +226,7 @@ end
 function handlers.surface_checkbox_click(event)
     log(l.info("surface_checkbox was triggered for player " .. event.player_index))
     global.auto[event.player_index].doSurface[event.element.caption] = event.element.state
-    
+
     if global.auto[event.player_index].zoomLevel[event.element.caption] == nil then
         if l.doD then log(l.debug("Zoomlevel was nil when changing surface selection")) end
         shooter.evaluateZoomForPlayerAndAllSurfaces(event.player_index)
@@ -266,7 +266,7 @@ function handlers.delete_area_button_click(event)
 	snip.resetArea(event.player_index)
     snip.calculateEstimates(event.player_index)
     snip.checkIfScreenshotPossible(event.player_index)
-    
+
 	gui.resetAreaValues(event.player_index)
 	gui.refreshEstimates(event.player_index)
 	gui.refreshStartHighResScreenshotButton(event.player_index)
@@ -319,7 +319,7 @@ end
 
 function handlers.zoom_slider_value_changed(event)
     log(l.info("zoom slider was moved"))
-    local level = event.element.slider_value
+    local level = math.pow(2, event.element.slider_value)
     global.gui[event.player_index].zoom_value.text = tostring(level)
     global.snip[event.player_index].zoomLevel = level
     snip.calculateEstimates(event.player_index)
@@ -452,7 +452,7 @@ local function handleAreaChange(index)
     snip.calculateArea(index)
     snip.calculateEstimates(index)
     snip.checkIfScreenshotPossible(index)
-        
+
     if global.gui[index] then
         gui.refreshAreaValues(index)
         gui.refreshEstimates(index)
@@ -495,6 +495,10 @@ end
 
 local function on_delete_area(event)
     handlers.delete_area_button_click(event)
+end
+
+local function on_toggle_gui(event)
+    handlers.togglegui_click(event)
 end
 -- #endregion
 
@@ -588,6 +592,7 @@ script.on_event("FAS-left-click", on_left_click)
 script.on_event("FAS-right-click", on_right_click)
 script.on_event("FAS-selection-toggle-shortcut", on_selection_toggle)
 script.on_event("FAS-delete-area-shortcut", on_delete_area)
+script.on_event("FAS-toggle-GUI", on_toggle_gui)
 
 -- surfaces
 script.on_event(defines.events.on_pre_surface_deleted, on_pre_surface_deleted)

@@ -37,6 +37,7 @@ function snip.calculateArea(index)
     local left
     local bottom
     local right
+    local offset = 0.05 -- A Small offset so we don't have the white lines of the rectangle bleed into image
 
     if global.snip[index].areaLeftClick then
         top = global.snip[index].areaLeftClick.y
@@ -105,12 +106,12 @@ function snip.calculateArea(index)
         color = {0.5, 0.5, 0.5, 0.5},
         width = 1,
         filled = false,
-        left_top = {left, top},
-        right_bottom = {right, bottom},
+        left_top = {left - offset, top - offset},
+        right_bottom = {right + offset, bottom + offset},
         players = {index},
         surface = surface_name
     }
-    
+
 end
 
 function snip.calculateEstimates(index)
@@ -122,7 +123,7 @@ function snip.calculateEstimates(index)
     local zoom = 1 / global.snip[index].zoomLevel
     local width = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
     local height = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
-    
+
     local size = "-"
     -- 1 means png, only other option is 2, meaning jpg
     if global.snip[index].output_format_index == 1 then
@@ -139,7 +140,7 @@ function snip.calculateEstimates(index)
             size = size .. " B"
         end
     end
-    
+
     local resolution = width .. "x" .. height
     global.snip[index].resolution = resolution
     global.snip[index].filesize = size
@@ -153,7 +154,7 @@ function snip.checkIfScreenshotPossible(index)
     else
         local resX = math.floor((global.snip[index].area.right - global.snip[index].area.left) * 32 * zoom)
         local resY = math.floor((global.snip[index].area.bottom - global.snip[index].area.top) * 32 * zoom)
-        
+
         local enable = resX < 16385 and resY < 16385
         global.snip[index].enableScreenshotButton = enable
     end

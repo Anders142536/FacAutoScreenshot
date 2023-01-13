@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.4.8
+  Features:
+    - Offset's the drawn rectangle by a small amount so that it does not bleed into the image.
+    - Add's new optional shortcut to toggle the GUI.
+    - Reworks zoom slider values to follow pattern [0.125, 0.25, 0.5, 1, 2, 4, 8]
+---------------------------------------------------------------------------------------------------
 Version: 2.4.7
   Features:
     - Area screenshot improvements with multiple surfaces. The selection rectangle now draws on the right surface, and the screenshot will be taken on the surface with the selection, instead of the surface you are looking at.
