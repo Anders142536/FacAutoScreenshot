@@ -37,7 +37,6 @@ function snip.calculateArea(index)
     local left
     local bottom
     local right
-    local offset = 0.05 -- A Small offset so we don't have the white lines of the rectangle bleed into image
 
     if global.snip[index].areaLeftClick then
         top = global.snip[index].areaLeftClick.y
@@ -102,6 +101,10 @@ function snip.calculateArea(index)
     if global.snip[index].rec then
         rendering.destroy(global.snip[index].rec)
     end
+    
+    -- A small offset so we don't have the white lines of the rectangle bleed into image
+    local offset = 0.05 
+    
     global.snip[index].rec = rendering.draw_rectangle{
         color = {0.5, 0.5, 0.5, 0.5},
         width = 1,

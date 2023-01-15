@@ -5,7 +5,7 @@ Version: 2.4.8
   Features:
     - Added new optional shortcut to toggle the GUI.
   Optimizations:
-    - Area selection rectangle is no longer shown on screenshots. Achieved by offsetting it by a small amount.
+    - Area selection rectangle is no longer shown on screenshots, achieved by adding a small offset.
     - Zoom slider values now follow pattern [0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32] instead of 0.25 to 5 with 0.25 steps. These values effectively double/half the resolution of the screenshot. 
     - Added a tooltip to the zoom slider.
 ---------------------------------------------------------------------------------------------------
