@@ -539,13 +539,14 @@ local function buildAreaZoom(index, area_content)
         type = "label",
         name = "zoom_label",
         caption = {"FAS-zoom-label-caption"},
+        tooltip = {"FAS-zoom-label-tooltip"},
         style = "fas_label"
     }
     global.gui[index].zoom_slider = zoom_flow.add{
         type = "slider",
         name = "zoom_slider",
         minimum_value = "-3",
-        maximum_value = "3",
+        maximum_value = "5",
         value = math.log(global.snip[index].zoomLevel)/math.log(2),
         style = "fas_slider"
     }
