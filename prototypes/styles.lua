@@ -52,7 +52,7 @@ styles.fas_slider = {
     type = "slider_style",
     parent = "notched_slider",
     right_margin = 8,
-    width = 128
+    width = 118
 }
 styles.fas_numeric_output = {
     type = "textbox_style",
@@ -63,7 +63,7 @@ styles.fas_numeric_output = {
 styles.fas_slim_numeric_output = {
     type = "textbox_style",
     parent = "fas_numeric_output",
-    width = 40
+    width = 50
 }
 styles.fas_wide_text_input = {
     type = "textbox_style",
