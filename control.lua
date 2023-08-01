@@ -509,19 +509,21 @@ local function on_pre_surface_deleted(event)
 
     -- delete entries of deleted surface
     for _, player in pairs(game.players) do
-        local name = game.get_surface(event.surface_index).name
-        if global.auto[player.index].doSurface[name] ~= nil then
-            global.auto[player.index].doSurface[name] = nil
-        end
+        if global.auto[player.index] ~= nil then
+            local name = game.get_surface(event.surface_index).name
+            if global.auto[player.index].doSurface[name] ~= nil then
+                global.auto[player.index].doSurface[name] = nil
+            end
 
-        -- if the surface was in queue for a screenshot
-        if global.queue[player.index] and global.queue[player.index][name] then
-            queue.remove(player.index, name)
-        end
+            -- if the surface was in queue for a screenshot
+            if global.queue[player.index] and global.queue[player.index][name] then
+                queue.remove(player.index, name)
+            end
 
-        -- if there was an area selection on the surface
-        if global.snip[player.index].surface_name == name then
-            snip.resetArea(player.index)
+            -- if there was an area selection on the surface
+            if global.snip[player.index].surface_name == name then
+                snip.resetArea(player.index)
+            end
         end
     end
 
