@@ -1,0 +1,6 @@
+{
+  "ignorePatterns": [],
+  "insertFinalNewline": true,
+  "printWidth": 80,
+  "proseWrap": "always"
+}
